@@ -78,6 +78,9 @@ Here are the planned features and improvements for future releases:
 2. **Real-Time Fuel Price Integration**: Develop a scraper to fetch current fuel prices from Romanian gas stations
 3. **Public API**: Create a public API allowing developers to access route information and calculations
 4. **Monetization**: Integrate Google Ads for sustainable project development
+5. **Expanded Location Coverage**: Ensure all localities in Romania and Moldova are available in the application
+
+
 
 ## Contributing
 
