@@ -81,9 +81,6 @@ const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected }: RouteDeta
   // Calculate estimated CO2 emissions using our function
   const co2Emissions = calculeazaEmisiiCO2(fuelConsumption, distance, fuelType).toFixed(1);
   
-  // Calculate estimated toll costs (very rough estimate for Romania)
-  const estimatedTollCost = Math.ceil(distance * 0.05);
-
   return (
     <div className="w-full md:mt-6 md:pt-5 md:border-t md:border-blue-100">
       <h3 className="text-lg font-medium text-blue-900 mb-4 px-4 pt-2 md:px-0 md:pt-0">{t('routeDetails.title')}</h3>
