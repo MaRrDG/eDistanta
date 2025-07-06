@@ -6,9 +6,13 @@ interface SearchComponentProps {
   onRouteCalculated: (
     startLocation: [number, number],
     endLocation: [number, number],
-    route: [number, number][],
-    distance: number,
-    duration: number
+    routes: {
+      route: [number, number][],
+      distance: number,
+      duration: number,
+      index: number
+    }[],
+    selectedRouteIndex: number
   ) => void;
   onMobileSubmit?: () => void; // Optional callback for mobile submit actions
 }
@@ -141,9 +145,12 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
     startCoords: [number, number],
     endCoords: [number, number]
   ): Promise<{
-    route: [number, number][];
-    distance: number;
-    duration: number;
+    routes: {
+      route: [number, number][],
+      distance: number,
+      duration: number,
+      index: number
+    }[]
   }> => {
     try {
       // Using OSRM API for route calculation
@@ -153,7 +160,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
       const endLng = endCoords[1];
       const endLat = endCoords[0];
       
-      const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
+      const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson&alternatives=true`;
       
       const response = await fetch(url);
       const data: RouteResponse = await response.json();
@@ -162,24 +169,28 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
         throw new Error('No route found');
       }
       
-      const route = data.routes[0];
+      // Process all routes
+      const processedRoutes = data.routes.map((route, index) => {
+        // OSRM returns coordinates as [longitude, latitude], but our app uses [latitude, longitude]
+        const formattedRoute = route.geometry.coordinates.map(
+          coord => [coord[1], coord[0]] as [number, number]
+        );
+        
+        // Convert distance from meters to kilometers
+        const distanceInKm = route.distance / 1000;
+        
+        // Convert duration from seconds to minutes
+        const durationInMinutes = route.duration / 60;
+        
+        return {
+          route: formattedRoute,
+          distance: distanceInKm,
+          duration: durationInMinutes,
+          index
+        };
+      });
       
-      // OSRM returns coordinates as [longitude, latitude], but our app uses [latitude, longitude]
-      const formattedRoute = route.geometry.coordinates.map(
-        coord => [coord[1], coord[0]] as [number, number]
-      );
-      
-      // Convert distance from meters to kilometers
-      const distanceInKm = route.distance / 1000;
-      
-      // Convert duration from seconds to minutes
-      const durationInMinutes = route.duration / 60;
-      
-      return {
-        route: formattedRoute,
-        distance: distanceInKm,
-        duration: durationInMinutes
-      };
+      return { routes: processedRoutes };
     } catch (error) {
       console.error('Error calculating route:', error);
       throw new Error('Failed to calculate route. Please try again.');
@@ -188,6 +199,8 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setShowStartSuggestions(false);
+    setShowEndSuggestions(false);
     setError(null);
     setIsCalculating(true);
     
@@ -220,9 +233,8 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
       onRouteCalculated(
         startCity.coordinates,
         endCity.coordinates,
-        routeData.route,
-        routeData.distance,
-        routeData.duration
+        routeData.routes,
+        0 // Default to first route
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -262,6 +274,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
                   setStartInput(e.target.value);
                   handleSearch(e.target.value, true);
                 }}
+                onBlur={() => setShowStartSuggestions(false)}
                 onFocus={() => startInput && setShowStartSuggestions(true)}
                 placeholder={t('search.enterStartLocation')}
                 className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700"
@@ -300,6 +313,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
                   setEndInput(e.target.value);
                   handleSearch(e.target.value, false);
                 }}
+                onBlur={() => setShowEndSuggestions(false)}
                 onFocus={() => endInput && setShowEndSuggestions(true)}
                 placeholder={t('search.enterDestination')}
                 className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700"

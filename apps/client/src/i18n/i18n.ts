@@ -5,10 +5,10 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // English translations
 const enTranslations = {
   app: {
-    name: 'Info-Trafic'
+    name: 'eDistanta'
   },
   header: {
-    title: 'Info-Trafic'
+    title: 'eDistanta'
   },
   search: {
     title: 'Plan Your Route',
@@ -27,10 +27,20 @@ const enTranslations = {
     estimatedTime: 'Estimated Time',
     fuelConsumption: 'Fuel Consumption',
     co2Emissions: 'CO₂ Emissions',
-    estimatedTollCost: 'Est. Toll Cost',
     fuel: 'Fuel',
     co2: 'CO₂',
-    estimateNote: '* Estimates based on average consumption of 6.5L/100km for a medium-sized car'
+    estimateNote: '* Estimates based on average consumption for the selected fuel type',
+    alternatives: 'Alternative Routes',
+    route: 'Route',
+    fuelSettings: 'Fuel Settings',
+    consumption: 'Consumption',
+    fuelType: 'Fuel Type'
+  },
+  fuelTypes: {
+    benzina: 'Gasoline',
+    motorina: 'Diesel',
+    gpl: 'LPG',
+    cng: 'CNG'
   },
   map: {
     startLocation: 'Start Location',
@@ -57,10 +67,10 @@ const enTranslations = {
 // Romanian translations
 const roTranslations = {
   app: {
-    name: 'Info-Trafic'
+    name: 'eDistanta'
   },
   header: {
-    title: 'Info-Trafic'
+    title: 'eDistanta'
   },
   search: {
     title: 'Planifică Ruta',
@@ -79,10 +89,20 @@ const roTranslations = {
     estimatedTime: 'Timp Estimat',
     fuelConsumption: 'Consum Combustibil',
     co2Emissions: 'Emisii CO₂',
-    estimatedTollCost: 'Cost Estimat Taxe',
     fuel: 'Combustibil',
     co2: 'CO₂',
-    estimateNote: '* Estimări bazate pe un consum mediu de 6.5L/100km pentru o mașină de dimensiuni medii'
+    estimateNote: '* Estimări bazate pe consumul mediu pentru tipul de combustibil selectat',
+    alternatives: 'Rute Alternative',
+    route: 'Ruta',
+    fuelSettings: 'Setări Combustibil',
+    consumption: 'Consum',
+    fuelType: 'Tip Combustibil'
+  },
+  fuelTypes: {
+    benzina: 'Benzină',
+    motorina: 'Motorină',
+    gpl: 'GPL',
+    cng: 'GNC'
   },
   map: {
     startLocation: 'Locație Pornire',

@@ -1,22 +1,75 @@
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
-interface RouteDetailsProps {
-  distance: number | null;
-  duration: number | null;
+interface RouteData {
+  route: [number, number][];
+  distance: number;
+  duration: number;
+  index: number;
 }
 
-const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
-  const { t } = useTranslation();
+interface RouteDetailsProps {
+  routes: RouteData[] | null;
+  selectedRouteIndex: number;
+  onRouteSelected: (index: number) => void;
+}
 
-  if (!distance || !duration) {
+// Route colors for alternatives - keep in sync with MapComponent
+const ROUTE_COLORS = ['#2563eb', '#9333ea', '#16a34a', '#f59e0b'];
+
+// Fuel types and their CO2 emission factors
+const FUEL_TYPES = ['benzina', 'motorina', 'gpl', 'cng'] as const;
+type FuelType = typeof FUEL_TYPES[number];
+
+/**
+ * Calculate CO2 emissions based on fuel consumption and type
+ * @param consumL_per_100km Fuel consumption in L/100km
+ * @param distantaKm Distance in kilometers
+ * @param tipCarburant Fuel type (benzina, motorina, gpl, cng)
+ * @returns CO2 emissions in kg
+ */
+function calculeazaEmisiiCO2(consumL_per_100km: number, distantaKm: number, tipCarburant: string): number {
+  // Factori de emisii CO2 (kg CO2 / litru)
+  const factoriEmisii: Record<FuelType, number> = {
+    benzina: 2.31,
+    motorina: 2.68,
+    gpl: 1.51,
+    cng: 2.75,  // aici se ia kg CO2 / kg gaz metan, nu litru
+  };
+
+  // Verificăm dacă tipul carburantului este valid
+  const fuelTypeLower = tipCarburant.toLowerCase() as FuelType;
+  if (!factoriEmisii.hasOwnProperty(fuelTypeLower)) {
+    throw new Error('Tip carburant necunoscut');
+  }
+
+  // Calculăm cantitatea de carburant consumată
+  const consumTotalLitri = (consumL_per_100km * distantaKm) / 100;
+
+  // Calculăm emisiile
+  const emisiiCO2 = consumTotalLitri * factoriEmisii[fuelTypeLower];
+
+  return emisiiCO2; // kg CO2
+}
+
+const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected }: RouteDetailsProps) => {
+  const { t } = useTranslation();
+  const [fuelConsumption, setFuelConsumption] = useState<number>(6.5);
+  const [fuelType, setFuelType] = useState<FuelType>('benzina');
+
+  if (!routes || routes.length === 0) {
     return null;
   }
+
+  const selectedRoute = routes[selectedRouteIndex];
+  const distance = selectedRoute.distance;
+  const duration = selectedRoute.duration;
 
   // Round distance to 1 decimal place
   const formattedDistance = distance.toFixed(1);
   
-  // Calculate fuel consumption (assuming 6.5L/100km)
-  const fuelConsumption = (distance * 6.5 / 100).toFixed(1);
+  // Calculate fuel consumption based on user input
+  const totalFuelConsumption = (distance * fuelConsumption / 100).toFixed(1);
   
   // Format duration in hours and minutes
   const hours = Math.floor(duration / 60);
@@ -25,8 +78,8 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
     ? `${hours}${t('units.hour')} ${minutes}${t('units.min')}` 
     : `${minutes}${t('units.min')}`;
     
-  // Calculate estimated CO2 emissions (average 120g/km)
-  const co2Emissions = (distance * 0.12).toFixed(1);
+  // Calculate estimated CO2 emissions using our function
+  const co2Emissions = calculeazaEmisiiCO2(fuelConsumption, distance, fuelType).toFixed(1);
   
   // Calculate estimated toll costs (very rough estimate for Romania)
   const estimatedTollCost = Math.ceil(distance * 0.05);
@@ -34,6 +87,95 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
   return (
     <div className="w-full md:mt-6 md:pt-5 md:border-t md:border-blue-100">
       <h3 className="text-lg font-medium text-blue-900 mb-4 px-4 pt-2 md:px-0 md:pt-0">{t('routeDetails.title')}</h3>
+      
+      {/* Route alternatives selector */}
+      {routes.length > 1 && (
+        <div className="mb-4 px-4 md:px-0">
+          <p className="text-sm text-slate-600 mb-2">{t('routeDetails.alternatives')}</p>
+          <div className="flex flex-wrap gap-2">
+            {routes.map((route, index) => {
+              const routeHours = Math.floor(route.duration / 60);
+              const routeMinutes = Math.round(route.duration % 60);
+              const routeDuration = routeHours > 0 
+                ? `${routeHours}${t('units.hour')} ${routeMinutes}${t('units.min')}` 
+                : `${routeMinutes}${t('units.min')}`;
+              
+              return (
+                <button
+                  key={index}
+                  onClick={() => onRouteSelected(index)}
+                  className={`flex items-center px-3 py-2 rounded-md text-sm ${
+                    selectedRouteIndex === index 
+                      ? 'bg-slate-100 border border-slate-300' 
+                      : 'bg-white border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <span 
+                    className="w-3 h-3 rounded-full mr-2" 
+                    style={{ backgroundColor: ROUTE_COLORS[index % ROUTE_COLORS.length] }}
+                  ></span>
+                  <span className="font-medium">
+                    {t('routeDetails.route')} {index + 1}
+                  </span>
+                  <span className="mx-1.5 text-slate-400">•</span>
+                  <span className="text-slate-600">
+                    {routeDuration}
+                  </span>
+                  <span className="mx-1.5 text-slate-400">•</span>
+                  <span className="text-slate-600">
+                    {route.distance.toFixed(1)} {t('units.km')}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
+      {/* Fuel consumption and type selectors */}
+      <div className="mb-4 px-4 md:px-0">
+        <p className="text-sm text-slate-600 mb-2">{t('routeDetails.fuelSettings')}</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="fuelConsumption" className="block text-xs text-slate-500 mb-1">
+              {t('routeDetails.consumption')} (L/100km)
+            </label>
+            <input
+              id="fuelConsumption"
+              type="number"
+              min="1"
+              max="30"
+              step="0.1"
+              value={fuelConsumption}
+              onChange={(e) => setFuelConsumption(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+            />
+          </div>
+          <div>
+            <label htmlFor="fuelType" className="block text-xs text-slate-500 mb-1">
+              {t('routeDetails.fuelType')}
+            </label>
+            <select
+              id="fuelType"
+              value={fuelType}
+              onChange={(e) => {
+                // Validate that the selected value is a valid fuel type
+                const selectedValue = e.target.value;
+                if (FUEL_TYPES.includes(selectedValue as FuelType)) {
+                  setFuelType(selectedValue as FuelType);
+                }
+              }}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+            >
+              {FUEL_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {t(`fuelTypes.${type}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       
       {/* Desktop layout - vertical stack */}
       <div className="hidden md:block bg-white rounded-lg overflow-hidden">
@@ -72,7 +214,7 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
             </div>
             <div>
               <p className="text-sm text-slate-500">{t('routeDetails.fuelConsumption')}</p>
-              <p className="text-lg font-semibold text-slate-900">{fuelConsumption} {t('units.liters')}</p>
+              <p className="text-lg font-semibold text-slate-900">{totalFuelConsumption} {t('units.liters')}</p>
             </div>
           </div>
           
@@ -85,20 +227,6 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
             <div>
               <p className="text-sm text-slate-500">{t('routeDetails.co2Emissions')}</p>
               <p className="text-lg font-semibold text-slate-900">{co2Emissions} {t('units.kg')}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center p-3.5">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-blue-600">
-                <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
-                <path fillRule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clipRule="evenodd" />
-                <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-slate-500">{t('routeDetails.estimatedTollCost')}</p>
-              <p className="text-lg font-semibold text-slate-900">{estimatedTollCost} {t('units.currency')}</p>
             </div>
           </div>
         </div>
@@ -142,7 +270,7 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
               </div>
               <p className="text-xs text-slate-500">{t('routeDetails.fuel')}</p>
             </div>
-            <p className="text-base font-semibold text-slate-900">{fuelConsumption} {t('units.liters')}</p>
+            <p className="text-base font-semibold text-slate-900">{totalFuelConsumption} {t('units.liters')}</p>
           </div>
           
           <div className="bg-white rounded-lg p-3 shadow-sm">
@@ -155,20 +283,6 @@ const RouteDetails = ({ distance, duration }: RouteDetailsProps) => {
               <p className="text-xs text-slate-500">{t('routeDetails.co2')}</p>
             </div>
             <p className="text-base font-semibold text-slate-900">{co2Emissions} {t('units.kg')}</p>
-          </div>
-          
-          <div className="bg-white rounded-lg p-3 shadow-sm col-span-2">
-            <div className="flex items-center mb-1">
-              <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-blue-600">
-                  <path d="M12 7.5a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
-                  <path fillRule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 011.5 14.625v-9.75zM8.25 9.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM18.75 9a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9.75a.75.75 0 00-.75-.75h-.008zM4.5 9.75A.75.75 0 015.25 9h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H5.25a.75.75 0 01-.75-.75V9.75z" clipRule="evenodd" />
-                  <path d="M2.25 18a.75.75 0 000 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 00-.75-.75H2.25z" />
-                </svg>
-              </div>
-              <p className="text-xs text-slate-500">{t('routeDetails.estimatedTollCost')}</p>
-            </div>
-            <p className="text-base font-semibold text-slate-900">{estimatedTollCost} {t('units.currency')}</p>
           </div>
         </div>
         

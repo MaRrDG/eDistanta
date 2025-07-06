@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, ZoomControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
@@ -40,24 +40,75 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const ROMANIA_CENTER: [number, number] = [45.9443, 25.0094];
 const DEFAULT_ZOOM = 7;
 
+// Route colors for alternatives
+const ROUTE_COLORS = ['#2563eb', '#9333ea', '#16a34a', '#f59e0b'];
+
+interface RouteData {
+  route: [number, number][];
+  distance: number;
+  duration: number;
+  index: number;
+}
+
 interface MapComponentProps {
   startLocation: [number, number] | null;
   endLocation: [number, number] | null;
-  route: [number, number][] | null;
+  routes: RouteData[] | null;
+  selectedRouteIndex: number;
+  onRouteSelected?: (index: number) => void;
 }
 
-const MapComponent = ({ startLocation, endLocation, route }: MapComponentProps) => {
+// Map controller component to handle map initialization
+const MapController = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    mapRef.current = map;
+    
+    // Enable all zoom and pan options
+    map.scrollWheelZoom.enable();
+    map.touchZoom.enable();
+    map.doubleClickZoom.enable();
+    map.dragging.enable();
+    
+    // Fix for mobile browsers to prevent page scrolling when interacting with map
+    const container = map.getContainer();
+    
+    // Prevent page scrolling when interacting with the map
+    const preventScroll = (e: Event) => {
+      if (e.target === container || container.contains(e.target as Node)) {
+        e.preventDefault();
+      }
+    };
+    
+    // Only add these listeners on mobile
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      
+      return () => {
+        document.removeEventListener('touchmove', preventScroll);
+      };
+    }
+  }, [map, mapRef]);
+  
+  return null;
+};
+
+const MapComponent = ({ startLocation, endLocation, routes, selectedRouteIndex, onRouteSelected }: MapComponentProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
   // Fit map to route bounds when route changes
   useEffect(() => {
-    if (mapRef.current && route && route.length > 0) {
+    if (mapRef.current && routes && routes.length > 0) {
       setIsLoading(true);
       
       try {
-        const bounds = L.latLngBounds(route.map(coord => L.latLng(coord[0], coord[1])));
+        // Get the selected route
+        const selectedRoute = routes[selectedRouteIndex].route;
+        
+        const bounds = L.latLngBounds(selectedRoute.map(coord => L.latLng(coord[0], coord[1])));
         mapRef.current.fitBounds(bounds, { 
           padding: [50, 50],
           animate: true,
@@ -73,10 +124,16 @@ const MapComponent = ({ startLocation, endLocation, route }: MapComponentProps) 
         setIsLoading(false);
       }
     }
-  }, [route]);
+  }, [routes, selectedRouteIndex]);
+
+  const handleRouteClick = (index: number) => {
+    if (onRouteSelected) {
+      onRouteSelected(index);
+    }
+  };
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative overflow-hidden">
       <MapContainer
         center={ROMANIA_CENTER}
         zoom={DEFAULT_ZOOM}
@@ -84,7 +141,13 @@ const MapComponent = ({ startLocation, endLocation, route }: MapComponentProps) 
         ref={mapRef}
         zoomControl={false}
         className="z-0"
+        attributionControl={false}
+        scrollWheelZoom={true}
+        touchZoom={true}
+        doubleClickZoom={true}
       >
+        <MapController mapRef={mapRef} />
+        
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -108,19 +171,23 @@ const MapComponent = ({ startLocation, endLocation, route }: MapComponentProps) 
           </Marker>
         )}
         
-        {route && route.length > 0 && (
+        {routes && routes.length > 0 && routes.map((routeData, index) => (
           <Polyline 
-            positions={route}
+            key={index}
+            positions={routeData.route}
             pathOptions={{
-              color: '#2563eb',
-              weight: 5,
-              opacity: 0.7,
+              color: ROUTE_COLORS[index % ROUTE_COLORS.length],
+              weight: selectedRouteIndex === index ? 5 : 3,
+              opacity: selectedRouteIndex === index ? 0.8 : 0.5,
               lineCap: 'round',
               lineJoin: 'round',
-              dashArray: '0',
+              dashArray: selectedRouteIndex === index ? '0' : '5, 5',
+            }}
+            eventHandlers={{
+              click: () => handleRouteClick(index)
             }}
           />
-        )}
+        ))}
       </MapContainer>
       
       {/* Loading overlay */}

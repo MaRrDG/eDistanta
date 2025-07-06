@@ -1,34 +1,83 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import MapComponent from './components/MapComponent'
 import SearchComponent from './components/SearchComponent'
 import RouteDetails from './components/RouteDetails'
 import LanguageSelector from './components/LanguageSelector'
 
+interface RouteData {
+  route: [number, number][];
+  distance: number;
+  duration: number;
+  index: number;
+}
+
 function App() {
   const [startLocation, setStartLocation] = useState<[number, number] | null>(null)
   const [endLocation, setEndLocation] = useState<[number, number] | null>(null)
-  const [route, setRoute] = useState<[number, number][] | null>(null)
-  const [distance, setDistance] = useState<number | null>(null)
-  const [duration, setDuration] = useState<number | null>(null)
+  const [routes, setRoutes] = useState<RouteData[] | null>(null)
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false)
+  const [safeAreaBottom, setSafeAreaBottom] = useState(0)
   const { t } = useTranslation()
+
+  // Detect Samsung browser and other browsers with bottom navigation bars
+  useEffect(() => {
+    // Check if the device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // For Samsung browser and other mobile browsers, add extra padding at the bottom
+      setSafeAreaBottom(0);
+      
+      // Try to detect Samsung browser specifically
+      const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
+      if (isSamsungBrowser) {
+        setSafeAreaBottom(16);
+      }
+      
+      // Try to detect viewport height changes that might indicate browser UI
+      const handleResize = () => {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.clientHeight;
+        
+        // If there's a significant difference, adjust the safe area
+        if (windowHeight - documentHeight > 30 && isSamsungBrowser) {
+          setSafeAreaBottom(windowHeight - documentHeight + 16);
+        }
+      };
+      
+      window.addEventListener('resize', handleResize);
+      handleResize();
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, []);
 
   const handleRouteCalculated = (
     start: [number, number],
     end: [number, number],
-    routeData: [number, number][],
-    distanceData: number,
-    durationData: number
+    routesData: RouteData[],
+    initialRouteIndex: number
   ) => {
     setStartLocation(start)
     setEndLocation(end)
-    setRoute(routeData)
-    setDistance(distanceData)
-    setDuration(durationData)
+    setRoutes(routesData)
+    setSelectedRouteIndex(initialRouteIndex)
     setIsDetailsExpanded(true)
   }
+
+  const handleRouteSelected = (index: number) => {
+    setSelectedRouteIndex(index)
+  }
+
+  // Get current route details for mobile display
+  const currentRoute = routes && routes.length > 0 ? routes[selectedRouteIndex] : null;
+  const distance = currentRoute ? currentRoute.distance : null;
+  const duration = currentRoute ? currentRoute.duration : null;
 
   return (
     <div className="h-screen flex flex-col bg-slate-50">
@@ -72,8 +121,12 @@ function App() {
             />
             {/* RouteDetails only shown in sidebar on medium screens and up */}
             <div className="hidden md:block">
-              {(distance !== null && duration !== null) && (
-                <RouteDetails distance={distance} duration={duration} />
+              {routes && routes.length > 0 && (
+                <RouteDetails 
+                  routes={routes} 
+                  selectedRouteIndex={selectedRouteIndex}
+                  onRouteSelected={handleRouteSelected}
+                />
               )}
             </div>
           </div>
@@ -94,7 +147,9 @@ function App() {
           <MapComponent 
             startLocation={startLocation}
             endLocation={endLocation}
-            route={route}
+            routes={routes}
+            selectedRouteIndex={selectedRouteIndex}
+            onRouteSelected={handleRouteSelected}
           />
           
           {/* Mobile toggle button when sidebar is closed */}
@@ -113,8 +168,11 @@ function App() {
           )}
           
           {/* Bottom route details widget for mobile */}
-          {distance !== null && duration !== null && (
-            <div className={`md:hidden absolute bottom-0 left-0 right-0 bg-white shadow-lg transition-transform duration-300 z-10 ${isDetailsExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]'}`}>
+          {routes && routes.length > 0 && (
+            <div 
+              className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg transition-transform duration-300 z-10 ${isDetailsExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]'}`}
+              style={{ paddingBottom: `${safeAreaBottom}px` }}
+            >
               <div 
                 className="flex justify-between items-center px-4 py-2 border-b border-blue-100 cursor-pointer"
                 onClick={() => {
@@ -139,13 +197,13 @@ function App() {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-600 mr-1">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium">{Math.floor(duration / 60)}{t('units.hour')} {Math.round(duration % 60)}{t('units.min')}</span>
+                    <span className="text-sm font-medium">{Math.floor(duration! / 60)}{t('units.hour')} {Math.round(duration! % 60)}{t('units.min')}</span>
                   </div>
                   <div className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-600 mr-1">
                       <path fillRule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm font-medium">{distance.toFixed(1)} {t('units.km')}</span>
+                    <span className="text-sm font-medium">{distance!.toFixed(1)} {t('units.km')}</span>
                   </div>
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -157,8 +215,12 @@ function App() {
                   </svg>
                 </div>
               </div>
-              <div className="max-h-[70vh] overflow-y-auto">
-                <RouteDetails distance={distance} duration={duration} />
+              <div className="max-h-[60vh] overflow-y-auto">
+                <RouteDetails 
+                  routes={routes} 
+                  selectedRouteIndex={selectedRouteIndex}
+                  onRouteSelected={handleRouteSelected}
+                />
               </div>
             </div>
           )}

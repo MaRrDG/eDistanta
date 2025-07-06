@@ -1,135 +1,92 @@
-# Turborepo starter
+# eDistanta - Modern Route Planning for Romania
 
-This Turborepo starter is maintained by the Turborepo core team.
+![eDistanta](https://img.shields.io/badge/eDistanta-v1.0-blue)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)
+![Turborepo](https://img.shields.io/badge/Turborepo-2.5-4353FF?logo=turborepo)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Using this example
+eDistanta is a modern, responsive web application for planning routes within Romania. It provides an intuitive interface for calculating distances between cities, estimating travel times, and visualizing routes on an interactive map.
 
-Run the following command:
+![eDistanta Screenshot](https://via.placeholder.com/800x450.png?text=eDistanta+Screenshot)
 
+## Features
+
+- **Interactive Route Planning**: Select start and destination cities from a comprehensive list of Romanian locations
+- **Multiple Route Options**: View and compare alternative routes between destinations
+- **Detailed Route Information**: Get accurate distance and estimated travel time
+- **Fuel Consumption Estimates**: Calculate fuel usage and CO₂ emissions based on vehicle type
+- **Responsive Design**: Optimized for both desktop and mobile devices
+- **Multilingual Support**: Available in English and Romanian
+- **Interactive Map**: Visualize routes using OpenStreetMap integration
+
+## Tech Stack
+
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS for modern, responsive design
+- **Mapping**: Leaflet with OpenStreetMap for route visualization
+- **Routing**: OSRM (Open Source Routing Machine) API
+- **Internationalization**: i18next for multilingual support
+- **Build System**: Turborepo for monorepo management
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 10 or higher
+
+### Installation
+
+1. Clone the repository:
 ```sh
-npx create-turbo@latest
+git clone https://github.com/yourusername/info-rutier.git
+cd info-rutier
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+2. Install dependencies:
+```sh
+npm install
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+3. Start the development server:
+```sh
+npm run dev
 ```
 
-### Develop
+4. Open your browser and navigate to `http://localhost:5173`
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+info-rutier/
+├── apps/
+│   └── client/         # React frontend application
+│       ├── public/     # Static assets
+│       └── src/        # Source code
+│           ├── components/  # React components
+│           ├── i18n/        # Internationalization
+│           └── assets/      # Images and other assets
+└── packages/           # Shared packages (future expansion)
 ```
 
-### Remote Caching
+## Contributing
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## License
 
-```
-cd my-turborepo
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+## Acknowledgements
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+- [OpenStreetMap](https://www.openstreetmap.org/) for map data
+- [OSRM](http://project-osrm.org/) for routing services
+- [Leaflet](https://leafletjs.com/) for interactive maps
+- [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/) for the frontend framework

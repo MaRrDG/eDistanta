@@ -1,5 +1,5 @@
 {
-  "name": "info-rutier",
+  "name": "edistanta",
   "private": true,
   "scripts": {
     "build": "turbo run build",
