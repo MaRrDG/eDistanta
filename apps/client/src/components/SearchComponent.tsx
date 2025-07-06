@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FormEvent } from 'react';
 
@@ -44,6 +44,12 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
   const [error, setError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Refs for handling click outside
+  const startSuggestionsRef = useRef<HTMLUListElement>(null);
+  const startInputRef = useRef<HTMLInputElement>(null);
+  const endSuggestionsRef = useRef<HTMLUListElement>(null);
+  const endInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch Romanian cities on component mount
   useEffect(() => {
@@ -109,6 +115,36 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
     };
 
     fetchCities();
+  }, []);
+
+  // Handle clicks outside of the suggestions
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // For start suggestions
+      if (
+        startSuggestionsRef.current && 
+        startInputRef.current && 
+        !startSuggestionsRef.current.contains(event.target as Node) && 
+        !startInputRef.current.contains(event.target as Node)
+      ) {
+        setShowStartSuggestions(false);
+      }
+      
+      // For end suggestions
+      if (
+        endSuggestionsRef.current && 
+        endInputRef.current && 
+        !endSuggestionsRef.current.contains(event.target as Node) && 
+        !endInputRef.current.contains(event.target as Node)
+      ) {
+        setShowEndSuggestions(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleSearch = (input: string, isStart: boolean) => {
@@ -267,6 +303,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
             </div>
             <div className="relative">
               <input
+                ref={startInputRef}
                 type="text"
                 id="start"
                 value={startInput}
@@ -274,13 +311,15 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
                   setStartInput(e.target.value);
                   handleSearch(e.target.value, true);
                 }}
-                onBlur={() => setShowStartSuggestions(false)}
                 onFocus={() => startInput && setShowStartSuggestions(true)}
                 placeholder={t('search.enterStartLocation')}
                 className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700"
               />
               {showStartSuggestions && startSuggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
+                <ul 
+                  ref={startSuggestionsRef}
+                  className="absolute z-10 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto"
+                >
                   {startSuggestions.map((city, index) => (
                     <li
                       key={index}
@@ -306,6 +345,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
             </div>
             <div className="relative">
               <input
+                ref={endInputRef}
                 type="text"
                 id="destination"
                 value={endInput}
@@ -313,13 +353,15 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
                   setEndInput(e.target.value);
                   handleSearch(e.target.value, false);
                 }}
-                onBlur={() => setShowEndSuggestions(false)}
                 onFocus={() => endInput && setShowEndSuggestions(true)}
                 placeholder={t('search.enterDestination')}
                 className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700"
               />
               {showEndSuggestions && endSuggestions.length > 0 && (
-                <ul className="absolute z-10 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto">
+                <ul 
+                  ref={endSuggestionsRef}
+                  className="absolute z-10 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto"
+                >
                   {endSuggestions.map((city, index) => (
                     <li
                       key={index}
