@@ -40,8 +40,8 @@ eDistanta is a modern, responsive web application for planning routes within Rom
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/yourusername/info-rutier.git
-cd info-rutier
+git clone https://github.com/yourusername/edistanta.git
+cd edistanta
 ```
 
 2. Install dependencies:
@@ -59,7 +59,7 @@ npm run dev
 ## Project Structure
 
 ```
-info-rutier/
+edistanta/
 ├── apps/
 │   └── client/         # React frontend application
 │       ├── public/     # Static assets
@@ -69,6 +69,15 @@ info-rutier/
 │           └── assets/      # Images and other assets
 └── packages/           # Shared packages (future expansion)
 ```
+
+## Roadmap
+
+Here are the planned features and improvements for future releases:
+
+1. **Multi-Stop Route Planning**: Add functionality to include multiple waypoints between start and destination
+2. **Real-Time Fuel Price Integration**: Develop a scraper to fetch current fuel prices from Romanian gas stations
+3. **Public API**: Create a public API allowing developers to access route information and calculations
+4. **Monetization**: Integrate Google Ads for sustainable project development
 
 ## Contributing
 
