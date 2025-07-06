@@ -10,6 +10,7 @@ interface SearchComponentProps {
     distance: number,
     duration: number
   ) => void;
+  onMobileSubmit?: () => void; // Optional callback for mobile submit actions
 }
 
 interface City {
@@ -27,7 +28,7 @@ interface RouteResponse {
   }[];
 }
 
-const SearchComponent = ({ onRouteCalculated }: SearchComponentProps) => {
+const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentProps) => {
   const { t } = useTranslation();
   const [startInput, setStartInput] = useState('');
   const [endInput, setEndInput] = useState('');
@@ -189,6 +190,11 @@ const SearchComponent = ({ onRouteCalculated }: SearchComponentProps) => {
     e.preventDefault();
     setError(null);
     setIsCalculating(true);
+    
+    // Call onMobileSubmit if it exists (for closing sidebar on mobile)
+    if (onMobileSubmit) {
+      onMobileSubmit();
+    }
     
     try {
       const startCity = cities.find(city => 

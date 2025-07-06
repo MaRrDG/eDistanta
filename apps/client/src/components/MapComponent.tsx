@@ -123,17 +123,6 @@ const MapComponent = ({ startLocation, endLocation, route }: MapComponentProps) 
         )}
       </MapContainer>
       
-      {/* Map overlay with info */}
-      <div className="absolute bottom-5 right-5 z-10 bg-white bg-opacity-90 backdrop-blur-sm rounded-lg shadow-lg p-3 text-xs text-slate-600 max-w-[200px]">
-        <div className="flex items-center mb-1">
-          <div className="w-3 h-3 rounded-full bg-blue-600 mr-1.5"></div>
-          <span>{t('app.name')} Map</span>
-        </div>
-        <div className="text-[10px] opacity-75">
-          {startLocation && endLocation ? t('map.routeDisplayed') : t('map.selectLocations')}
-        </div>
-      </div>
-      
       {/* Loading overlay */}
       {isLoading && (
         <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-20">

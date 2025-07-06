@@ -43,7 +43,10 @@ function App() {
         <div className="flex items-center gap-4">
           <LanguageSelector />
           <button 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              onClick={() => {
+                setIsSidebarOpen(!isSidebarOpen)
+                setIsDetailsExpanded(false)
+              }}
             className="md:hidden bg-blue-50 hover:bg-blue-100 p-2 rounded-full text-blue-600"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -58,7 +61,15 @@ function App() {
         {/* Sidebar with search and route details */}
         <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col`}>
           <div className="p-4 flex-1 overflow-y-auto">
-            <SearchComponent onRouteCalculated={handleRouteCalculated} />
+            <SearchComponent 
+              onRouteCalculated={handleRouteCalculated} 
+              onMobileSubmit={() => {
+                // Only close the sidebar on mobile devices
+                if (window.innerWidth < 768) {
+                  setIsSidebarOpen(false);
+                }
+              }}
+            />
             {/* RouteDetails only shown in sidebar on medium screens and up */}
             <div className="hidden md:block">
               {(distance !== null && duration !== null) && (
@@ -89,7 +100,10 @@ function App() {
           {/* Mobile toggle button when sidebar is closed */}
           {!isSidebarOpen && (
             <button 
-              onClick={() => setIsSidebarOpen(true)}
+              onClick={() => {
+                setIsSidebarOpen(true)
+                setIsDetailsExpanded(false)
+              }}
               className="md:hidden absolute top-4 left-4 z-10 bg-white shadow-lg p-3 rounded-full text-blue-600"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -103,7 +117,14 @@ function App() {
             <div className={`md:hidden absolute bottom-0 left-0 right-0 bg-white shadow-lg transition-transform duration-300 z-10 ${isDetailsExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]'}`}>
               <div 
                 className="flex justify-between items-center px-4 py-2 border-b border-blue-100 cursor-pointer"
-                onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+                onClick={() => {
+                  const isExpanded = !isDetailsExpanded
+                  setIsDetailsExpanded(isExpanded)
+
+                  if (isExpanded) {
+                    setIsSidebarOpen(false)
+                  }
+                }}
               >
                 <div className="flex items-center">
                   <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
