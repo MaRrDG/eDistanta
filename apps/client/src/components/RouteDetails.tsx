@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface RouteData {
   route: [number, number][];
@@ -8,10 +8,17 @@ interface RouteData {
   index: number;
 }
 
+interface Waypoint {
+  id: string;
+  name: string;
+  coordinates: [number, number];
+}
+
 interface RouteDetailsProps {
   routes: RouteData[] | null;
   selectedRouteIndex: number;
   onRouteSelected: (index: number) => void;
+  waypoints?: Waypoint[];
 }
 
 // Route colors for alternatives - keep in sync with MapComponent
@@ -52,10 +59,25 @@ function calculeazaEmisiiCO2(consumL_per_100km: number, distantaKm: number, tipC
   return emisiiCO2; // kg CO2
 }
 
-const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected }: RouteDetailsProps) => {
+const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected, waypoints = [] }: RouteDetailsProps) => {
   const { t } = useTranslation();
-  const [fuelConsumption, setFuelConsumption] = useState<number>(6.5);
-  const [fuelType, setFuelType] = useState<FuelType>('benzina');
+  const [fuelConsumption, setFuelConsumption] = useState<number>(() => {
+    const savedConsumption = localStorage.getItem('fuelConsumption');
+    return savedConsumption ? parseFloat(savedConsumption) : 6.5;
+  });
+  const [fuelType, setFuelType] = useState<FuelType>(() => {
+    const savedFuelType = localStorage.getItem('fuelType') as FuelType;
+    return FUEL_TYPES.includes(savedFuelType) ? savedFuelType : 'benzina';
+  });
+
+  // Save fuel settings to local storage when they change
+  useEffect(() => {
+    localStorage.setItem('fuelConsumption', fuelConsumption.toString());
+  }, [fuelConsumption]);
+
+  useEffect(() => {
+    localStorage.setItem('fuelType', fuelType);
+  }, [fuelType]);
 
   if (!routes || routes.length === 0) {
     return null;
@@ -128,28 +150,32 @@ const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected }: RouteDeta
           </div>
         </div>
       )}
+
+      {/* Waypoints summary */}
+      {waypoints.length > 0 && (
+        <div className="mb-4 px-4 md:px-0">
+          <p className="text-sm text-slate-600 mb-2">{t('routeDetails.waypoints')}</p>
+          <div className="space-y-2">
+            {waypoints.map((waypoint, index) => (
+              <div key={waypoint.id} className="flex items-center text-sm">
+                <span 
+                  className="w-3 h-3 rounded-full mr-2 bg-orange-500"
+                ></span>
+                <span className="text-slate-700">
+                  {t('search.waypoint')} {index + 1}: {waypoint.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       
       {/* Fuel consumption and type selectors */}
       <div className="mb-4 px-4 md:px-0">
         <p className="text-sm text-slate-600 mb-2">{t('routeDetails.fuelSettings')}</p>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="fuelConsumption" className="block text-xs text-slate-500 mb-1">
-              {t('routeDetails.consumption')} (L/100km)
-            </label>
-            <input
-              id="fuelConsumption"
-              type="number"
-              min="1"
-              max="30"
-              step="0.1"
-              value={fuelConsumption}
-              onChange={(e) => setFuelConsumption(Number(e.target.value))}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="fuelType" className="block text-xs text-slate-500 mb-1">
+            <label htmlFor="fuelType" className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]">
               {t('routeDetails.fuelType')}
             </label>
             <select
@@ -170,6 +196,21 @@ const RouteDetails = ({ routes, selectedRouteIndex, onRouteSelected }: RouteDeta
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label htmlFor="fuelConsumption" className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]">
+              {t('routeDetails.consumption')} <span className='text-[9px]'>(L/100km)</span>
+            </label>
+            <input
+              id="fuelConsumption"
+              type="number"
+              min="1"
+              max="30"
+              step="0.1"
+              value={fuelConsumption}
+              onChange={(e) => setFuelConsumption(Number(e.target.value))}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+            />
           </div>
         </div>
       </div>

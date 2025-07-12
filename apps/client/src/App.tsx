@@ -12,9 +12,16 @@ interface RouteData {
   index: number;
 }
 
+interface Waypoint {
+  id: string;
+  name: string;
+  coordinates: [number, number];
+}
+
 function App() {
   const [startLocation, setStartLocation] = useState<[number, number] | null>(null)
   const [endLocation, setEndLocation] = useState<[number, number] | null>(null)
+  const [waypoints, setWaypoints] = useState<Waypoint[]>([])
   const [routes, setRoutes] = useState<RouteData[] | null>(null)
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -60,11 +67,13 @@ function App() {
   const handleRouteCalculated = (
     start: [number, number],
     end: [number, number],
+    waypointsList: Waypoint[],
     routesData: RouteData[],
     initialRouteIndex: number
   ) => {
     setStartLocation(start)
     setEndLocation(end)
+    setWaypoints(waypointsList)
     setRoutes(routesData)
     setSelectedRouteIndex(initialRouteIndex)
     setIsDetailsExpanded(true)
@@ -124,6 +133,7 @@ function App() {
                   routes={routes} 
                   selectedRouteIndex={selectedRouteIndex}
                   onRouteSelected={handleRouteSelected}
+                  waypoints={waypoints}
                 />
               )}
             </div>
@@ -145,6 +155,7 @@ function App() {
           <MapComponent 
             startLocation={startLocation}
             endLocation={endLocation}
+            waypoints={waypoints}
             routes={routes}
             selectedRouteIndex={selectedRouteIndex}
             onRouteSelected={handleRouteSelected}
@@ -218,6 +229,7 @@ function App() {
                   routes={routes} 
                   selectedRouteIndex={selectedRouteIndex}
                   onRouteSelected={handleRouteSelected}
+                  waypoints={waypoints}
                 />
               </div>
             </div>

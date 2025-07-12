@@ -14,12 +14,16 @@ const enTranslations = {
     title: 'Plan Your Route',
     startLocation: 'Start Location',
     destination: 'Destination',
+    waypoint: 'Waypoint',
     enterStartLocation: 'Enter start location',
     enterDestination: 'Enter destination',
+    enterWaypoint: 'Enter waypoint location',
+    addWaypoint: 'Add Waypoint',
     calculateRoute: 'Calculate Fastest Route',
     calculatingRoute: 'Calculating Route...',
     loadingCities: 'Loading cities...',
-    validationError: 'Please select valid start and destination cities from the suggestions.'
+    validationError: 'Please select valid start and destination cities from the suggestions.',
+    waypointValidationError: 'Please select valid cities for all waypoints from the suggestions.'
   },
   routeDetails: {
     title: 'Route Details',
@@ -32,6 +36,7 @@ const enTranslations = {
     estimateNote: '* Estimates based on average consumption for the selected fuel type',
     alternatives: 'Alternative Routes',
     route: 'Route',
+    waypoints: 'Waypoints',
     fuelSettings: 'Fuel Settings',
     consumption: 'Consumption',
     fuelType: 'Fuel Type'
@@ -45,6 +50,7 @@ const enTranslations = {
   map: {
     startLocation: 'Start Location',
     destination: 'Destination',
+    waypoint: 'Waypoint',
     routeDisplayed: 'Route displayed',
     selectLocations: 'Select start and destination',
     loadingRoute: 'Loading route...'
@@ -76,12 +82,16 @@ const roTranslations = {
     title: 'Planifică Ruta',
     startLocation: 'Locație de Pornire',
     destination: 'Destinație',
+    waypoint: 'Punct Intermediar',
     enterStartLocation: 'Introduceți locația de pornire',
     enterDestination: 'Introduceți destinația',
+    enterWaypoint: 'Introduceți punctul intermediar',
+    addWaypoint: 'Adaugă Punct Intermediar',
     calculateRoute: 'Calculează Ruta Rapidă',
     calculatingRoute: 'Se calculează ruta...',
     loadingCities: 'Se încarcă orașele...',
-    validationError: 'Vă rugăm să selectați orașe valide pentru pornire și destinație din sugestii.'
+    validationError: 'Vă rugăm să selectați orașe valide pentru pornire și destinație din sugestii.',
+    waypointValidationError: 'Vă rugăm să selectați orașe valide pentru toate punctele intermediare din sugestii.'
   },
   routeDetails: {
     title: 'Detalii Rută',
@@ -94,6 +104,7 @@ const roTranslations = {
     estimateNote: '* Estimări bazate pe consumul mediu pentru tipul de combustibil selectat',
     alternatives: 'Rute Alternative',
     route: 'Ruta',
+    waypoints: 'Puncte Intermediare',
     fuelSettings: 'Setări Combustibil',
     consumption: 'Consum',
     fuelType: 'Tip Combustibil'
@@ -107,6 +118,7 @@ const roTranslations = {
   map: {
     startLocation: 'Locație Pornire',
     destination: 'Destinație',
+    waypoint: 'Punct Intermediar',
     routeDisplayed: 'Rută afișată',
     selectLocations: 'Selectați locația de pornire și destinația',
     loadingRoute: 'Se încarcă ruta...'

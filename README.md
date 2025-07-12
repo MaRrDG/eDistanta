@@ -74,11 +74,11 @@ edistanta/
 
 Here are the planned features and improvements for future releases:
 
-1. **Multi-Stop Route Planning**: Add functionality to include multiple waypoints between start and destination
+1. ✅ **Multi-Stop Route Planning** [Implemented]: Add functionality to include multiple waypoints between start and destination
 2. **Real-Time Fuel Price Integration**: Develop a scraper to fetch current fuel prices from Romanian gas stations
 3. **Public API**: Create a public API allowing developers to access route information and calculations
 4. **Monetization**: Integrate Google Ads for sustainable project development
-5. **Expanded Location Coverage**: Ensure all localities in Romania and Moldova are available in the application
+5. ✅ **Expanded Location Coverage** [Implemented]: Ensure all localities in Romania and Moldova are available in the application
 
 
 
