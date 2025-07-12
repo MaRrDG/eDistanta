@@ -217,7 +217,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
     <div className="w-full">
       <h2 className="text-lg font-medium text-blue-900 mb-4">{t('search.title')}</h2>
       
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5 pb-12 md:pb-4">
         {/* Start Location Input */}
         <LocationInput
           ref={startInputRef}
