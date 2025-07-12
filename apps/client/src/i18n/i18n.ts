@@ -23,7 +23,11 @@ const enTranslations = {
     calculatingRoute: 'Calculating Route...',
     loadingCities: 'Loading cities...',
     validationError: 'Please select valid start and destination cities from the suggestions.',
-    waypointValidationError: 'Please select valid cities for all waypoints from the suggestions.'
+    waypointValidationError: 'Please select valid cities for all waypoints from the suggestions.',
+    clickToSelect: 'Click on a location to select it',
+    noResults: 'No locations found. Try a different search term.',
+    recalculateNeeded: 'Route needs recalculation',
+    recalculateHint: 'Click to recalculate route with changes'
   },
   routeDetails: {
     title: 'Route Details',
@@ -91,7 +95,11 @@ const roTranslations = {
     calculatingRoute: 'Se calculează ruta...',
     loadingCities: 'Se încarcă orașele...',
     validationError: 'Vă rugăm să selectați orașe valide pentru pornire și destinație din sugestii.',
-    waypointValidationError: 'Vă rugăm să selectați orașe valide pentru toate punctele intermediare din sugestii.'
+    waypointValidationError: 'Vă rugăm să selectați orașe valide pentru toate punctele intermediare din sugestii.',
+    clickToSelect: 'Faceți clic pe o locație pentru a o selecta',
+    noResults: 'Nu s-au găsit locații. Încercați un termen de căutare diferit.',
+    recalculateNeeded: 'Ruta necesită recalculare',
+    recalculateHint: 'Faceți clic pentru a recalcula ruta cu modificările'
   },
   routeDetails: {
     title: 'Detalii Rută',

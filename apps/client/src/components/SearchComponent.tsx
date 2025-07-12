@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { FormEvent } from 'react';
 import type { SearchComponentProps, LocationResult } from '../types/location';
 import { useLocationSearch } from '../hooks/useLocationSearch';
@@ -16,6 +17,8 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
   const [endInput, setEndInput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [hasRouteChanges, setHasRouteChanges] = useState(false);
+  const [hasCalculatedRoute, setHasCalculatedRoute] = useState(false);
   
   // State for suggestions
   const [startSuggestions, setStartSuggestions] = useState<LocationResult[]>([]);
@@ -26,7 +29,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
   const [showWaypointSuggestions, setShowWaypointSuggestions] = useState<{[key: string]: boolean}>({});
   
   // Custom hooks
-  const { handleSearch, searchLocation } = useLocationSearch();
+  const { handleSearch, searchLocation, isLoading } = useLocationSearch();
   const { 
     waypoints, 
     addWaypoint, 
@@ -91,6 +94,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
   // Handle search for waypoint
   const handleWaypointSearch = (waypointId: string, input: string) => {
     updateWaypointName(waypointId, input);
+
     handleSearch(
       input,
       waypointId,
@@ -112,11 +116,17 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
       updateWaypointFromLocation(type, location);
       setShowWaypointSuggestions(prev => ({ ...prev, [type]: false }));
     }
+    if (hasCalculatedRoute) {
+      setHasRouteChanges(true);
+    }
   };
 
   // Handle waypoint removal with cleanup
   const handleWaypointRemove = (waypointId: string) => {
     removeWaypoint(waypointId);
+    if (hasCalculatedRoute) {
+      setHasRouteChanges(true);
+    }
     setWaypointSuggestions(prev => {
       const newSuggestions = { ...prev };
       delete newSuggestions[waypointId];
@@ -129,6 +139,19 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
     });
   };
 
+  // Handle waypoint addition
+  const handleWaypointAdd = () => {
+    addWaypoint();
+  };
+
+  // Handle waypoint movement
+  const handleWaypointMove = (waypointId: string, direction: 'up' | 'down') => {
+    moveWaypoint(waypointId, direction);
+    if (hasCalculatedRoute) {
+      setHasRouteChanges(true);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -136,6 +159,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
     setShowEndSuggestions(false);
     setError(null);
     setIsCalculating(true);
+    setHasRouteChanges(false);
     
     if (onMobileSubmit) {
       onMobileSubmit();
@@ -180,6 +204,8 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
         routeData.routes,
         0
       );
+      
+      setHasCalculatedRoute(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
@@ -201,6 +227,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
           placeholder={t('search.enterStartLocation')}
           suggestions={startSuggestions}
           showSuggestions={showStartSuggestions}
+          isLoading={isLoading('start')}
           markerColor="blue"
           onChange={handleStartSearch}
           onFocus={() => startInput && setShowStartSuggestions(true)}
@@ -208,36 +235,62 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
         />
 
         {/* Waypoints */}
-        {waypoints.map((waypoint, index) => (
-          <WaypointInput
-            key={waypoint.id}
-            waypoint={waypoint}
-            index={index}
-            suggestions={waypointSuggestions[waypoint.id] || []}
-            showSuggestions={showWaypointSuggestions[waypoint.id] || false}
-            canMoveUp={index > 0}
-            canMoveDown={index < waypoints.length - 1}
-            onChange={(value) => handleWaypointSearch(waypoint.id, value)}
-            onFocus={() => waypoint.name && setShowWaypointSuggestions(prev => ({ ...prev, [waypoint.id]: true }))}
-            onSelectLocation={(location) => handleLocationSelect(location, waypoint.id)}
-            onMoveUp={() => moveWaypoint(waypoint.id, 'up')}
-            onMoveDown={() => moveWaypoint(waypoint.id, 'down')}
-            onRemove={() => handleWaypointRemove(waypoint.id)}
-          />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {waypoints.map((waypoint, index) => (
+            <motion.div
+              key={waypoint.id}
+              layout
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                mass: 0.8
+              }}
+            >
+              <WaypointInput
+                waypoint={waypoint}
+                index={index}
+                suggestions={waypointSuggestions[waypoint.id] || []}
+                showSuggestions={showWaypointSuggestions[waypoint.id] || false}
+                isLoading={isLoading(waypoint.id)}
+                canMoveUp={index > 0}
+                canMoveDown={index < waypoints.length - 1}
+                onChange={(value) => handleWaypointSearch(waypoint.id, value)}
+                onFocus={() => waypoint.name && setShowWaypointSuggestions(prev => ({ ...prev, [waypoint.id]: true }))}
+                onSelectLocation={(location) => handleLocationSelect(location, waypoint.id)}
+                onMoveUp={() => handleWaypointMove(waypoint.id, 'up')}
+                onMoveDown={() => handleWaypointMove(waypoint.id, 'down')}
+                onRemove={() => handleWaypointRemove(waypoint.id)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {/* Add Waypoint Button */}
         <div className="flex justify-center">
-          <button
+          <motion.button
             type="button"
-            onClick={addWaypoint}
+            onClick={handleWaypointAdd}
             className="flex items-center px-3 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <motion.svg 
+              className="w-4 h-4 mr-1" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              whileHover={{ rotate: 90 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
+            </motion.svg>
             {t('search.addWaypoint')}
-          </button>
+          </motion.button>
         </div>
 
         {/* Destination Input */}
@@ -249,6 +302,7 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
           placeholder={t('search.enterDestination')}
           suggestions={endSuggestions}
           showSuggestions={showEndSuggestions}
+          isLoading={isLoading('end')}
           markerColor="green"
           onChange={handleEndSearch}
           onFocus={() => endInput && setShowEndSuggestions(true)}
@@ -262,15 +316,37 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
           </div>
         )}
 
+        {/* Route Changes Alert */}
+        {hasRouteChanges && hasCalculatedRoute && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-700 flex items-center"
+          >
+            <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div>
+              <div className="font-medium">{t('search.recalculateNeeded')}</div>
+              <div className="text-xs mt-1">{t('search.recalculateHint')}</div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Submit Button */}
-        <button
+        <motion.button
           type="submit"
           disabled={isCalculating || !startInput || !endInput}
-          className={`w-full py-2.5 px-4 rounded-md font-medium text-white ${
+          className={`w-full py-2.5 px-4 rounded-md font-medium text-white transition-colors flex items-center justify-center ${
             isCalculating || !startInput || !endInput
               ? 'bg-blue-300 cursor-not-allowed'
+              : hasRouteChanges && hasCalculatedRoute
+              ? 'bg-amber-500 hover:bg-amber-600'
               : 'bg-blue-600 hover:bg-blue-700'
-          } transition-colors flex items-center justify-center`}
+          }`}
+          whileHover={!isCalculating && startInput && endInput ? { scale: 1.02 } : {}}
+          whileTap={!isCalculating && startInput && endInput ? { scale: 0.98 } : {}}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
         >
           {isCalculating ? (
             <>
@@ -280,13 +356,19 @@ const SearchComponent = ({ onRouteCalculated, onMobileSubmit }: SearchComponentP
               </svg>
               {t('search.calculatingRoute')}
             </>
+          ) : hasRouteChanges && hasCalculatedRoute ? (
+            <>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {t('search.recalculateNeeded')}
+            </>
           ) : (
             t('search.calculateRoute')
           )}
-        </button>
+        </motion.button>
       </form>
     </div>
   );
 };
-
 export default SearchComponent; 

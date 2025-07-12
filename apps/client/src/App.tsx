@@ -115,8 +115,8 @@ function App() {
       {/* Main content with map focus */}
       <main className="flex flex-1 overflow-hidden">
         {/* Sidebar with search and route details */}
-        <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col`}>
-          <div className="p-4 flex-1 overflow-y-auto">
+        <div className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}>
+          <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent 
               onRouteCalculated={handleRouteCalculated} 
               onMobileSubmit={() => {
