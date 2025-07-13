@@ -1,4 +1,4 @@
-# Info Rutier API
+# eDistanta API
 
 Express API for fuel price scraping and management with PostgreSQL database using TypeORM.
 

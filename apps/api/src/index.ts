@@ -58,7 +58,7 @@ app.use('/api/fuel-prices', fuelPriceRoutes);
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: 'Info Rutier API',
+    message: 'eDistanta API',
     version: '1.0.0',
     endpoints: {
       health: '/health',
