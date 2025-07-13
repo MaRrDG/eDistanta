@@ -1,5 +1,5 @@
 {
-  "name": "info-rutier-api",
+  "name": "edistanta-api",
   "version": "1.0.0",
   "description": "Express API for fuel price scraping and management",
   "main": "dist/index.js",
