@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useFuelPrice, useAvailableStations } from '../hooks/useFuelPrice';
-import type { FuelStation } from '../services/fuelPriceService';
 
 interface RouteData {
   route: [number, number][];
@@ -36,16 +35,7 @@ const FUEL_TYPES = [
 ] as const;
 type FuelType = (typeof FUEL_TYPES)[number];
 
-// Map frontend fuel types to backend fuel types
-const FUEL_TYPE_MAP: Record<FuelType, string> = {
-  'benzina-regular': 'benzina',
-  'benzina-premium': 'benzina',
-  'motorina-regular': 'motorina',
-  'motorina-premium': 'motorina',
-  gpl: 'gpl',
-};
-
-/**
+/**3
  * Calculate CO2 emissions based on fuel consumption and type
  * @param consumL_per_100km Fuel consumption in L/100km
  * @param distantaKm Distance in kilometers
