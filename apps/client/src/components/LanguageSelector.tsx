@@ -14,7 +14,7 @@ const LanguageSelector: React.FC = () => {
         <select
           className="appearance-none bg-white border border-blue-100 rounded-md pl-3 pr-8 py-1.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={i18n.language}
-          onChange={(e) => changeLanguage(e.target.value)}
+          onChange={e => changeLanguage(e.target.value)}
           aria-label={t('languageSelector.language')}
         >
           <option value="en">{t('languageSelector.english')}</option>
@@ -34,4 +34,4 @@ const LanguageSelector: React.FC = () => {
   );
 };
 
-export default LanguageSelector; 
+export default LanguageSelector;

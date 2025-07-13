@@ -36,4 +36,4 @@ export interface SearchComponentProps {
     selectedRouteIndex: number
   ) => void;
   onMobileSubmit?: () => void;
-} 
+}

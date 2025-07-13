@@ -1,7 +1,11 @@
 import cron from 'node-cron';
 import { AppDataSource } from '../config/database';
 import { FuelPrice } from '../entities/FuelPrice';
-import { ScrapedFuelPrice, ScrapingResult, ScrapingStatus } from '../types/scraper';
+import {
+  ScrapedFuelPrice,
+  ScrapingResult,
+  ScrapingStatus,
+} from '../types/scraper';
 import { SCRAPER_CONFIG } from '../config/scraper';
 import { PecoOnlineScraper } from '../scrapers/PecoOnlineScraper';
 
@@ -15,7 +19,9 @@ export class ScraperService {
   }
 
   private initializeScheduler(): void {
-    const cronSchedule = process.env.SCRAPING_CRON_SCHEDULE || SCRAPER_CONFIG.DEFAULT_CRON_SCHEDULE;
+    const cronSchedule =
+      process.env.SCRAPING_CRON_SCHEDULE ||
+      SCRAPER_CONFIG.DEFAULT_CRON_SCHEDULE;
     const scrapingEnabled = process.env.SCRAPING_ENABLED === 'true';
 
     if (scrapingEnabled) {
@@ -23,7 +29,7 @@ export class ScraperService {
         console.info('Starting scheduled fuel price scraping');
         await this.scrapeFuelPrices();
       });
-      
+
       console.info(`Fuel price scraping scheduled with cron: ${cronSchedule}`);
     } else {
       console.info('Fuel price scraping is disabled');
@@ -37,16 +43,16 @@ export class ScraperService {
     }
 
     this.isRunning = true;
-    
+
     try {
       console.info('Starting fuel price scraping');
-      
+
       const scrapedPrices = await Promise.allSettled(
         this.scrapers.map(scraper => scraper.scrape())
       );
 
       const allPrices: ScrapedFuelPrice[] = [];
-      
+
       scrapedPrices.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           allPrices.push(...result.value);
@@ -57,19 +63,18 @@ export class ScraperService {
 
       if (allPrices.length > 0) {
         await this.saveFuelPrices(allPrices);
-        console.info(`Successfully scraped and saved ${allPrices.length} fuel prices`);
+        console.info(
+          `Successfully scraped and saved ${allPrices.length} fuel prices`
+        );
       } else {
         console.warn('No fuel prices were scraped');
       }
-      
     } catch (error) {
       console.error('Error during fuel price scraping:', error);
     } finally {
       this.isRunning = false;
     }
   }
-
-
 
   private async saveFuelPrices(prices: ScrapedFuelPrice[]): Promise<void> {
     try {
@@ -82,7 +87,7 @@ export class ScraperService {
         fuelPrice.location = price.location;
         fuelPrice.address = price.address;
         fuelPrice.scrapedAt = new Date();
-        
+
         return fuelPrice;
       });
 
@@ -102,17 +107,18 @@ export class ScraperService {
 
       await this.scrapeFuelPrices();
       const count = await this.fuelPriceRepository.count();
-      
-      return { 
-        success: true, 
+
+      return {
+        success: true,
         message: 'Manual scraping completed successfully',
-        count 
+        count,
       };
     } catch (error) {
       console.error('Error during manual scraping:', error);
-      return { 
-        success: false, 
-        message: error instanceof Error ? error.message : 'Unknown error occurred' 
+      return {
+        success: false,
+        message:
+          error instanceof Error ? error.message : 'Unknown error occurred',
       };
     }
   }
@@ -124,4 +130,4 @@ export class ScraperService {
   }
 }
 
-export const scraperService = new ScraperService(); 
+export const scraperService = new ScraperService();

@@ -26,14 +26,14 @@ export const AppDataSource = new DataSource({
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-  }
+  },
 });
 
 export const initializeDatabase = async (): Promise<void> => {
   try {
     await AppDataSource.initialize();
     console.info('Database connection initialized successfully');
-    
+
     // Run migrations if in production
     if (process.env.NODE_ENV === 'production') {
       await AppDataSource.runMigrations();
@@ -54,4 +54,4 @@ export const closeDatabase = async (): Promise<void> => {
   } catch (error) {
     console.error('Error closing database connection:', error);
   }
-}; 
+};

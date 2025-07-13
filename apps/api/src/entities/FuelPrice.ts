@@ -1,5 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { IsNotEmpty, IsNumber, IsString, IsOptional, IsDecimal } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsOptional,
+  IsDecimal,
+} from 'class-validator';
 
 @Entity('fuel_prices')
 @Index(['stationName', 'fuelType'])
@@ -39,7 +52,11 @@ export class FuelPrice {
   @IsString()
   address?: string;
 
-  @Column({ name: 'scraped_at', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    name: 'scraped_at',
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   scrapedAt: Date;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
@@ -47,4 +64,4 @@ export class FuelPrice {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
-} 
+}

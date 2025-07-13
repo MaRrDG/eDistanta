@@ -23,16 +23,19 @@ Express API for fuel price scraping and management with PostgreSQL database usin
 ## Installation
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Set up environment variables**:
+
    ```bash
    cp env.example .env
    ```
-   
+
    Edit `.env` with your configuration:
+
    ```env
    # Database
    DB_HOST=localhost
@@ -40,11 +43,11 @@ Express API for fuel price scraping and management with PostgreSQL database usin
    DB_NAME=info_rutier
    DB_USER=postgres
    DB_PASSWORD=your_password
-   
+
    # Scraping
    SCRAPING_ENABLED=true
    SCRAPING_CRON_SCHEDULE=0 10 * * *
-   
+
    # Server
    PORT=3001
    CORS_ORIGIN=http://localhost:5173
@@ -113,9 +116,11 @@ The API follows a modular architecture with clear separation of concerns:
 ### Fuel Prices
 
 #### GET `/api/fuel-prices`
+
 Get all fuel prices with optional filtering and pagination.
 
 **Query Parameters:**
+
 - `page` (number): Page number (default: 1)
 - `limit` (number): Items per page (default: 50)
 - `stationName` (string): Filter by station name
@@ -129,52 +134,65 @@ Get all fuel prices with optional filtering and pagination.
 - `sortOrder` (string): Sort order 'ASC' or 'DESC' (default: 'DESC')
 
 **Example:**
+
 ```bash
 GET /api/fuel-prices?fuelType=Benzina&location=Bucuresti&page=1&limit=20
 ```
 
 #### GET `/api/fuel-prices/latest`
+
 Get the latest fuel prices for each station and fuel type.
 
 **Query Parameters:**
+
 - `fuelType` (string): Filter by fuel type
 - `location` (string): Filter by location
 
 #### GET `/api/fuel-prices/station/:stationName`
+
 Get fuel prices for a specific station.
 
 **Query Parameters:**
+
 - `fuelType` (string): Filter by fuel type
 - `limit` (number): Number of results (default: 10)
 
 #### GET `/api/fuel-prices/stats`
+
 Get fuel price statistics.
 
 **Query Parameters:**
+
 - `fuelType` (string): Filter by fuel type
 - `location` (string): Filter by location
 - `days` (number): Number of days to analyze (default: 30)
 
 #### GET `/api/fuel-prices/types`
+
 Get all available fuel types.
 
 #### GET `/api/fuel-prices/locations`
+
 Get all available locations.
 
 ### Scraping
 
 #### POST `/api/fuel-prices/scrape`
+
 Trigger manual fuel price scraping.
 
 #### GET `/api/fuel-prices/scrape/status`
+
 Get current scraping status.
 
 ### System
 
 #### GET `/health`
+
 Health check endpoint.
 
 #### GET `/`
+
 API information and available endpoints.
 
 ## Response Format
@@ -195,6 +213,7 @@ All API responses follow this structure:
 ```
 
 Error responses:
+
 ```json
 {
   "success": false,
@@ -207,31 +226,34 @@ Error responses:
 
 ### fuel_prices table
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | SERIAL | Primary key |
-| station_name | VARCHAR(255) | Gas station name |
-| fuel_type | VARCHAR(50) | Type of fuel (Benzina, Motorina, etc.) |
-| price | DECIMAL(10,3) | Price per liter |
-| currency | VARCHAR(3) | Currency code (default: RON) |
-| location | VARCHAR(255) | City or location |
-| address | TEXT | Full address |
-| latitude | DECIMAL(10,8) | GPS latitude |
-| longitude | DECIMAL(11,8) | GPS longitude |
-| scraped_at | TIMESTAMP | When data was scraped |
-| created_at | TIMESTAMP | Record creation time |
-| updated_at | TIMESTAMP | Last update time |
+| Column       | Type          | Description                            |
+| ------------ | ------------- | -------------------------------------- |
+| id           | SERIAL        | Primary key                            |
+| station_name | VARCHAR(255)  | Gas station name                       |
+| fuel_type    | VARCHAR(50)   | Type of fuel (Benzina, Motorina, etc.) |
+| price        | DECIMAL(10,3) | Price per liter                        |
+| currency     | VARCHAR(3)    | Currency code (default: RON)           |
+| location     | VARCHAR(255)  | City or location                       |
+| address      | TEXT          | Full address                           |
+| latitude     | DECIMAL(10,8) | GPS latitude                           |
+| longitude    | DECIMAL(11,8) | GPS longitude                          |
+| scraped_at   | TIMESTAMP     | When data was scraped                  |
+| created_at   | TIMESTAMP     | Record creation time                   |
+| updated_at   | TIMESTAMP     | Last update time                       |
 
 ## Scraping Configuration
 
-The scraper supports multiple fuel price websites and can be configured through environment variables:
+The scraper supports multiple fuel price websites and can be configured through environment
+variables:
 
 - `SCRAPING_ENABLED`: Enable/disable automatic scraping
-- `SCRAPING_CRON_SCHEDULE`: Cron expression for scheduling (default: "0 10 * * *" - 10:00 AM daily)
+- `SCRAPING_CRON_SCHEDULE`: Cron expression for scheduling (default: "0 10 \* \* \*" - 10:00 AM
+  daily)
 
 ### Supported Websites
 
 Currently implemented scrapers:
+
 - **PECO Online**: Romanian fuel price aggregator
 
 ### Adding New Scrapers
@@ -239,6 +261,7 @@ Currently implemented scrapers:
 To add a new scraper:
 
 1. Create a new scraper class in `src/scrapers/` implementing the scraper interface:
+
    ```typescript
    export class NewScraper {
      async scrape(): Promise<ScrapedFuelPrice[]> {
@@ -248,6 +271,7 @@ To add a new scraper:
    ```
 
 2. Add the scraper to the `ScraperService` in `src/services/ScraperService.ts`:
+
    ```typescript
    private scrapers = [
      new PecoOnlineScraper(),
@@ -260,6 +284,7 @@ To add a new scraper:
 ### Configuration Constants
 
 All scraper configuration is centralized in `src/config/scraper.ts`:
+
 - `SCRAPER_CONFIG`: General scraping settings
 - `PECO_ONLINE_CONFIG`: PECO Online specific configuration
 - `QUERY_DEFAULTS`: Default query parameters
@@ -267,6 +292,7 @@ All scraper configuration is centralized in `src/config/scraper.ts`:
 ## Logging
 
 Logs are written to:
+
 - Console (development)
 - `logs/app.log` (application logs)
 - `logs/exceptions.log` (unhandled exceptions)
@@ -290,7 +316,9 @@ const response = await fetch('http://localhost:3001/api/fuel-prices/latest');
 const data = await response.json();
 
 // Get fuel prices with filters
-const filtered = await fetch('http://localhost:3001/api/fuel-prices?fuelType=Benzina&location=Bucuresti');
+const filtered = await fetch(
+  'http://localhost:3001/api/fuel-prices?fuelType=Benzina&location=Bucuresti'
+);
 const fuelPrices = await filtered.json();
 ```
 
@@ -339,4 +367,4 @@ const fuelPrices = await filtered.json();
 
 ## License
 
-This project is licensed under the ISC License. 
+This project is licensed under the ISC License.

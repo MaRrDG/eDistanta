@@ -7,8 +7,10 @@ const router = Router();
 router.get('/', fuelPriceController.getFuelPrices);
 
 // Get fuel prices by station name and fuel type
-router.get('/station/:stationName/:fuelType', fuelPriceController.getLatestFuelPriceByStationAndFuelType);
-
+router.get(
+  '/station/:stationName/:fuelType',
+  fuelPriceController.getLatestFuelPriceByStationAndFuelType
+);
 
 // Trigger manual scraping (POST for security)
 router.post('/scrape', fuelPriceController.triggerManualScraping);
@@ -16,4 +18,4 @@ router.post('/scrape', fuelPriceController.triggerManualScraping);
 // Get scraping status
 router.get('/scrape/status', fuelPriceController.getScrapingStatus);
 
-export default router; 
+export default router;

@@ -8,14 +8,18 @@
 ![Turborepo](https://img.shields.io/badge/Turborepo-2.5-4353FF?logo=turborepo)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-eDistanta is a comprehensive web application for route planning and fuel price tracking in Romania. It combines intuitive route planning with real-time fuel price data to help users make informed travel decisions.
+eDistanta is a comprehensive web application for route planning and fuel price tracking in Romania.
+It combines intuitive route planning with real-time fuel price data to help users make informed
+travel decisions.
 
 ![eDistanta Screenshot](https://via.placeholder.com/800x450.png?text=Info+Rutier+Screenshot)
 
 ## Features
 
 ### Route Planning
-- **Interactive Route Planning**: Select start and destination cities from a comprehensive list of Romanian locations
+
+- **Interactive Route Planning**: Select start and destination cities from a comprehensive list of
+  Romanian locations
 - **Multiple Route Options**: View and compare alternative routes between destinations
 - **Multi-Stop Routes**: Add multiple waypoints between start and destination
 - **Detailed Route Information**: Get accurate distance and estimated travel time
@@ -23,6 +27,7 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 - **Interactive Map**: Visualize routes using OpenStreetMap integration
 
 ### Fuel Price Tracking
+
 - **Real-Time Fuel Prices**: Automated scraping of current fuel prices from Romanian gas stations
 - **Price Comparison**: Compare fuel prices across different stations and locations
 - **Historical Data**: Track fuel price trends over time
@@ -30,6 +35,7 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 - **RESTful API**: Comprehensive API for accessing fuel price data
 
 ### User Experience
+
 - **Responsive Design**: Optimized for both desktop and mobile devices
 - **Multilingual Support**: Available in English and Romanian
 - **Modern UI**: Clean, intuitive interface built with Tailwind CSS
@@ -37,6 +43,7 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: React 18 with TypeScript
 - **Styling**: Tailwind CSS for modern, responsive design
 - **Mapping**: Leaflet with OpenStreetMap for route visualization
@@ -44,6 +51,7 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 - **Internationalization**: i18next for multilingual support
 
 ### Backend
+
 - **Runtime**: Node.js with Express.js
 - **Database**: PostgreSQL with TypeORM
 - **Scraping**: Axios and Cheerio for web scraping
@@ -51,6 +59,7 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 - **Security**: Helmet, CORS, and rate limiting
 
 ### Development
+
 - **Build System**: Turborepo for monorepo management
 - **Language**: TypeScript throughout the stack
 - **Architecture**: Modular design with clean separation of concerns
@@ -65,17 +74,20 @@ eDistanta is a comprehensive web application for route planning and fuel price t
 ### Installation
 
 1. Clone the repository:
+
 ```sh
 git clone https://github.com/yourusername/eDistanta.git
 cd eDistanta
 ```
 
 2. Install dependencies:
+
 ```sh
 npm install
 ```
 
 3. Set up the database:
+
 ```sh
 # Create PostgreSQL database
 createdb info_rutier
@@ -86,6 +98,7 @@ cp apps/api/env.example apps/api/.env
 ```
 
 4. Start the development servers:
+
 ```sh
 # Start both frontend and backend
 npm run dev
@@ -140,16 +153,18 @@ For detailed API documentation, see [`apps/api/README.md`](apps/api/README.md).
 
 Here are the planned features and improvements for future releases:
 
-1. ✅ **Multi-Stop Route Planning** [Implemented]: Add functionality to include multiple waypoints between start and destination
-2. ✅ **Real-Time Fuel Price Integration** [Implemented]: Automated scraping of current fuel prices from Romanian gas stations
+1. ✅ **Multi-Stop Route Planning** [Implemented]: Add functionality to include multiple waypoints
+   between start and destination
+2. ✅ **Real-Time Fuel Price Integration** [Implemented]: Automated scraping of current fuel prices
+   from Romanian gas stations
 3. **Enhanced Fuel Price Sources**: Add more fuel price websites and improve data accuracy
 4. **Route Optimization**: Integrate fuel prices with route planning for cost-effective travel
-5. **Public API**: Create a public API allowing developers to access route information and calculations
+5. **Public API**: Create a public API allowing developers to access route information and
+   calculations
 6. **Mobile App**: Develop native mobile applications for iOS and Android
 7. **Monetization**: Integrate Google Ads for sustainable project development
-8. ✅ **Expanded Location Coverage** [Implemented]: Ensure all localities in Romania and Moldova are available in the application
-
-
+8. ✅ **Expanded Location Coverage** [Implemented]: Ensure all localities in Romania and Moldova are
+   available in the application
 
 ## Contributing
 
@@ -204,7 +219,8 @@ npm run format
 - [OpenStreetMap](https://www.openstreetmap.org/) for map data
 - [OSRM](http://project-osrm.org/) for routing services
 - [Leaflet](https://leafletjs.com/) for interactive maps
-- [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/) for the frontend framework
+- [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/) for the frontend
+  framework
 - [Express.js](https://expressjs.com/) for the backend framework
 - [PostgreSQL](https://www.postgresql.org/) for the database
 - [TypeORM](https://typeorm.io/) for database management

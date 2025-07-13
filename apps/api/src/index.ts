@@ -30,10 +30,12 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -48,7 +50,7 @@ app.get('/health', (req, res) => {
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -63,36 +65,46 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/health',
       fuelPrices: '/api/fuel-prices',
-      documentation: '/api/docs' // Future endpoint for API documentation
-    }
+      documentation: '/api/docs', // Future endpoint for API documentation
+    },
   });
 });
 
 // Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
-  });
-});
+app.use(
+  (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error:
+        process.env.NODE_ENV === 'development'
+          ? err.message
+          : 'Something went wrong',
+    });
+  }
+);
 
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Route not found'
+    message: 'Route not found',
   });
 });
 
 // Graceful shutdown
 const gracefulShutdown = async (signal: string) => {
   console.info(`Received ${signal}. Starting graceful shutdown...`);
-  
+
   // Close database connection
   await closeDatabase();
-  
+
   // Close server
   process.exit(0);
 };
@@ -105,7 +117,7 @@ const startServer = async () => {
   try {
     // Initialize database
     await initializeDatabase();
-    
+
     // Start Express server
     app.listen(PORT, () => {
       console.info(`Server is running on port ${PORT}`);
@@ -119,4 +131,4 @@ const startServer = async () => {
   }
 };
 
-startServer(); 
+startServer();

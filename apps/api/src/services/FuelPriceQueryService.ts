@@ -6,13 +6,15 @@ import { QUERY_DEFAULTS } from '../config/scraper';
 export class FuelPriceQueryService {
   constructor(private repository: Repository<FuelPrice>) {}
 
-  async getFuelPrices(query: FuelPriceQuery): Promise<PaginationResult<FuelPrice>> {
+  async getFuelPrices(
+    query: FuelPriceQuery
+  ): Promise<PaginationResult<FuelPrice>> {
     const {
       page = QUERY_DEFAULTS.PAGE,
       limit = QUERY_DEFAULTS.LIMIT,
       latestOnly = QUERY_DEFAULTS.LATEST_ONLY,
       sortBy = QUERY_DEFAULTS.SORT_BY,
-      sortOrder = QUERY_DEFAULTS.SORT_ORDER
+      sortOrder = QUERY_DEFAULTS.SORT_ORDER,
     } = query;
 
     const pageNumber = Number(page);
@@ -27,7 +29,13 @@ export class FuelPriceQueryService {
       fuelPrices = result.data;
       total = result.total;
     } else {
-      [fuelPrices, total] = await this.getAllPrices(query, skip, limitNumber, sortBy, sortOrder);
+      [fuelPrices, total] = await this.getAllPrices(
+        query,
+        skip,
+        limitNumber,
+        sortBy,
+        sortOrder
+      );
     }
 
     return {
@@ -36,14 +44,17 @@ export class FuelPriceQueryService {
         page: pageNumber,
         limit: limitNumber,
         total,
-        totalPages: Math.ceil(total / limitNumber)
-      }
+        totalPages: Math.ceil(total / limitNumber),
+      },
     };
   }
 
-  async getLatestFuelPriceByStationAndFuelType(stationName: string, fuelType?: string): Promise<FuelPrice | null> {
+  async getLatestFuelPriceByStationAndFuelType(
+    stationName: string,
+    fuelType?: string
+  ): Promise<FuelPrice | null> {
     const whereConditions: any = {
-      stationName: Like(`%${stationName}%`)
+      stationName: Like(`%${stationName}%`),
     };
 
     if (fuelType) {
@@ -52,7 +63,7 @@ export class FuelPriceQueryService {
 
     return await this.repository.findOne({
       where: whereConditions,
-      order: { scrapedAt: 'DESC' }
+      order: { scrapedAt: 'DESC' },
     });
   }
 
@@ -69,7 +80,7 @@ export class FuelPriceQueryService {
       where: whereConditions,
       order: { [sortBy]: sortOrder },
       skip,
-      take
+      take,
     });
   }
 
@@ -116,7 +127,9 @@ export class FuelPriceQueryService {
     }
 
     if (query.dateFrom || query.dateTo) {
-      const from = query.dateFrom ? new Date(query.dateFrom) : new Date('1900-01-01');
+      const from = query.dateFrom
+        ? new Date(query.dateFrom)
+        : new Date('1900-01-01');
       const to = query.dateTo ? new Date(query.dateTo) : new Date();
       whereConditions.scrapedAt = Between(from, to);
     }
@@ -124,38 +137,49 @@ export class FuelPriceQueryService {
     return whereConditions;
   }
 
-  private applyFilters(queryBuilder: SelectQueryBuilder<FuelPrice>, query: FuelPriceQuery): SelectQueryBuilder<FuelPrice> {
+  private applyFilters(
+    queryBuilder: SelectQueryBuilder<FuelPrice>,
+    query: FuelPriceQuery
+  ): SelectQueryBuilder<FuelPrice> {
     if (query.stationName) {
-      queryBuilder = queryBuilder.where('fp.stationName ILIKE :stationName', { 
-        stationName: `%${query.stationName}%` 
+      queryBuilder = queryBuilder.where('fp.stationName ILIKE :stationName', {
+        stationName: `%${query.stationName}%`,
       });
     }
 
     if (query.fuelType) {
-      queryBuilder = queryBuilder.andWhere('fp.fuelType = :fuelType', { 
-        fuelType: query.fuelType 
+      queryBuilder = queryBuilder.andWhere('fp.fuelType = :fuelType', {
+        fuelType: query.fuelType,
       });
     }
 
     if (query.location) {
-      queryBuilder = queryBuilder.andWhere('fp.location ILIKE :location', { 
-        location: `%${query.location}%` 
+      queryBuilder = queryBuilder.andWhere('fp.location ILIKE :location', {
+        location: `%${query.location}%`,
       });
     }
 
     if (query.minPrice || query.maxPrice) {
-      queryBuilder = queryBuilder.andWhere('fp.price BETWEEN :minPrice AND :maxPrice', {
-        minPrice: query.minPrice || QUERY_DEFAULTS.MIN_PRICE,
-        maxPrice: query.maxPrice || QUERY_DEFAULTS.MAX_PRICE
-      });
+      queryBuilder = queryBuilder.andWhere(
+        'fp.price BETWEEN :minPrice AND :maxPrice',
+        {
+          minPrice: query.minPrice || QUERY_DEFAULTS.MIN_PRICE,
+          maxPrice: query.maxPrice || QUERY_DEFAULTS.MAX_PRICE,
+        }
+      );
     }
 
     if (query.dateFrom || query.dateTo) {
-      const from = query.dateFrom ? new Date(query.dateFrom) : new Date('1900-01-01');
+      const from = query.dateFrom
+        ? new Date(query.dateFrom)
+        : new Date('1900-01-01');
       const to = query.dateTo ? new Date(query.dateTo) : new Date();
-      queryBuilder = queryBuilder.andWhere('fp.scrapedAt BETWEEN :from AND :to', { from, to });
+      queryBuilder = queryBuilder.andWhere(
+        'fp.scrapedAt BETWEEN :from AND :to',
+        { from, to }
+      );
     }
 
     return queryBuilder;
   }
-} 
+}

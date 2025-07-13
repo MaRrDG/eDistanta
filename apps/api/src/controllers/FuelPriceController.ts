@@ -23,15 +23,15 @@ export class FuelPriceController {
         maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
         dateFrom: req.query.dateFrom as string,
         dateTo: req.query.dateTo as string,
-        latestOnly: req.query.latestOnly === 'true'
+        latestOnly: req.query.latestOnly === 'true',
       };
 
       const result = await this.queryService.getFuelPrices(query);
-      
+
       const response: ApiResponse<FuelPrice[]> = {
         success: true,
         data: result.data,
-        ...result.pagination && { pagination: result.pagination }
+        ...(result.pagination && { pagination: result.pagination }),
       };
 
       res.json(response);
@@ -40,25 +40,29 @@ export class FuelPriceController {
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error fetching fuel prices',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
       res.status(500).json(response);
     }
   };
 
-  public getLatestFuelPriceByStationAndFuelType = async (req: Request, res: Response): Promise<void> => {
+  public getLatestFuelPriceByStationAndFuelType = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const { stationName, fuelType } = req.params;
 
-      const fuelPrice = await this.queryService.getLatestFuelPriceByStationAndFuelType(
-        stationName,
-        fuelType
-      );
+      const fuelPrice =
+        await this.queryService.getLatestFuelPriceByStationAndFuelType(
+          stationName,
+          fuelType
+        );
 
       const response: ApiResponse<FuelPrice | null> = {
         success: true,
         data: fuelPrice,
-        count: fuelPrice ? 1 : 0
+        count: fuelPrice ? 1 : 0,
       };
 
       res.json(response);
@@ -67,20 +71,23 @@ export class FuelPriceController {
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error fetching fuel prices by station',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
       res.status(500).json(response);
     }
   };
 
-  public triggerManualScraping = async (req: Request, res: Response): Promise<void> => {
+  public triggerManualScraping = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const result = await scraperService.manualScrape();
-      
+
       const response: ApiResponse<never> = {
         success: result.success,
         message: result.message,
-        count: result.count
+        count: result.count,
       };
 
       const statusCode = result.success ? 200 : 400;
@@ -90,19 +97,22 @@ export class FuelPriceController {
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error triggering manual scraping',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
       res.status(500).json(response);
     }
   };
 
-  public getScrapingStatus = async (req: Request, res: Response): Promise<void> => {
+  public getScrapingStatus = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const status = scraperService.getScrapingStatus();
-      
+
       const response: ApiResponse<typeof status> = {
         success: true,
-        data: status
+        data: status,
       };
 
       res.json(response);
@@ -111,11 +121,11 @@ export class FuelPriceController {
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error getting scraping status',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
       res.status(500).json(response);
     }
   };
 }
 
-export const fuelPriceController = new FuelPriceController(); 
+export const fuelPriceController = new FuelPriceController();
