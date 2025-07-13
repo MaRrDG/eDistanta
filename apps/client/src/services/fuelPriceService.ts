@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:9000';
+const API_BASE_URL = 'https://api-edistanta.mario-theodor.ro';
 
 export interface FuelPrice {
   id: number;

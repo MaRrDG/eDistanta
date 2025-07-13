@@ -110,10 +110,12 @@ const SearchComponent = ({
     type: 'start' | 'end' | string
   ) => {
     if (type === 'start') {
+      setHasRouteChanges(true);
       setStartInput(location.name);
       setShowStartSuggestions(false);
     } else if (type === 'end') {
       setEndInput(location.name);
+      setHasRouteChanges(true);
       setShowEndSuggestions(false);
     } else {
       // It's a waypoint
