@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://api-edistanta.mario-theodor.ro';
+const API_BASE_URL = 'https://api.edistanta.ro';
 
 export interface FuelPrice {
   id: number;
@@ -27,13 +27,34 @@ export interface FuelStation {
 }
 
 export class FuelPriceService {
+  static async checkApiHealth(): Promise<boolean> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/fuel-prices/health`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const result = await response.json();
+      return result.success === true;
+    } catch (error) {
+      console.error('API health check failed:', error);
+      return false;
+    }
+  }
+
   static async getFuelPriceByStationAndType(
     stationName: string,
     fuelType: string
   ): Promise<FuelPrice | null> {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/fuel-prices/station/${encodeURIComponent(stationName)}/${encodeURIComponent(fuelType)}`
+        `${API_BASE_URL}/api/v1/fuel-prices/station/${encodeURIComponent(stationName)}/${encodeURIComponent(fuelType)}`
       );
 
       if (!response.ok) {
@@ -56,7 +77,7 @@ export class FuelPriceService {
   static async getAvailableStations(): Promise<FuelStation[]> {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/fuel-prices?latestOnly=true`
+        `${API_BASE_URL}/api/v1/fuel-prices?latestOnly=true`
       );
 
       if (!response.ok) {

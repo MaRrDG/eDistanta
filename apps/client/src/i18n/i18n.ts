@@ -54,6 +54,15 @@ const enTranslations = {
     currentPrice: 'Current Price',
     priceNotAvailable: 'Price not available',
     lastUpdated: 'Last updated',
+    stationsError: 'Error loading stations',
+    priceError: 'Error loading price',
+    apiError: {
+      title: 'Service Unavailable',
+      description: 'The fuel price service is currently unavailable. Please try again later.',
+      retry: 'Retry',
+    },
+    fuelPricesUnavailable: 'Fuel price data is temporarily unavailable. Basic estimates are shown.',
+    basicFuelSettings: 'Basic Fuel Settings',
   },
   fuelTypes: {
     'benzina-regular': 'Gasoline',
@@ -118,6 +127,15 @@ const enTranslations = {
     feature4: 'Elevation profiles and route statistics',
     close: 'Close',
   },
+  404: {
+    title: 'Page Not Found',
+    description: 'Sorry, but the page you are looking for does not exist or has been moved.',
+    goHome: 'Back to Homepage',
+    goBack: 'Go Back',
+    helpfulLinks: 'You might be interested in:',
+    linkHome: 'Homepage',
+    contact: 'If the problem persists, please contact us.',
+  },
 };
 
 // Romanian translations
@@ -172,6 +190,15 @@ const roTranslations = {
     currentPrice: 'Preț Curent',
     priceNotAvailable: 'Preț indisponibil',
     lastUpdated: 'Actualizat ultima dată',
+    stationsError: 'Eroare la încărcarea stațiilor',
+    priceError: 'Eroare la încărcarea prețului',
+    apiError: {
+      title: 'Serviciu Indisponibil',
+      description: 'Serviciul de preturi combustibil este temporar indisponibil. Vă rugăm să încercați din nou mai târziu.',
+      retry: 'Încearcă din nou',
+    },
+    fuelPricesUnavailable: 'Datele de preț combustibil sunt temporar indisponibile. Se afișează estimări de bază.',
+    basicFuelSettings: 'Setări Combustibil de Bază',
   },
   fuelTypes: {
     'benzina-regular': 'Benzină',
@@ -236,6 +263,15 @@ const roTranslations = {
     feature3: 'Preţuri actuale la combustibil şi estimări de consum',
     feature4: 'Profile de elevaţie şi statistici de traseu',
     close: 'Închide',
+  },
+  404: {
+    title: 'Pagina nu a fost găsită',
+    description: 'Ne pare rău, dar pagina pe care o căutați nu există sau a fost mutată.',
+    goHome: 'Înapoi la pagina principală',
+    goBack: 'Înapoi',
+    helpfulLinks: 'Poate te interesează:',
+    linkHome: 'Pagina principală',
+    contact: 'Dacă problema persistă, vă rugăm să ne contactați.',
   },
 };
 

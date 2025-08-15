@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { fuelPriceController } from '../controllers/FuelPriceController';
+import { fuelPriceController } from '../../controllers/FuelPriceController';
 
 const router = Router();
 
@@ -17,5 +17,16 @@ router.post('/scrape', fuelPriceController.triggerManualScraping);
 
 // Get scraping status
 router.get('/scrape/status', fuelPriceController.getScrapingStatus);
+
+// API health check endpoint for fuel prices service
+router.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'fuel-price-api',
+    version: 'v1'
+  });
+});
 
 export default router;

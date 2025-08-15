@@ -10,7 +10,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 
 import { initializeDatabase, closeDatabase } from './config/database';
-import fuelPriceRoutes from './routes/FuelPriceRoutes';
+import v1Routes from './routes/v1';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -43,8 +43,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
-app.use('/api/fuel-prices', fuelPriceRoutes);
+// API v1 routes
+app.use('/api/v1', v1Routes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -53,8 +53,9 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: '/health',
-      fuelPrices: '/api/fuel-prices',
-      documentation: '/api/docs', // Future endpoint for API documentation
+      v1: '/api/v1',
+      fuelPrices: '/api/v1/fuel-prices',
+      documentation: '/api/v1/docs', // Future endpoint for API documentation
     },
   });
 });
@@ -112,7 +113,7 @@ const startServer = async () => {
       console.info(`Server is running on port ${PORT}`);
       console.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
       console.info(`Health check: http://localhost:${PORT}/health`);
-      console.info(`API endpoints: http://localhost:${PORT}/api/fuel-prices`);
+      console.info(`API v1 endpoints: http://localhost:${PORT}/api/v1`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

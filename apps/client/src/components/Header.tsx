@@ -21,7 +21,7 @@ const Header = ({
   return (
     <header className="bg-white border-b border-blue-100 py-3 px-4 flex items-center justify-between">
       <div className="flex items-center">
-        <img src="/logo.png" alt="eDistanta" className="w-8 h-8 mr-3" />
+        <img src="/only_icon_transparent.png" alt="eDistanta" className="w-8" />
         <h1 className="text-xl font-semibold text-blue-800">
           {t('header.title')}
         </h1>

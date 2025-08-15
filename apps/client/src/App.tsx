@@ -6,6 +6,8 @@ import RouteDetails from './components/RouteDetails';
 import TermsAndConditionsModal from './components/TermsAndConditionsModal';
 import ProjectInfoModal from './components/ProjectInfoModal';
 import Header from './components/Header';
+import NotFoundPage from './components/NotFoundPage';
+import { useApiHealth } from './hooks/useFuelPrice';
 
 interface RouteData {
   route: [number, number][];
@@ -21,6 +23,7 @@ interface Waypoint {
 }
 
 function App() {
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [startLocation, setStartLocation] = useState<[number, number] | null>(
     null
   );
@@ -34,6 +37,22 @@ function App() {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [safeAreaBottom, setSafeAreaBottom] = useState(0);
   const { t } = useTranslation();
+
+  // Check API health on app load
+  const { data: isApiHealthy } = useApiHealth();
+
+  useEffect(() => {
+    // Handle browser navigation
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   useEffect(() => {
     const isMobile =
@@ -92,6 +111,14 @@ function App() {
   const distance = currentRoute ? currentRoute.distance : null;
   const duration = currentRoute ? currentRoute.duration : null;
 
+  // Simple routing logic - only home route is valid
+  const isValidPath = currentPath === '/';
+
+  // If not the home route, show 404
+  if (!isValidPath) {
+    return <NotFoundPage />;
+  }
+
   return (
     <div className="h-screen flex flex-col bg-slate-50">
       <Header
@@ -101,6 +128,36 @@ function App() {
         isSidebarOpen={isSidebarOpen}
         setIsDetailsExpanded={setIsDetailsExpanded}
       />
+
+      {/* Global API Status Banner */}
+      {isApiHealthy === false && (
+        <div className="bg-red-600 text-white px-4 py-2 text-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <span className="font-medium">
+                {t('routeDetails.apiError.title')}: {t('routeDetails.apiError.description')}
+              </span>
+            </div>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded text-xs font-medium ml-4 transition-colors"
+            >
+              {t('routeDetails.apiError.retry')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="flex flex-1 overflow-hidden">
         <div

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { useFuelPrice, useAvailableStations } from '../hooks/useFuelPrice';
+import { useFuelPrice, useAvailableStations, useApiHealth } from '../hooks/useFuelPrice';
 
 interface RouteData {
   route: [number, number][];
@@ -100,15 +100,22 @@ const RouteDetails = ({
     return localStorage.getItem('selectedStation') || '';
   });
 
+  // Check API health
+  const { data: isApiHealthy, isLoading: isCheckingHealth, error: healthError } = useApiHealth();
+
   // Fetch available stations
-  const { data: availableStations = [], isLoading: isLoadingStations } =
-    useAvailableStations();
+  const { 
+    data: availableStations = [], 
+    isLoading: isLoadingStations, 
+    error: stationsError 
+  } = useAvailableStations();
 
   // Fetch fuel price for selected station and fuel type
-  const { data: fuelPriceData, isLoading: isLoadingPrice } = useFuelPrice(
-    selectedStation,
-    fuelType
-  );
+  const { 
+    data: fuelPriceData, 
+    isLoading: isLoadingPrice, 
+    error: priceError 
+  } = useFuelPrice(selectedStation, fuelType);
 
   // Save fuel settings to local storage when they change
   useEffect(() => {
@@ -126,6 +133,21 @@ const RouteDetails = ({
   if (!routes || routes.length === 0) {
     return null;
   }
+
+  // API Error States
+  if (isCheckingHealth) {
+    return (
+      <div className="w-full md:mt-6 md:pt-5 md:border-t md:border-blue-100">
+        <div className="px-4 py-8 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if API is available for fuel pricing features
+  const isApiAvailable = isApiHealthy !== false && !healthError;
 
   const selectedRoute = routes[selectedRouteIndex];
   const distance = selectedRoute.distance;
@@ -152,8 +174,8 @@ const RouteDetails = ({
     fuelType
   ).toFixed(1);
 
-  // Calculate fuel cost based on selected station price
-  const fuelCost = fuelPriceData?.price
+  // Calculate fuel cost based on selected station price (only when API is available)
+  const fuelCost = isApiAvailable && fuelPriceData?.price && !priceError
     ? (
         parseFloat(totalFuelConsumption) * getPriceAsNumber(fuelPriceData.price)
       ).toFixed(2)
@@ -232,115 +254,202 @@ const RouteDetails = ({
         </div>
       )}
 
-      {/* Fuel consumption and type selectors */}
-      <div className="mb-4 px-4 md:px-0">
-        <p className="text-sm text-slate-600 mb-2">
-          {t('routeDetails.fuelSettings')}
-        </p>
-        <div className="grid grid-cols-1 gap-3 mb-3">
-          <div>
-            <label
-              htmlFor="fuelStation"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
-            >
-              {t('routeDetails.fuelStation')}
-            </label>
-            <select
-              id="fuelStation"
-              value={selectedStation}
-              onChange={e => setSelectedStation(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm capitalize"
-              disabled={isLoadingStations}
-            >
-              <option value="">
-                {isLoadingStations
-                  ? t('common.loading')
-                  : t('routeDetails.selectStation')}
-              </option>
-              {availableStations.map(station => (
-                <option
-                  className="capitalize"
-                  key={station.stationName}
-                  value={station.stationName}
+      {/* API Status Warning */}
+      {!isApiAvailable && (
+        <div className="mb-4 px-4 md:px-0">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <div className="flex items-center">
+              <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
+                <svg
+                  className="w-4 h-4 text-yellow-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  {station.stationName}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label
-              htmlFor="fuelType"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
-            >
-              {t('routeDetails.fuelType')}
-            </label>
-            <select
-              id="fuelType"
-              value={fuelType}
-              onChange={e => {
-                // Validate that the selected value is a valid fuel type
-                const selectedValue = e.target.value;
-                if (FUEL_TYPES.includes(selectedValue as FuelType)) {
-                  setFuelType(selectedValue as FuelType);
-                }
-              }}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
-            >
-              {FUEL_TYPES.map(type => (
-                <option key={type} value={type}>
-                  {t(`fuelTypes.${type}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor="fuelConsumption"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
-            >
-              {t('routeDetails.consumption')}{' '}
-              <span className="text-[9px]">(L/100km)</span>
-            </label>
-            <input
-              id="fuelConsumption"
-              type="number"
-              min="1"
-              max="30"
-              step="0.1"
-              value={fuelConsumption}
-              onChange={e => setFuelConsumption(Number(e.target.value))}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
-            />
-          </div>
-        </div>
-
-        {/* Fuel price display */}
-        {selectedStation && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-md">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">
-                {t('routeDetails.currentPrice')} ({t(`fuelTypes.${fuelType}`)}):
-              </span>
-              <span className="text-sm font-medium text-slate-900">
-                {isLoadingPrice
-                  ? t('common.loading')
-                  : fuelPriceData?.price
-                    ? `${getPriceAsNumber(fuelPriceData.price).toFixed(2)} ${fuelPriceData.currency}/L`
-                    : t('routeDetails.priceNotAvailable')}
-              </span>
-            </div>
-            {fuelPriceData?.scrapedAt && (
-              <div className="text-xs text-slate-500 mt-1">
-                {t('routeDetails.lastUpdated')}:{' '}
-                {new Date(fuelPriceData.scrapedAt).toLocaleString()}
+                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
               </div>
-            )}
+              <p className="text-yellow-800 text-sm">
+                {t('routeDetails.fuelPricesUnavailable')}
+              </p>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Fuel consumption and type selectors - only show if API is available */}
+      {isApiAvailable && (
+        <div className="mb-4 px-4 md:px-0">
+          <p className="text-sm text-slate-600 mb-2">
+            {t('routeDetails.fuelSettings')}
+          </p>
+          <div className="grid grid-cols-1 gap-3 mb-3">
+            <div>
+              <label
+                htmlFor="fuelStation"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.fuelStation')}
+              </label>
+              <select
+                id="fuelStation"
+                value={selectedStation}
+                onChange={e => setSelectedStation(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm capitalize"
+                disabled={isLoadingStations}
+              >
+                <option value="">
+                  {isLoadingStations
+                    ? t('common.loading')
+                    : stationsError
+                      ? t('routeDetails.stationsError')
+                      : t('routeDetails.selectStation')}
+                </option>
+                {!stationsError && availableStations.map(station => (
+                  <option
+                    className="capitalize"
+                    key={station.stationName}
+                    value={station.stationName}
+                  >
+                    {station.stationName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                htmlFor="fuelType"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.fuelType')}
+              </label>
+              <select
+                id="fuelType"
+                value={fuelType}
+                onChange={e => {
+                  // Validate that the selected value is a valid fuel type
+                  const selectedValue = e.target.value;
+                  if (FUEL_TYPES.includes(selectedValue as FuelType)) {
+                    setFuelType(selectedValue as FuelType);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              >
+                {FUEL_TYPES.map(type => (
+                  <option key={type} value={type}>
+                    {t(`fuelTypes.${type}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label
+                htmlFor="fuelConsumption"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.consumption')}{' '}
+                <span className="text-[9px]">(L/100km)</span>
+              </label>
+              <input
+                id="fuelConsumption"
+                type="number"
+                min="1"
+                max="30"
+                step="0.1"
+                value={fuelConsumption}
+                onChange={e => setFuelConsumption(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Fuel price display */}
+          {selectedStation && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-md">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600">
+                  {t('routeDetails.currentPrice')} ({t(`fuelTypes.${fuelType}`)}):
+                </span>
+                <span className="text-sm font-medium text-slate-900">
+                  {isLoadingPrice
+                    ? t('common.loading')
+                    : priceError
+                      ? t('routeDetails.priceError')
+                      : fuelPriceData?.price
+                        ? `${getPriceAsNumber(fuelPriceData.price).toFixed(2)} ${fuelPriceData.currency}/L`
+                        : t('routeDetails.priceNotAvailable')}
+                </span>
+              </div>
+              {fuelPriceData?.scrapedAt && (
+                <div className="text-xs text-slate-500 mt-1">
+                  {t('routeDetails.lastUpdated')}:{' '}
+                  {new Date(fuelPriceData.scrapedAt).toLocaleString()}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Basic fuel consumption settings when API is unavailable */}
+      {!isApiAvailable && (
+        <div className="mb-4 px-4 md:px-0">
+          <p className="text-sm text-slate-600 mb-2">
+            {t('routeDetails.basicFuelSettings')}
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                htmlFor="fuelTypeBasic"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.fuelType')}
+              </label>
+              <select
+                id="fuelTypeBasic"
+                value={fuelType}
+                onChange={e => {
+                  const selectedValue = e.target.value;
+                  if (FUEL_TYPES.includes(selectedValue as FuelType)) {
+                    setFuelType(selectedValue as FuelType);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              >
+                {FUEL_TYPES.map(type => (
+                  <option key={type} value={type}>
+                    {t(`fuelTypes.${type}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label
+                htmlFor="fuelConsumptionBasic"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.consumption')}{' '}
+                <span className="text-[9px]">(L/100km)</span>
+              </label>
+              <input
+                id="fuelConsumptionBasic"
+                type="number"
+                min="1"
+                max="30"
+                step="0.1"
+                value={fuelConsumption}
+                onChange={e => setFuelConsumption(Number(e.target.value))}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Desktop layout - vertical stack */}
       <div className="hidden md:block bg-white rounded-lg overflow-hidden">
@@ -395,8 +504,8 @@ const RouteDetails = ({
             </div>
           </div>
 
-          {/* Fuel cost display */}
-          {selectedStation && fuelCost && (
+          {/* Fuel cost display - only show when API is available and price is loaded */}
+          {isApiAvailable && selectedStation && fuelCost && (
             <div className="flex items-center p-3.5">
               <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3">
                 <svg
@@ -564,8 +673,8 @@ const RouteDetails = ({
             </p>
           </div>
 
-          {/* Fuel cost display for mobile */}
-          {selectedStation && fuelCost && (
+          {/* Fuel cost display for mobile - only show when API is available */}
+          {isApiAvailable && selectedStation && fuelCost && (
             <div className="bg-white rounded-lg p-3 shadow-sm">
               <div className="flex items-center mb-1">
                 <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-2">
