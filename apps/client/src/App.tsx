@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import MapComponent from './components/MapComponent';
 import SearchComponent from './components/SearchComponent';
 import RouteDetails from './components/RouteDetails';
-import LanguageSelector from './components/LanguageSelector';
+import TermsAndConditionsModal from './components/TermsAndConditionsModal';
+import ProjectInfoModal from './components/ProjectInfoModal';
+import Header from './components/Header';
 
 interface RouteData {
   route: [number, number][];
@@ -28,33 +30,29 @@ function App() {
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [safeAreaBottom, setSafeAreaBottom] = useState(0);
   const { t } = useTranslation();
 
-  // Detect Samsung browser and other browsers with bottom navigation bars
   useEffect(() => {
-    // Check if the device is mobile
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
 
     if (isMobile) {
-      // For Samsung browser and other mobile browsers, add extra padding at the bottom
       setSafeAreaBottom(0);
 
-      // Try to detect Samsung browser specifically
       const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
       if (isSamsungBrowser) {
         setSafeAreaBottom(16);
       }
 
-      // Try to detect viewport height changes that might indicate browser UI
       const handleResize = () => {
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.clientHeight;
 
-        // If there's a significant difference, adjust the safe area
         if (windowHeight - documentHeight > 30 && isSamsungBrowser) {
           setSafeAreaBottom(windowHeight - documentHeight + 16);
         }
@@ -96,44 +94,15 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col bg-slate-50">
-      {/* Modern minimal header */}
-      <header className="bg-white border-b border-blue-100 py-3 px-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <img src="/logo.png" alt="eDistanta" className="w-8 h-8 mr-3" />
-          <h1 className="text-xl font-semibold text-blue-800">
-            {t('header.title')}
-          </h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <LanguageSelector />
-          <button
-            onClick={() => {
-              setIsSidebarOpen(!isSidebarOpen);
-              setIsDetailsExpanded(false);
-            }}
-            className="md:hidden bg-blue-50 hover:bg-blue-100 p-2 rounded-full text-blue-600"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
-          </button>
-        </div>
-      </header>
+      <Header
+        setIsInfoModalOpen={setIsInfoModalOpen}
+        setIsTermsModalOpen={setIsTermsModalOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        isSidebarOpen={isSidebarOpen}
+        setIsDetailsExpanded={setIsDetailsExpanded}
+      />
 
-      {/* Main content with map focus */}
       <main className="flex flex-1 overflow-hidden">
-        {/* Sidebar with search and route details */}
         <div
           className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
         >
@@ -141,13 +110,11 @@ function App() {
             <SearchComponent
               onRouteCalculated={handleRouteCalculated}
               onMobileSubmit={() => {
-                // Only close the sidebar on mobile devices
                 if (window.innerWidth < 768) {
                   setIsSidebarOpen(false);
                 }
               }}
             />
-            {/* RouteDetails only shown in sidebar on medium screens and up */}
             <div className="hidden md:block">
               {routes && routes.length > 0 && (
                 <RouteDetails
@@ -158,9 +125,20 @@ function App() {
                 />
               )}
             </div>
+
+            <div className="sm:hidden mt-6 pt-4 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setIsTermsModalOpen(true);
+                  setIsSidebarOpen(false);
+                }}
+                className="w-full text-left text-sm text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+              >
+                {t('terms.button')}
+              </button>
+            </div>
           </div>
 
-          {/* Mobile close button */}
           <button
             onClick={() => setIsSidebarOpen(false)}
             className="md:hidden absolute top-2 right-2 bg-blue-50 hover:bg-blue-100 p-1 rounded-full text-blue-600"
@@ -182,7 +160,6 @@ function App() {
           </button>
         </div>
 
-        {/* Map container - takes all available space */}
         <div className="flex-1 relative">
           <MapComponent
             startLocation={startLocation}
@@ -193,7 +170,6 @@ function App() {
             onRouteSelected={handleRouteSelected}
           />
 
-          {/* Mobile toggle button when sidebar is closed */}
           {!isSidebarOpen && (
             <button
               onClick={() => {
@@ -219,7 +195,6 @@ function App() {
             </button>
           )}
 
-          {/* Bottom route details widget for mobile */}
           {routes && routes.length > 0 && (
             <div
               className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg transition-transform duration-300 z-10 ${isDetailsExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]'}`}
@@ -314,6 +289,14 @@ function App() {
           )}
         </div>
       </main>
+
+      {isTermsModalOpen && (
+        <TermsAndConditionsModal setIsTermsModalOpen={setIsTermsModalOpen} />
+      )}
+
+      {isInfoModalOpen && (
+        <ProjectInfoModal setIsInfoModalOpen={setIsInfoModalOpen} />
+      )}
     </div>
   );
 }

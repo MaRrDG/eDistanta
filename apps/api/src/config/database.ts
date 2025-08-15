@@ -2,13 +2,6 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { FuelPrice } from '../entities/FuelPrice';
 
-console.log(process.env.DB_HOST);
-console.log(process.env.DB_PORT);
-console.log(process.env.DB_USER);
-console.log(process.env.DB_PASSWORD);
-console.log(process.env.DB_NAME);
-console.log(process.env.DB_SSL);
-
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',

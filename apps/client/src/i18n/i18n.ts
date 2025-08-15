@@ -69,6 +69,7 @@ const enTranslations = {
     routeDisplayed: 'Route displayed',
     selectLocations: 'Select start and destination',
     loadingRoute: 'Loading route...',
+    fitToRoute: 'Fit to Route',
   },
   units: {
     km: 'km',
@@ -85,6 +86,37 @@ const enTranslations = {
   },
   common: {
     loading: 'Loading...',
+  },
+  terms: {
+    button: 'Terms & Conditions',
+    title: 'Terms and Conditions',
+    routePlanning:
+      'These directions are intended for planning purposes only. You may find that construction projects, traffic, weather, or other events may cause conditions to differ from the map results, and you should plan your route accordingly. You must obey all signs or notices regarding your route.',
+    fuelPriceTitle: 'Fuel Price Information',
+    fuelPriceInfo:
+      'Fuel prices are updated every 12 hours at 12:00 AM and 12:00 PM. Prices are sourced from Bucharest and may vary in different cities across Romania.',
+    disclaimerTitle: 'Important Disclaimers',
+    disclaimer1:
+      'Route calculations are estimates and actual travel time may vary',
+    disclaimer2:
+      'Fuel consumption calculations are based on average vehicle consumption',
+    disclaimer3: 'Always follow local traffic laws and road signs',
+    disclaimer4:
+      'The application is not responsible for any route-related incidents',
+    lastUpdated: 'Last updated: January 2025',
+    close: 'Close',
+  },
+  info: {
+    title: 'About eDistanta',
+    subtitle: 'Smart Route Planning for Romania',
+    description:
+      'Discover the most efficient routes between all cities in Romania. Calculate precise road distances, compare alternative routes, and get detailed fuel consumption estimates for your journey.',
+    featuresTitle: 'What We Offer',
+    feature1: 'Accurate distances between Romanian cities',
+    feature2: 'Multiple route alternatives with detailed comparisons',
+    feature3: 'Real-time fuel prices and consumption estimates',
+    feature4: 'Elevation profiles and route statistics',
+    close: 'Close',
   },
 };
 
@@ -155,6 +187,7 @@ const roTranslations = {
     routeDisplayed: 'Rută afișată',
     selectLocations: 'Selectați locația de pornire și destinația',
     loadingRoute: 'Se încarcă ruta...',
+    fitToRoute: 'Potrivește Ruta',
   },
   units: {
     km: 'km',
@@ -171,6 +204,38 @@ const roTranslations = {
   },
   common: {
     loading: 'Se încarcă...',
+  },
+  terms: {
+    button: 'Termeni şi Condiţii',
+    title: 'Termeni şi Condiţii',
+    routePlanning:
+      'Aceste indicaţii au ca scop unic planificarea. Se poate să constataţi că proiectele de construcţie, traficul, vremea sau alte evenimente pot determina condiţiile de trafic să difere faţă de rezultatele oferite de hartă; prin urmare, planificarea traseului trebuie efectuată ţinând cont de cele menţionate. Trebuie să respectaţi toate semnele de circulaţie şi anunţurile referitoare la traseul dvs.',
+    fuelPriceTitle: 'Informaţii despre Preţurile Combustibilului',
+    fuelPriceInfo:
+      'Preţurile combustibilului sunt actualizate la fiecare 12 ore, la orele 00:00 şi 12:00. Preţurile sunt preluate din Bucureşti şi pot varia în diferite oraşe din România.',
+    disclaimerTitle: 'Clauze de Exonerare Importante',
+    disclaimer1:
+      'Calculele rutelor sunt estimări şi timpul real de călătorie poate varia',
+    disclaimer2:
+      'Calculele de consum de combustibil se bazează pe consumul mediu al vehiculelor',
+    disclaimer3:
+      'Respectaţi întotdeauna legile locale de circulaţie şi indicatoarele rutiere',
+    disclaimer4:
+      'Aplicaţia nu îşi asumă responsabilitatea pentru incidentele legate de traseu',
+    lastUpdated: 'Ultima actualizare: Ianuarie 2025',
+    close: 'Închide',
+  },
+  info: {
+    title: 'Despre eDistanta',
+    subtitle: 'Planificare Inteligentă de Rute în România',
+    description:
+      'Descoperiţi cele mai eficiente rute între toate oraşele din România. Calculaţi distanţe rutiere precise, comparaţi trasee alternative şi obţineţi estimări detaliate de consum pentru călătoria dumneavoastră.',
+    featuresTitle: 'Ce Oferim',
+    feature1: 'Distanţe precise între oraşele româneşti',
+    feature2: 'Multiple alternative de rute cu comparaţii detaliate',
+    feature3: 'Preţuri actuale la combustibil şi estimări de consum',
+    feature4: 'Profile de elevaţie şi statistici de traseu',
+    close: 'Închide',
   },
 };
 

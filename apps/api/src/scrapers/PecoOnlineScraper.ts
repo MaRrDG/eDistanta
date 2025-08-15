@@ -13,6 +13,8 @@ export class PecoOnlineScraper {
           try {
             const prices = await this.scrapeFuelTypeForCity(fuelType, city);
 
+            console.log('prices', prices);
+
             prices.forEach(price => {
               const stationKey = `${price.stationName}_${fuelType}`;
               if (!stationMap.has(stationKey)) {
@@ -79,7 +81,11 @@ export class PecoOnlineScraper {
     $('.rezultat').each((index, element) => {
       const $element = $(element);
 
-      const priceText = $element.find('h5.pret strong').text().trim();
+      let priceText = $element.find('h3.pret strong').text().trim();
+      if (!priceText) {
+        priceText = $element.find('h5.pret strong').text().trim();
+      }
+
       const price = parseFloat(priceText.replace(',', '.'));
 
       const stationName = $element.find('img').attr('alt')?.trim() || '';

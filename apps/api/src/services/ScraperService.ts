@@ -19,18 +19,29 @@ export class ScraperService {
   }
 
   private initializeScheduler(): void {
-    const cronSchedule =
-      process.env.SCRAPING_CRON_SCHEDULE ||
+    const cronSchedule1 =
+      process.env.SCRAPING_CRON_SCHEDULE_1 ||
       SCRAPER_CONFIG.DEFAULT_CRON_SCHEDULE;
+    const cronSchedule2 =
+      process.env.SCRAPING_CRON_SCHEDULE_2 ||
+      '0 22 * * *'; // Default second schedule at 10 PM
     const scrapingEnabled = process.env.SCRAPING_ENABLED === 'true';
 
     if (scrapingEnabled) {
-      cron.schedule(cronSchedule, async () => {
-        console.info('Starting scheduled fuel price scraping');
+      // First cron job
+      cron.schedule(cronSchedule1, async () => {
+        console.info('Starting scheduled fuel price scraping (Schedule 1)');
         await this.scrapeFuelPrices();
       });
 
-      console.info(`Fuel price scraping scheduled with cron: ${cronSchedule}`);
+      // Second cron job
+      cron.schedule(cronSchedule2, async () => {
+        console.info('Starting scheduled fuel price scraping (Schedule 2)');
+        await this.scrapeFuelPrices();
+      });
+
+      console.info(`Fuel price scraping scheduled with cron 1: ${cronSchedule1}`);
+      console.info(`Fuel price scraping scheduled with cron 2: ${cronSchedule2}`);
     } else {
       console.info('Fuel price scraping is disabled');
     }

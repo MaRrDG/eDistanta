@@ -146,8 +146,8 @@ const MapComponent = ({
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
 
-  // Fit map to route bounds when route changes
-  useEffect(() => {
+  // Function to fit map to route bounds
+  const fitMapToRoute = () => {
     if (mapRef.current && routes && routes.length > 0) {
       setIsLoading(true);
 
@@ -188,6 +188,11 @@ const MapComponent = ({
         setIsLoading(false);
       }
     }
+  };
+
+  // Fit map to route bounds when route changes
+  useEffect(() => {
+    fitMapToRoute();
   }, [routes, selectedRouteIndex, startLocation, endLocation, waypoints]);
 
   const handleRouteClick = (index: number) => {
@@ -205,7 +210,7 @@ const MapComponent = ({
         ref={mapRef}
         zoomControl={false}
         className="z-0"
-        attributionControl={false}
+        attributionControl={true}
         scrollWheelZoom={true}
         touchZoom={true}
         doubleClickZoom={true}
@@ -217,7 +222,7 @@ const MapComponent = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <ZoomControl position="bottomright" />
+        <ZoomControl position="topright" />
 
         {startLocation && (
           <Marker position={startLocation} icon={startIcon}>
@@ -270,7 +275,32 @@ const MapComponent = ({
           ))}
       </MapContainer>
 
-      {/* Loading overlay */}
+      {routes && routes.length > 0 && (
+        <button
+          onClick={fitMapToRoute}
+          className="absolute top-20 right-2 z-10 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-lg px-3 py-2 flex items-center transition-all duration-200 hover:shadow-xl sm:space-x-2"
+          title={t('map.fitToRoute')}
+        >
+          <svg
+            className="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+            />
+          </svg>
+          <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+            {t('map.fitToRoute')}
+          </span>
+        </button>
+      )}
+
       {isLoading && (
         <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-20">
           <div className="bg-white p-4 rounded-lg shadow-lg flex items-center">

@@ -153,7 +153,6 @@ const WaypointInput = ({
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         />
 
-        {/* Loading indicator */}
         {isLoading && (
           <div className="absolute inset-y-0 right-0 flex items-center pr-3">
             <svg
@@ -179,7 +178,6 @@ const WaypointInput = ({
           </div>
         )}
 
-        {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && (
           <ul
             ref={suggestionsRef}
@@ -200,7 +198,6 @@ const WaypointInput = ({
           </ul>
         )}
 
-        {/* No results message */}
         {showSuggestions &&
           suggestions.length === 0 &&
           waypoint.name.trim() &&
@@ -225,7 +222,6 @@ const WaypointInput = ({
             </div>
           )}
 
-        {/* Instruction hint - positioned below suggestions */}
         {waypoint.name.trim() &&
           !isLoading &&
           suggestions.length > 0 &&

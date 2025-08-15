@@ -15,7 +15,6 @@ const SearchComponent = ({
 }: SearchComponentProps) => {
   const { t } = useTranslation();
 
-  // State for main inputs
   const [startInput, setStartInput] = useState('');
   const [endInput, setEndInput] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +22,6 @@ const SearchComponent = ({
   const [hasRouteChanges, setHasRouteChanges] = useState(false);
   const [hasCalculatedRoute, setHasCalculatedRoute] = useState(false);
 
-  // State for suggestions
   const [startSuggestions, setStartSuggestions] = useState<LocationResult[]>(
     []
   );
@@ -37,7 +35,6 @@ const SearchComponent = ({
     [key: string]: boolean;
   }>({});
 
-  // Custom hooks
   const { handleSearch, searchLocation, isLoading } = useLocationSearch();
   const {
     waypoints,
@@ -50,11 +47,9 @@ const SearchComponent = ({
     getInvalidWaypoints,
   } = useWaypoints();
 
-  // Refs for handling click outside
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle clicks outside of the suggestions
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -78,19 +73,16 @@ const SearchComponent = ({
     };
   }, []);
 
-  // Handle search for start location
   const handleStartSearch = (input: string) => {
     setStartInput(input);
     handleSearch(input, 'start', setStartSuggestions, setShowStartSuggestions);
   };
 
-  // Handle search for end location
   const handleEndSearch = (input: string) => {
     setEndInput(input);
     handleSearch(input, 'end', setEndSuggestions, setShowEndSuggestions);
   };
 
-  // Handle search for waypoint
   const handleWaypointSearch = (waypointId: string, input: string) => {
     updateWaypointName(waypointId, input);
 
@@ -104,7 +96,6 @@ const SearchComponent = ({
     );
   };
 
-  // Handle location selection
   const handleLocationSelect = (
     location: LocationResult,
     type: 'start' | 'end' | string
@@ -118,7 +109,6 @@ const SearchComponent = ({
       setHasRouteChanges(true);
       setShowEndSuggestions(false);
     } else {
-      // It's a waypoint
       updateWaypointFromLocation(type, location);
       setShowWaypointSuggestions(prev => ({ ...prev, [type]: false }));
     }
@@ -127,7 +117,6 @@ const SearchComponent = ({
     }
   };
 
-  // Handle waypoint removal with cleanup
   const handleWaypointRemove = (waypointId: string) => {
     removeWaypoint(waypointId);
     if (hasCalculatedRoute) {
@@ -145,12 +134,10 @@ const SearchComponent = ({
     });
   };
 
-  // Handle waypoint addition
   const handleWaypointAdd = () => {
     addWaypoint();
   };
 
-  // Handle waypoint movement
   const handleWaypointMove = (waypointId: string, direction: 'up' | 'down') => {
     moveWaypoint(waypointId, direction);
     if (hasCalculatedRoute) {
@@ -158,7 +145,6 @@ const SearchComponent = ({
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setShowStartSuggestions(false);
@@ -172,11 +158,9 @@ const SearchComponent = ({
     }
 
     try {
-      // Search for start location
       const startResults = await searchLocation(startInput);
       const startLocation = startResults.length > 0 ? startResults[0] : null;
 
-      // Search for end location
       const endResults = await searchLocation(endInput);
       const endLocation = endResults.length > 0 ? endResults[0] : null;
 
@@ -186,7 +170,6 @@ const SearchComponent = ({
         return;
       }
 
-      // Validate waypoints
       const validWaypoints = getValidWaypoints();
       const invalidWaypoints = getInvalidWaypoints();
 
@@ -196,7 +179,6 @@ const SearchComponent = ({
         return;
       }
 
-      // Calculate route
       const routeData = await RouteService.calculateRoute(
         startLocation.coordinates,
         endLocation.coordinates,
@@ -228,7 +210,6 @@ const SearchComponent = ({
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5 pb-12 md:pb-4">
-        {/* Start Location Input */}
         <LocationInput
           ref={startInputRef}
           id="start"
@@ -244,7 +225,6 @@ const SearchComponent = ({
           onSelectLocation={location => handleLocationSelect(location, 'start')}
         />
 
-        {/* Waypoints */}
         <AnimatePresence mode="popLayout">
           {waypoints.map((waypoint, index) => (
             <motion.div
@@ -287,7 +267,6 @@ const SearchComponent = ({
           ))}
         </AnimatePresence>
 
-        {/* Add Waypoint Button */}
         <div className="flex justify-center">
           <motion.button
             type="button"
@@ -316,7 +295,6 @@ const SearchComponent = ({
           </motion.button>
         </div>
 
-        {/* Destination Input */}
         <LocationInput
           ref={endInputRef}
           id="destination"
@@ -332,14 +310,12 @@ const SearchComponent = ({
           onSelectLocation={location => handleLocationSelect(location, 'end')}
         />
 
-        {/* Error Message */}
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
             {error}
           </div>
         )}
 
-        {/* Route Changes Alert */}
         {hasRouteChanges && hasCalculatedRoute && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -365,8 +341,7 @@ const SearchComponent = ({
             </div>
           </motion.div>
         )}
-
-        {/* Submit Button */}
+  
         <motion.button
           type="submit"
           disabled={isCalculating || !startInput || !endInput}
