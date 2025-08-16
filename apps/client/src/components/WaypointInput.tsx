@@ -17,6 +17,7 @@ interface WaypointInputProps {
   onMoveUp: () => void;
   onMoveDown: () => void;
   onRemove: () => void;
+  isSelected: boolean;
 }
 
 const WaypointInput = ({
@@ -33,7 +34,8 @@ const WaypointInput = ({
   onMoveUp,
   onMoveDown,
   onRemove,
-}: WaypointInputProps) => {
+  isSelected,
+    }: WaypointInputProps) => {
   const { t } = useTranslation();
   const suggestionsRef = useRef<HTMLUListElement>(null);
 
@@ -146,9 +148,11 @@ const WaypointInput = ({
           onChange={e => onChange(e.target.value)}
           onFocus={onFocus}
           placeholder={t('search.enterWaypoint')}
-          className={`w-full px-3 py-2 pr-10 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 ${
-            isLoading ? 'bg-blue-50' : ''
-          }`}
+          className={`w-full px-3 py-2 ${isSelected ? 'pr-16' : 'pr-10'} border ${
+            isSelected ? 'border-green-300 bg-green-50' : 'border-blue-200'
+          } rounded-md focus:outline-none focus:ring-2 ${
+            isSelected ? 'focus:ring-green-500' : 'focus:ring-blue-500'
+          } text-slate-700 ${isLoading ? 'bg-blue-50' : ''}`}
           whileFocus={{ scale: 1.02 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         />
@@ -187,10 +191,18 @@ const WaypointInput = ({
               <li
                 key={locationIndex}
                 className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 border-b border-blue-50 last:border-b-0"
-                onClick={() => onSelectLocation(location)}
+                onMouseDown={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onSelectLocation(location);
+                }}
+                onClick={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
               >
-                <div className="font-medium">{location.name}</div>
-                <div className="text-xs text-slate-500">
+                <div className="font-medium pointer-events-none">{location.name}</div>
+                <div className="text-xs text-slate-500 pointer-events-none">
                   {location.display_name}
                 </div>
               </li>

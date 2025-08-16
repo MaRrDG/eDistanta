@@ -10,13 +10,5 @@ export default defineConfig({
         manualChunks: undefined,
       },
     },
-  },
-  server: {
-    // Handle client-side routing during development
-    historyApiFallback: true,
-  },
-  preview: {
-    // Handle client-side routing in preview mode
-    historyApiFallback: true,
-  },
+  }
 });

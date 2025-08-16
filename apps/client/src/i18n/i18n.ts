@@ -27,6 +27,8 @@ const enTranslations = {
     waypointValidationError:
       'Please select valid cities for all waypoints from the suggestions.',
     clickToSelect: 'Click on a location to select it',
+    clearSelection: 'Clear selection',
+    selected: 'Selected',
     noResults: 'No locations found. Try a different search term.',
     recalculateNeeded: 'Route needs recalculation',
     recalculateHint: 'Click to recalculate route with changes',
@@ -163,6 +165,8 @@ const roTranslations = {
     waypointValidationError:
       'Vă rugăm să selectați orașe valide pentru toate punctele intermediare din sugestii.',
     clickToSelect: 'Faceți clic pe o locație pentru a o selecta',
+    clearSelection: 'Șterge selecția',
+    selected: 'Selectat',
     noResults: 'Nu s-au găsit locații. Încercați un termen de căutare diferit.',
     recalculateNeeded: 'Ruta necesită recalculare',
     recalculateHint: 'Faceți clic pentru a recalcula ruta cu modificările',

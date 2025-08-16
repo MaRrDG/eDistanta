@@ -22,6 +22,11 @@ const SearchComponent = ({
   const [hasRouteChanges, setHasRouteChanges] = useState(false);
   const [hasCalculatedRoute, setHasCalculatedRoute] = useState(false);
 
+  const [hasStartSelection, setHasStartSelection] = useState(false);
+  const [hasEndSelection, setHasEndSelection] = useState(false);
+  const [hasWaypointSelection, setHasWaypointSelection] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [startSuggestions, setStartSuggestions] = useState<LocationResult[]>(
     []
   );
@@ -75,17 +80,19 @@ const SearchComponent = ({
 
   const handleStartSearch = (input: string) => {
     setStartInput(input);
+    setHasStartSelection(false);
     handleSearch(input, 'start', setStartSuggestions, setShowStartSuggestions);
   };
 
   const handleEndSearch = (input: string) => {
     setEndInput(input);
+    setHasEndSelection(false);
     handleSearch(input, 'end', setEndSuggestions, setShowEndSuggestions);
   };
 
   const handleWaypointSearch = (waypointId: string, input: string) => {
     updateWaypointName(waypointId, input);
-
+    setHasWaypointSelection(prev => ({ ...prev, [waypointId]: false }));
     handleSearch(
       input,
       waypointId,
@@ -104,11 +111,15 @@ const SearchComponent = ({
       setHasRouteChanges(true);
       setStartInput(location.name);
       setShowStartSuggestions(false);
+      setHasStartSelection(true);
+      console.log('hasStartSelection', hasStartSelection);
     } else if (type === 'end') {
       setEndInput(location.name);
       setHasRouteChanges(true);
       setShowEndSuggestions(false);
+      setHasEndSelection(true);
     } else {
+      setHasWaypointSelection(prev => ({ ...prev, [type]: true }));
       updateWaypointFromLocation(type, location);
       setShowWaypointSuggestions(prev => ({ ...prev, [type]: false }));
     }
@@ -222,6 +233,7 @@ const SearchComponent = ({
           markerColor="blue"
           onChange={handleStartSearch}
           onFocus={() => startInput && setShowStartSuggestions(true)}
+          isSelected={hasStartSelection}
           onSelectLocation={location => handleLocationSelect(location, 'start')}
         />
 
@@ -262,6 +274,7 @@ const SearchComponent = ({
                 onMoveUp={() => handleWaypointMove(waypoint.id, 'up')}
                 onMoveDown={() => handleWaypointMove(waypoint.id, 'down')}
                 onRemove={() => handleWaypointRemove(waypoint.id)}
+                isSelected={hasWaypointSelection[waypoint.id] || false}
               />
             </motion.div>
           ))}
@@ -307,6 +320,7 @@ const SearchComponent = ({
           markerColor="green"
           onChange={handleEndSearch}
           onFocus={() => endInput && setShowEndSuggestions(true)}
+          isSelected={hasEndSelection}
           onSelectLocation={location => handleLocationSelect(location, 'end')}
         />
 

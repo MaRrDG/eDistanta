@@ -278,7 +278,7 @@ const MapComponent = ({
       {routes && routes.length > 0 && (
         <button
           onClick={fitMapToRoute}
-          className="absolute top-20 right-2 z-10 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-lg px-3 py-2 flex items-center transition-all duration-200 hover:shadow-xl sm:space-x-2"
+          className="absolute top-20 right-2 z-[1] bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-lg px-3 py-2 flex items-center transition-all duration-200 hover:shadow-xl sm:space-x-2"
           title={t('map.fitToRoute')}
         >
           <svg

@@ -142,6 +142,7 @@ function App() {
                 strokeWidth="2"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
@@ -151,7 +152,8 @@ function App() {
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded text-xs font-medium ml-4 transition-colors"
+              className="bg-red-700 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium ml-4 transition-colors"
+              aria-label={t('routeDetails.apiError.retry')}
             >
               {t('routeDetails.apiError.retry')}
             </button>
@@ -161,7 +163,7 @@ function App() {
 
       <main className="flex flex-1 overflow-hidden">
         <div
-          className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
+          className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-full md:w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
         >
           <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent
@@ -189,7 +191,7 @@ function App() {
                   setIsTermsModalOpen(true);
                   setIsSidebarOpen(false);
                 }}
-                className="w-full text-left text-sm text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+                className="w-full text-left text-sm text-blue-700 hover:text-blue-900 transition-colors cursor-pointer py-3 px-2 min-h-[44px] flex items-center"
               >
                 {t('terms.button')}
               </button>
@@ -198,7 +200,8 @@ function App() {
 
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden absolute top-2 right-2 bg-blue-50 hover:bg-blue-100 p-1 rounded-full text-blue-600"
+            className="md:hidden absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 p-3 rounded-full text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Close sidebar"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -207,6 +210,7 @@ function App() {
               strokeWidth={1.5}
               stroke="currentColor"
               className="w-5 h-5"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -233,7 +237,8 @@ function App() {
                 setIsSidebarOpen(true);
                 setIsDetailsExpanded(false);
               }}
-              className="md:hidden absolute top-4 left-4 z-10 bg-white shadow-lg p-3 rounded-full text-blue-600"
+              className="md:hidden absolute top-4 left-4 z-10 bg-blue-600 hover:bg-blue-700 shadow-lg p-3 rounded-full text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Open search sidebar"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +246,8 @@ function App() {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-5 h-5"
+                className="w-4 h-4"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -257,8 +263,8 @@ function App() {
               className={`md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg transition-transform duration-300 z-10 ${isDetailsExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-3rem)]'}`}
               style={{ paddingBottom: `${safeAreaBottom}px` }}
             >
-              <div
-                className="flex justify-between items-center px-4 py-2 border-b border-blue-100 cursor-pointer"
+              <button
+                className="flex justify-between items-center px-4 py-4 border-b border-blue-100 cursor-pointer w-full text-left min-h-[48px]"
                 onClick={() => {
                   const isExpanded = !isDetailsExpanded;
                   setIsDetailsExpanded(isExpanded);
@@ -267,6 +273,8 @@ function App() {
                     setIsSidebarOpen(false);
                   }
                 }}
+                aria-label={isDetailsExpanded ? "Collapse route details" : "Expand route details"}
+                aria-expanded={isDetailsExpanded}
               >
                 <div className="flex items-center">
                   <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
@@ -275,11 +283,12 @@ function App() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       className="w-3.5 h-3.5 text-blue-600"
+                      aria-hidden="true"
                     >
                       <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                     </svg>
                   </div>
-                  <span className="font-medium text-blue-800">
+                  <span className="font-medium text-gray-900">
                     {t('routeDetails.title')}
                   </span>
                 </div>
@@ -290,6 +299,7 @@ function App() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       className="w-4 h-4 text-blue-600 mr-1"
+                      aria-hidden="true"
                     >
                       <path
                         fillRule="evenodd"
@@ -297,7 +307,7 @@ function App() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-medium text-gray-700">
                       {Math.floor(duration! / 60)}
                       {t('units.hour')} {Math.round(duration! % 60)}
                       {t('units.min')}
@@ -309,6 +319,7 @@ function App() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       className="w-4 h-4 text-blue-600 mr-1"
+                      aria-hidden="true"
                     >
                       <path
                         fillRule="evenodd"
@@ -316,7 +327,7 @@ function App() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-medium text-gray-700">
                       {distance!.toFixed(1)} {t('units.km')}
                     </span>
                   </div>
@@ -325,6 +336,7 @@ function App() {
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     className={`w-5 h-5 text-blue-600 transform transition-transform ${isDetailsExpanded ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
                   >
                     <path
                       fillRule="evenodd"
@@ -333,7 +345,7 @@ function App() {
                     />
                   </svg>
                 </div>
-              </div>
+              </button>
               <div className="max-h-[60vh] overflow-y-auto">
                 <RouteDetails
                   routes={routes}

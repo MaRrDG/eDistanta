@@ -13,7 +13,7 @@ const ProjectInfoModal = ({ setIsInfoModalOpen }: ProjectInfoModalProps) => {
       style={{ animation: 'fadeIn 0.3s ease-out' }}
     >
       <div
-        className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden transition-all duration-300 ease-out transform"
+        className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden transition-all duration-300 ease-out transform my-auto"
         style={{ animation: 'modalSlideIn 0.3s ease-out' }}
       >
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -80,7 +80,7 @@ const ProjectInfoModal = ({ setIsInfoModalOpen }: ProjectInfoModalProps) => {
             </div>
           </div>
         </div>
-        <div className="p-6 border-t border-gray-200 flex justify-end">
+        <div className="p-6 pb-8 sm:pb-6 border-t border-gray-200 flex justify-end">
           <button
             onClick={() => setIsInfoModalOpen(false)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"

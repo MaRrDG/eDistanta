@@ -15,6 +15,7 @@ interface LocationInputProps {
   onFocus: () => void;
   onSelectLocation: (location: LocationResult) => void;
   className?: string;
+  isSelected?: boolean;
 }
 
 const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
@@ -32,6 +33,7 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
       onFocus,
       onSelectLocation,
       className,
+      isSelected,
     },
     ref
   ) => {
@@ -74,9 +76,11 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
             onChange={e => onChange(e.target.value)}
             onFocus={onFocus}
             placeholder={placeholder}
-            className={`w-full z-0 px-3 py-2 pr-10 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 ${
-              isLoading ? 'bg-blue-50' : ''
-            }`}
+            className={`w-full z-0 px-3 py-2 ${isSelected ? 'pr-16' : 'pr-10'} border ${
+              isSelected ? 'border-green-300 bg-green-50' : 'border-blue-200'
+            } rounded-md focus:outline-none focus:ring-2 ${
+              isSelected ? 'focus:ring-green-500' : 'focus:ring-blue-500'
+            } text-slate-700 ${isLoading ? 'bg-blue-50' : ''}`}
           />
 
           {/* Loading indicator */}
@@ -109,16 +113,24 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
           {showSuggestions && suggestions.length > 0 && (
             <ul
               ref={suggestionsRef}
-              className="absolute z-50 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto"
+              className="absolute z-[1000] w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto"
             >
               {suggestions.map((location, index) => (
                 <li
                   key={index}
-                  className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 border-b border-blue-50 last:border-b-0"
-                  onClick={() => onSelectLocation(location)}
+                  className="px-3 py-2 hover:bg-blue-50 cursor-pointer text-slate-700 border-b border-blue-50 last:border-b-0 select-none"
+                  onMouseDown={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelectLocation(location);
+                  }}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
                 >
-                  <div className="font-medium">{location.name}</div>
-                  <div className="text-xs text-slate-500">
+                  <div className="font-medium pointer-events-none">{location.name}</div>
+                  <div className="text-xs text-slate-500 pointer-events-none">
                     {location.display_name}
                   </div>
                 </li>
