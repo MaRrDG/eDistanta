@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FormEvent } from 'react';
@@ -12,11 +12,15 @@ import WaypointInput from './WaypointInput';
 const SearchComponent = ({
   onRouteCalculated,
   onMobileSubmit,
+  initialStartInput = '',
+  initialEndInput = '',
+  initialStartLocation = null,
+  initialEndLocation = null,
 }: SearchComponentProps) => {
   const { t } = useTranslation();
 
-  const [startInput, setStartInput] = useState('');
-  const [endInput, setEndInput] = useState('');
+  const [startInput, setStartInput] = useState(initialStartInput);
+  const [endInput, setEndInput] = useState(initialEndInput);
   const [error, setError] = useState<string | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [hasRouteChanges, setHasRouteChanges] = useState(false);
@@ -54,6 +58,70 @@ const SearchComponent = ({
 
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
+  const hasAutoCalculatedRef = useRef(false);
+
+  // Reset auto-calculation flag when route changes
+  useEffect(() => {
+    hasAutoCalculatedRef.current = false;
+  }, [initialStartInput, initialEndInput]);
+
+  // Update inputs when initial values change (for URL-based routes)
+  useEffect(() => {
+    if (initialStartInput !== startInput) {
+      setStartInput(initialStartInput);
+      setHasStartSelection(!!initialStartInput);
+    }
+    if (initialEndInput !== endInput) {
+      setEndInput(initialEndInput);
+      setHasEndSelection(!!initialEndInput);
+    }
+  }, [initialStartInput, initialEndInput]);
+
+  // Auto-calculate route when both initial locations are provided
+  useEffect(() => {
+    if (
+      initialStartLocation && 
+      initialEndLocation && 
+      initialStartInput && 
+      initialEndInput && 
+      !hasAutoCalculatedRef.current
+    ) {
+      // Auto-trigger route calculation for URL-based routes
+      const autoCalculateRoute = async () => {
+        hasAutoCalculatedRef.current = true;
+        setIsCalculating(true);
+        setError(null);
+        
+        try {
+          const routeData = await RouteService.calculateRoute(
+            initialStartLocation,
+            initialEndLocation,
+            []
+          );
+
+          onRouteCalculated(
+            initialStartLocation,
+            initialEndLocation,
+            [],
+            routeData.routes,
+            0
+          );
+
+          setHasCalculatedRoute(true);
+        } catch (err) {
+          setError(
+            err instanceof Error ? err.message : 'An unknown error occurred'
+          );
+        } finally {
+          setIsCalculating(false);
+        }
+      };
+
+      // Small delay to ensure UI is ready
+      const timer = setTimeout(autoCalculateRoute, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [initialStartLocation, initialEndLocation, initialStartInput, initialEndInput]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

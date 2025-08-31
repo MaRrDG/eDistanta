@@ -1,16 +1,18 @@
 {
   "name": "edistanta-web",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc -b && vite build",
+    "build": "npm run generate-sitemap && tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-sitemap": "node scripts/generateSitemap.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",
+    "@types/react-router-dom": "^5.3.3",
     "framer-motion": "^11.15.0",
     "i18next": "^25.3.1",
     "i18next-browser-languagedetector": "^8.2.0",
@@ -19,6 +21,7 @@
     "react-dom": "^19.1.0",
     "react-i18next": "^15.6.0",
     "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.8.2",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
