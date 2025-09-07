@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import MapComponent from './MapComponent';
 import SearchComponent from './SearchComponent';
@@ -10,85 +9,53 @@ import Header from './Header';
 import ApiStatusBanner from './ApiStatusBanner';
 import MobileRoutePanel from './MobileRoutePanel';
 import { useApiHealth } from '../hooks/useFuelPrice';
-import type { AppLayoutProps } from '../types/route';
+import { useAppState } from '../contexts/AppStateContext';
+
+interface AppLayoutProps {
+  initialStartInput?: string;
+  initialEndInput?: string;
+}
 
 const AppLayout = ({
-  startLocation,
-  endLocation,
-  waypoints,
-  routes,
-  selectedRouteIndex,
-  isSidebarOpen,
-  setIsSidebarOpen,
-  isDetailsExpanded,
-  setIsDetailsExpanded,
-  safeAreaBottom,
-  setSafeAreaBottom,
-  onRouteCalculated,
-  onRouteSelected,
-  distance,
-  duration,
   initialStartInput = '',
   initialEndInput = '',
-  initialStartLocation = null,
-  initialEndLocation = null
 }: AppLayoutProps) => {
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const [isTollModalOpen, setIsTollModalOpen] = useState(false);
-  const [tollModalData, setTollModalData] = useState<{
-    bridges: any[];
-    totalRON: number;
-    totalEUR: number;
-    vehicleType: 'car' | 'bus' | 'minibus';
-    pricePerPass: { ron: number; eur: number };
-  } | null>(null);
   const { t } = useTranslation();
-
-  const handleTollModalOpen = (tollSummary: { 
-    bridges: any[]; 
-    totalRON: number; 
-    totalEUR: number;
-    vehicleType: 'car' | 'bus' | 'minibus';
-    pricePerPass: { ron: number; eur: number };
-  }) => {
-    setTollModalData(tollSummary);
-    setIsTollModalOpen(true);
-  };
-
   const { data: isApiHealthy } = useApiHealth();
-
-  useEffect(() => {
-    const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-
-    if (isMobile) {
-      setSafeAreaBottom(0);
-
-      const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
-      if (isSamsungBrowser) {
-        setSafeAreaBottom(16);
-      }
-
-      const handleResize = () => {
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.clientHeight;
-
-        if (windowHeight - documentHeight > 30 && isSamsungBrowser) {
-          setSafeAreaBottom(windowHeight - documentHeight + 16);
-        }
-      };
-
-      window.addEventListener('resize', handleResize);
-      handleResize();
-
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }
-  }, [setSafeAreaBottom]);
+  
+  const {
+    // Route state
+    startLocation,
+    endLocation,
+    waypoints,
+    routes,
+    selectedRouteIndex,
+    
+    // UI state
+    isSidebarOpen,
+    setIsSidebarOpen,
+    isDetailsExpanded,
+    setIsDetailsExpanded,
+    safeAreaBottom,
+    
+    // Modal state
+    isTermsModalOpen,
+    setIsTermsModalOpen,
+    isInfoModalOpen,
+    setIsInfoModalOpen,
+    isTollModalOpen,
+    setIsTollModalOpen,
+    tollModalData,
+    
+    // Computed values
+    distance,
+    duration,
+    
+    // Actions
+    handleRouteCalculated,
+    handleRouteSelected,
+    handleTollModalOpen,
+  } = useAppState();
 
   return (
     <div className="h-screen flex flex-col bg-slate-50">
@@ -110,7 +77,7 @@ const AppLayout = ({
         >
           <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent
-              onRouteCalculated={onRouteCalculated}
+              onRouteCalculated={handleRouteCalculated}
               onMobileSubmit={() => {
                 if (window.innerWidth < 768) {
                   setIsSidebarOpen(false);
@@ -118,15 +85,13 @@ const AppLayout = ({
               }}
               initialStartInput={initialStartInput}
               initialEndInput={initialEndInput}
-              initialStartLocation={initialStartLocation}
-              initialEndLocation={initialEndLocation}
             />
             <div className="hidden md:block">
               {routes && routes.length > 0 && (
                 <RouteDetails
                   routes={routes}
                   selectedRouteIndex={selectedRouteIndex}
-                  onRouteSelected={onRouteSelected}
+                  onRouteSelected={handleRouteSelected}
                   waypoints={waypoints}
                   onTollModalOpen={handleTollModalOpen}
                 />
@@ -176,7 +141,7 @@ const AppLayout = ({
             waypoints={waypoints}
             routes={routes}
             selectedRouteIndex={selectedRouteIndex}
-            onRouteSelected={onRouteSelected}
+            onRouteSelected={handleRouteSelected}
           />
 
           {!isSidebarOpen && (
@@ -210,7 +175,7 @@ const AppLayout = ({
             <MobileRoutePanel
               routes={routes}
               selectedRouteIndex={selectedRouteIndex}
-              onRouteSelected={onRouteSelected}
+              onRouteSelected={handleRouteSelected}
               waypoints={waypoints}
               isDetailsExpanded={isDetailsExpanded}
               setIsDetailsExpanded={setIsDetailsExpanded}
@@ -239,7 +204,6 @@ const AppLayout = ({
           totalRON={tollModalData.totalRON}
           totalEUR={tollModalData.totalEUR}
           vehicleType={tollModalData.vehicleType}
-          pricePerPass={tollModalData.pricePerPass}
         />
       )}
     </div>
