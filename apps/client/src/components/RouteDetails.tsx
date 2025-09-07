@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useFuelPrice, useAvailableStations, useApiHealth } from '../hooks/useFuelPrice';
+import { TollService, type VehicleType as TollVehicleType } from '../services/tollService';
 
 interface RouteData {
   route: [number, number][];
@@ -20,10 +21,24 @@ interface RouteDetailsProps {
   selectedRouteIndex: number;
   onRouteSelected: (index: number) => void;
   waypoints?: Waypoint[];
+  onTollModalOpen?: (tollSummary: { 
+    bridges: any[]; 
+    totalRON: number; 
+    totalEUR: number; 
+    vehicleType: TollVehicleType;
+  }) => void;
 }
 
 // Route colors for alternatives - keep in sync with MapComponent
 const ROUTE_COLORS = ['#2563eb', '#9333ea', '#16a34a', '#f59e0b'];
+
+// Vehicle types
+const VEHICLE_TYPES = [
+  'car',
+  'bus',
+  'minibus',
+] as const;
+type VehicleType = (typeof VEHICLE_TYPES)[number];
 
 // Fuel types and their CO2 emission factors
 const FUEL_TYPES = [
@@ -34,6 +49,13 @@ const FUEL_TYPES = [
   'gpl',
 ] as const;
 type FuelType = (typeof FUEL_TYPES)[number];
+
+// Default fuel consumption by vehicle type (L/100km)
+const DEFAULT_FUEL_CONSUMPTION: Record<VehicleType, number> = {
+  car: 6.5,
+  minibus: 9.5,
+  bus: 25.0,
+};
 
 /**3
  * Calculate CO2 emissions based on fuel consumption and type
@@ -83,12 +105,26 @@ const RouteDetails = ({
   selectedRouteIndex,
   onRouteSelected,
   waypoints = [],
+  onTollModalOpen,
 }: RouteDetailsProps) => {
   const { t } = useTranslation();
+  
+  const [vehicleType, setVehicleType] = useState<VehicleType>(() => {
+    const savedVehicleType = localStorage.getItem('vehicleType') as VehicleType;
+    return VEHICLE_TYPES.includes(savedVehicleType)
+      ? savedVehicleType
+      : 'car';
+  });
+
   const [fuelConsumption, setFuelConsumption] = useState<number>(() => {
     const savedConsumption = localStorage.getItem('fuelConsumption');
-    return savedConsumption ? parseFloat(savedConsumption) : 6.5;
+    const savedVehicleType = localStorage.getItem('vehicleType') as VehicleType;
+    const defaultForVehicle = VEHICLE_TYPES.includes(savedVehicleType) 
+      ? DEFAULT_FUEL_CONSUMPTION[savedVehicleType]
+      : DEFAULT_FUEL_CONSUMPTION.car;
+    return savedConsumption ? parseFloat(savedConsumption) : defaultForVehicle;
   });
+  
   const [fuelType, setFuelType] = useState<FuelType>(() => {
     const savedFuelType = localStorage.getItem('fuelType') as FuelType;
     return FUEL_TYPES.includes(savedFuelType)
@@ -99,6 +135,8 @@ const RouteDetails = ({
   const [selectedStation, setSelectedStation] = useState<string>(() => {
     return localStorage.getItem('selectedStation') || '';
   });
+
+
 
   // Check API health
   const { data: isApiHealthy, isLoading: isCheckingHealth, error: healthError } = useApiHealth();
@@ -117,7 +155,11 @@ const RouteDetails = ({
     error: priceError 
   } = useFuelPrice(selectedStation, fuelType);
 
-  // Save fuel settings to local storage when they change
+  // Save settings to local storage when they change
+  useEffect(() => {
+    localStorage.setItem('vehicleType', vehicleType);
+  }, [vehicleType]);
+
   useEffect(() => {
     localStorage.setItem('fuelConsumption', fuelConsumption.toString());
   }, [fuelConsumption]);
@@ -129,6 +171,14 @@ const RouteDetails = ({
   useEffect(() => {
     localStorage.setItem('selectedStation', selectedStation);
   }, [selectedStation]);
+
+  // Update fuel consumption when vehicle type changes (if user hasn't customized it)
+  useEffect(() => {
+    const savedConsumption = localStorage.getItem('fuelConsumption');
+    if (!savedConsumption) {
+      setFuelConsumption(DEFAULT_FUEL_CONSUMPTION[vehicleType]);
+    }
+  }, [vehicleType]);
 
   if (!routes || routes.length === 0) {
     return null;
@@ -152,6 +202,20 @@ const RouteDetails = ({
   const selectedRoute = routes[selectedRouteIndex];
   const distance = selectedRoute.distance;
   const duration = selectedRoute.duration;
+
+  // Calculate toll bridges for the selected route
+  const tollSummary = useMemo(() => {
+    if (!selectedRoute?.route) return { 
+      totalRON: 0, 
+      totalEUR: 0, 
+      bridges: [], 
+      hasTolls: false, 
+      vehicleType: vehicleType as TollVehicleType
+    };
+    
+    const detectedBridges = TollService.detectTollBridges(selectedRoute.route);
+    return TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
+  }, [selectedRoute, vehicleType]);
 
   // Round distance to 1 decimal place
   const formattedDistance = distance.toFixed(1);
@@ -280,13 +344,83 @@ const RouteDetails = ({
         </div>
       )}
 
+      {/* Bridge tolls information */}
+      {tollSummary.hasTolls && (
+        <div className="mb-4 px-4 md:px-0">
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+            <div className="flex items-start">
+              <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center mr-2 mt-0.5">
+                <svg
+                  className="w-4 h-4 text-orange-600"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-orange-800 text-sm font-medium mb-2">
+                  {t('routeDetails.tollBridgesDetected')}
+                </p>
+                <div className="space-y-1">
+                  {tollSummary.bridges.map((bridge) => (
+                    <div key={bridge.id} className="text-xs text-orange-700">
+                      <span className="font-medium">{bridge.nameRo}</span>
+                      <span className="text-orange-600 ml-2">
+                        {bridge.tollRON > 0 ? `${bridge.tollRON} RON` : `${bridge.tollEUR} EUR`}
+                      </span>
+                      {bridge.crossesBorder && (
+                        <span className="text-orange-500 ml-1">
+                          ({t('routeDetails.internationalBridge')})
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Fuel consumption and type selectors - only show if API is available */}
       {isApiAvailable && (
         <div className="mb-4 px-4 md:px-0">
           <p className="text-sm text-slate-600 mb-2">
-            {t('routeDetails.fuelSettings')}
+            {t('routeDetails.vehicleSettings')}
           </p>
           <div className="grid grid-cols-1 gap-3 mb-3">
+            <div>
+              <label
+                htmlFor="vehicleType"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.vehicleType')}
+              </label>
+              <select
+                id="vehicleType"
+                value={vehicleType}
+                onChange={e => {
+                  const selectedValue = e.target.value;
+                  if (VEHICLE_TYPES.includes(selectedValue as VehicleType)) {
+                    setVehicleType(selectedValue as VehicleType);
+                    // Update fuel consumption to default for new vehicle type
+                    setFuelConsumption(DEFAULT_FUEL_CONSUMPTION[selectedValue as VehicleType]);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              >
+                {VEHICLE_TYPES.map(type => (
+                  <option key={type} value={type}>
+                    {t(`vehicleTypes.${type}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div>
               <label
                 htmlFor="fuelStation"
@@ -396,12 +530,41 @@ const RouteDetails = ({
         </div>
       )}
 
-      {/* Basic fuel consumption settings when API is unavailable */}
+      {/* Basic vehicle and fuel consumption settings when API is unavailable */}
       {!isApiAvailable && (
         <div className="mb-4 px-4 md:px-0">
           <p className="text-sm text-slate-600 mb-2">
-            {t('routeDetails.basicFuelSettings')}
+            {t('routeDetails.basicVehicleSettings')}
           </p>
+          <div className="grid grid-cols-1 gap-3 mb-3">
+            <div>
+              <label
+                htmlFor="vehicleTypeBasic"
+                className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              >
+                {t('routeDetails.vehicleType')}
+              </label>
+              <select
+                id="vehicleTypeBasic"
+                value={vehicleType}
+                onChange={e => {
+                  const selectedValue = e.target.value;
+                  if (VEHICLE_TYPES.includes(selectedValue as VehicleType)) {
+                    setVehicleType(selectedValue as VehicleType);
+                    // Update fuel consumption to default for new vehicle type
+                    setFuelConsumption(DEFAULT_FUEL_CONSUMPTION[selectedValue as VehicleType]);
+                  }
+                }}
+                className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
+              >
+                {VEHICLE_TYPES.map(type => (
+                  <option key={type} value={type}>
+                    {t(`vehicleTypes.${type}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label
@@ -526,6 +689,48 @@ const RouteDetails = ({
                 </p>
               </div>
             </div>
+          )}
+
+          {/* Bridge tolls display - show when tolls are detected */}
+          {tollSummary.hasTolls && (
+            <button
+              onClick={() => onTollModalOpen?.(tollSummary)}
+              className="flex items-center p-3.5 w-full hover:bg-blue-50 transition-colors cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-blue-600"
+                >
+                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2ZM8 21V19H16V21H8Z" />
+                </svg>
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm text-slate-500">
+                  {t('routeDetails.bridgeTolls')}
+                </p>
+                <p className="text-lg font-semibold text-slate-900">
+                  {tollSummary.totalRON} RON
+                  {tollSummary.totalEUR > 0 && (
+                    <span className="text-sm text-slate-600 ml-1">
+                      (~{tollSummary.totalEUR} EUR)
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="ml-2">
+                <svg
+                  className="w-5 h-5 text-slate-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
           )}
 
           <div className="flex items-center p-3.5">
@@ -696,6 +901,43 @@ const RouteDetails = ({
               </p>
             </div>
           )}
+
+          {/* Bridge tolls display for mobile - show when tolls are detected */}
+          {tollSummary.hasTolls && (
+            <button
+              onClick={() => onTollModalOpen?.(tollSummary)}
+              className="bg-white rounded-lg p-3 shadow-sm w-full hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center mb-1">
+                <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-3.5 h-3.5 text-blue-600"
+                  >
+                    <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2ZM8 21V19H16V21H8Z" />
+                  </svg>
+                </div>
+                <p className="text-xs text-slate-500">
+                  {t('routeDetails.tolls')}
+                </p>
+                <div className="ml-auto">
+                  <svg
+                    className="w-4 h-4 text-slate-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+              <p className="text-base font-semibold text-slate-900 text-left">
+                {tollSummary.totalRON} RON
+              </p>
+            </button>
+          )}
         </div>
 
         <div className="mt-3 text-xs text-slate-500 text-center">
@@ -707,6 +949,8 @@ const RouteDetails = ({
       <div className="hidden md:block mt-4 px-2 text-xs text-slate-500">
         <p>{t('routeDetails.estimateNote')}</p>
       </div>
+
+
     </div>
   );
 };

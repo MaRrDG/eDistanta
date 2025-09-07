@@ -1,5 +1,5 @@
-// const API_BASE_URL = 'http://localhost:9000';
-const API_BASE_URL = 'https://api.edistanta.ro';
+const API_BASE_URL = 'http://localhost:9000';
+// const API_BASE_URL = 'https://api.edistanta.ro';
 
 export interface FuelPrice {
   id: number;

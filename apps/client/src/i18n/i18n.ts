@@ -48,6 +48,8 @@ const enTranslations = {
     alternatives: 'Alternative Routes',
     route: 'Route',
     waypoints: 'Waypoints',
+    vehicleSettings: 'Vehicle & Fuel Settings',
+    vehicleType: 'Vehicle Type',
     fuelSettings: 'Fuel Settings',
     consumption: 'Consumption',
     fuelType: 'Fuel Type',
@@ -64,7 +66,23 @@ const enTranslations = {
       retry: 'Retry',
     },
     fuelPricesUnavailable: 'Fuel price data is temporarily unavailable. Basic estimates are shown.',
-    basicFuelSettings: 'Basic Fuel Settings',
+    basicVehicleSettings: 'Basic Vehicle Settings',
+    bridgeTolls: 'Bridge Tolls',
+    tolls: 'Tolls',
+    tollBridgesDetected: 'Bridge tolls detected on this route:',
+    internationalBridge: 'international',
+  },
+  tollModal: {
+    title: 'Bridge Toll Information',
+    totalCost: 'Total Toll Cost',
+    bridgeDetails: 'Bridge Details',
+    perPass: 'per pass',
+    bridge: 'bridge',
+    bridges: 'bridges',
+    commercialTitle: 'Business Partnership Opportunity',
+    commercialMessage: 'Want your payment services or toll-related business to appear here? Partner with us to reach thousands of Romanian travelers planning their routes.',
+    contactButton: 'Contact Us',
+    disclaimer: 'Toll prices are estimates based on current rates and may vary. Always verify current toll rates before traveling.',
   },
   fuelTypes: {
     'benzina-regular': 'Gasoline',
@@ -72,6 +90,11 @@ const enTranslations = {
     'motorina-regular': 'Diesel',
     'motorina-premium': 'Diesel Premium',
     gpl: 'LPG',
+  },
+  vehicleTypes: {
+    car: 'Car',
+    bus: 'Bus',
+    minibus: 'Minibus',
   },
   map: {
     startLocation: 'Start Location',
@@ -97,6 +120,7 @@ const enTranslations = {
   },
   common: {
     loading: 'Loading...',
+    close: 'Close',
   },
   terms: {
     button: 'Terms & Conditions',
@@ -186,6 +210,8 @@ const roTranslations = {
     alternatives: 'Rute Alternative',
     route: 'Ruta',
     waypoints: 'Puncte Intermediare',
+    vehicleSettings: 'Setări Vehicul și Combustibil',
+    vehicleType: 'Tip Vehicul',
     fuelSettings: 'Setări Combustibil',
     consumption: 'Consum',
     fuelType: 'Tip Combustibil',
@@ -202,7 +228,24 @@ const roTranslations = {
       retry: 'Încearcă din nou',
     },
     fuelPricesUnavailable: 'Datele de preț combustibil sunt temporar indisponibile. Se afișează estimări de bază.',
-    basicFuelSettings: 'Setări Combustibil de Bază',
+    basicVehicleSettings: 'Setări Vehicul de Bază',
+    bridgeTolls: 'Taxe Poduri',
+    tolls: 'Taxe',
+    tollBridgesDetected: 'Taxe de pod detectate pe această rută:',
+    internationalBridge: 'internațional',
+  },
+  tollModal: {
+    title: 'Informații Taxe Poduri',
+    totalCost: 'Cost Total Taxe',
+    bridgeDetails: 'Detalii Poduri',
+    perPass: 'per trecere',
+    bridge: 'pod',
+    bridges: 'poduri',
+    commercialTitle: 'Parteneriate pentru servicii de plată și taxe',
+    commercialMessage: 'Promovează-ți serviciile de plată sau afacerea legată de taxe direct către mii de călători români care își planifică rutele. Devino partenerul nostru și crește-ți vizibilitatea!',
+    contactButton: 'Contactează-ne',
+    disclaimer: 'Prețurile afișate sunt estimative, bazate pe tarifele curente, și pot varia. Verifică întotdeauna tarifele oficiale înainte de călătorie.',
+    
   },
   fuelTypes: {
     'benzina-regular': 'Benzină',
@@ -210,6 +253,11 @@ const roTranslations = {
     'motorina-regular': 'Motorină',
     'motorina-premium': 'Motorină Premium',
     gpl: 'GPL',
+  },
+  vehicleTypes: {
+    car: 'Autoturism',
+    bus: 'Autobuz',
+    minibus: 'Microbuz',
   },
   map: {
     startLocation: 'Locație Pornire',
@@ -235,6 +283,7 @@ const roTranslations = {
   },
   common: {
     loading: 'Se încarcă...',
+    close: 'Închide',
   },
   terms: {
     button: 'Termeni şi Condiţii',

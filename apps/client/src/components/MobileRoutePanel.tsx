@@ -13,6 +13,12 @@ interface MobileRoutePanelProps {
   safeAreaBottom: number;
   distance: number | null;
   duration: number | null;
+  onTollModalOpen?: (tollSummary: { 
+    bridges: any[]; 
+    totalRON: number; 
+    totalEUR: number;
+    vehicleType: 'car' | 'bus' | 'minibus';
+  }) => void;
 }
 
 const MobileRoutePanel = ({
@@ -25,7 +31,8 @@ const MobileRoutePanel = ({
   setIsSidebarOpen,
   safeAreaBottom,
   distance,
-  duration
+  duration,
+  onTollModalOpen
 }: MobileRoutePanelProps) => {
   const { t } = useTranslation();
 
@@ -127,6 +134,7 @@ const MobileRoutePanel = ({
           selectedRouteIndex={selectedRouteIndex}
           onRouteSelected={onRouteSelected}
           waypoints={waypoints}
+          onTollModalOpen={onTollModalOpen}
         />
       </div>
     </div>

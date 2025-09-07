@@ -5,6 +5,7 @@ import SearchComponent from './SearchComponent';
 import RouteDetails from './RouteDetails';
 import TermsAndConditionsModal from './TermsAndConditionsModal';
 import ProjectInfoModal from './ProjectInfoModal';
+import TollInfoModal from './TollInfoModal';
 import Header from './Header';
 import ApiStatusBanner from './ApiStatusBanner';
 import MobileRoutePanel from './MobileRoutePanel';
@@ -34,7 +35,26 @@ const AppLayout = ({
 }: AppLayoutProps) => {
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isTollModalOpen, setIsTollModalOpen] = useState(false);
+  const [tollModalData, setTollModalData] = useState<{
+    bridges: any[];
+    totalRON: number;
+    totalEUR: number;
+    vehicleType: 'car' | 'bus' | 'minibus';
+    pricePerPass: { ron: number; eur: number };
+  } | null>(null);
   const { t } = useTranslation();
+
+  const handleTollModalOpen = (tollSummary: { 
+    bridges: any[]; 
+    totalRON: number; 
+    totalEUR: number;
+    vehicleType: 'car' | 'bus' | 'minibus';
+    pricePerPass: { ron: number; eur: number };
+  }) => {
+    setTollModalData(tollSummary);
+    setIsTollModalOpen(true);
+  };
 
   const { data: isApiHealthy } = useApiHealth();
 
@@ -108,6 +128,7 @@ const AppLayout = ({
                   selectedRouteIndex={selectedRouteIndex}
                   onRouteSelected={onRouteSelected}
                   waypoints={waypoints}
+                  onTollModalOpen={handleTollModalOpen}
                 />
               )}
             </div>
@@ -197,6 +218,7 @@ const AppLayout = ({
               safeAreaBottom={safeAreaBottom}
               distance={distance}
               duration={duration}
+              onTollModalOpen={handleTollModalOpen}
             />
           )}
         </div>
@@ -208,6 +230,17 @@ const AppLayout = ({
 
       {isInfoModalOpen && (
         <ProjectInfoModal setIsInfoModalOpen={setIsInfoModalOpen} />
+      )}
+
+      {isTollModalOpen && tollModalData && (
+        <TollInfoModal
+          setIsTollModalOpen={setIsTollModalOpen}
+          bridges={tollModalData.bridges}
+          totalRON={tollModalData.totalRON}
+          totalEUR={tollModalData.totalEUR}
+          vehicleType={tollModalData.vehicleType}
+          pricePerPass={tollModalData.pricePerPass}
+        />
       )}
     </div>
   );

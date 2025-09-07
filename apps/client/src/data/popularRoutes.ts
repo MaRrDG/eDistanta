@@ -27,8 +27,8 @@ export const ROMANIAN_CITIES: City[] = [
   { name: "Brașov", slug: "brasov", coordinates: [45.6427, 25.5887], county: "Brașov", population: 253200 },
   { name: "Galați", slug: "galati", coordinates: [45.4353, 28.0080], county: "Galați", population: 249432 },
   { name: "Ploiești", slug: "ploiesti", coordinates: [44.9404, 26.0266], county: "Prahova", population: 201226 },
-  
-  // Important regional centers (population 100k-200k)
+
+  // Important regional centers (100k–200k)
   { name: "Oradea", slug: "oradea", coordinates: [47.0465, 21.9189], county: "Bihor", population: 196367 },
   { name: "Brăila", slug: "braila", coordinates: [45.2692, 27.9574], county: "Brăila", population: 180302 },
   { name: "Arad", slug: "arad", coordinates: [46.1866, 21.3123], county: "Arad", population: 159704 },
@@ -39,8 +39,8 @@ export const ROMANIAN_CITIES: City[] = [
   { name: "Baia Mare", slug: "baia-mare", coordinates: [47.6587, 23.5681], county: "Maramureș", population: 123738 },
   { name: "Buzău", slug: "buzau", coordinates: [45.1500, 26.8203], county: "Buzău", population: 115494 },
   { name: "Satu Mare", slug: "satu-mare", coordinates: [47.7910, 22.8571], county: "Satu Mare", population: 102441 },
-  
-  // Other important cities (50k-100k)
+
+  // Smaller but important
   { name: "Suceava", slug: "suceava", coordinates: [47.6635, 26.2535], county: "Suceava", population: 92121 },
   { name: "Piatra Neamț", slug: "piatra-neamt", coordinates: [46.9226, 26.3712], county: "Neamț", population: 85055 },
   { name: "Târgu Jiu", slug: "targu-jiu", coordinates: [45.0428, 23.2739], county: "Gorj", population: 82504 },
@@ -51,73 +51,56 @@ export const ROMANIAN_CITIES: City[] = [
   { name: "Reșița", slug: "resita", coordinates: [45.3005, 21.8892], county: "Caraș-Severin", population: 73282 },
   { name: "Slatina", slug: "slatina", coordinates: [44.4297, 24.3681], county: "Olt", population: 70293 },
   { name: "Alba Iulia", slug: "alba-iulia", coordinates: [46.0667, 23.5833], county: "Alba", population: 63536 },
-  
-  // Tourist destinations and important smaller cities
+
+  // Tourist destinations
   { name: "Mamaia", slug: "mamaia", coordinates: [44.2500, 28.6167], county: "Constanța" },
-  { name: "Sinaia", slug: "sinaia", coordinates: [45.3500, 25.5500], county: "Prahova" },
-  { name: "Predeal", slug: "predeal", coordinates: [45.5167, 25.5667], county: "Brașov" },
-  { name: "Poiana Brașov", slug: "poiana-brasov", coordinates: [45.5833, 25.5333], county: "Brașov" },
   { name: "Vama Veche", slug: "vama-veche", coordinates: [43.7667, 28.5667], county: "Constanța" },
   { name: "Eforie Nord", slug: "eforie-nord", coordinates: [44.0833, 28.6333], county: "Constanța" },
   { name: "Mangalia", slug: "mangalia", coordinates: [43.8167, 28.5833], county: "Constanța" },
-  { name: "Neptun", slug: "neptun", coordinates: [44.1167, 28.6000], county: "Constanța" },
+  { name: "Sinaia", slug: "sinaia", coordinates: [45.3500, 25.5500], county: "Prahova" },
+  { name: "Bușteni", slug: "busteni", coordinates: [45.4167, 25.5333], county: "Prahova" },
+  { name: "Predeal", slug: "predeal", coordinates: [45.5167, 25.5667], county: "Brașov" },
+  { name: "Poiana Brașov", slug: "poiana-brasov", coordinates: [45.5833, 25.5333], county: "Brașov" },
+  { name: "Bran", slug: "bran", coordinates: [45.5167, 25.3667], county: "Brașov" },
+  { name: "Sighișoara", slug: "sighisoara", coordinates: [46.2167, 24.7833], county: "Mureș" },
+  { name: "Murighiol", slug: "murighiol", coordinates: [45.0333, 29.1833], county: "Tulcea" }, // Delta Dunării
 ];
 
-// Most searched routes in Romania (based on typical search patterns)
+
+// Popular searched routes in Romania (refined for SEO)
 export const POPULAR_ROUTES: PopularRoute[] = [
-  // Bucharest routes (highest priority)
+  // Bucharest ↔ major cities
   { from: "bucuresti", to: "cluj-napoca", slug: "bucuresti-cluj-napoca", searchVolume: 8900, priority: 10 },
   { from: "bucuresti", to: "timisoara", slug: "bucuresti-timisoara", searchVolume: 6700, priority: 9 },
   { from: "bucuresti", to: "iasi", slug: "bucuresti-iasi", searchVolume: 5800, priority: 9 },
   { from: "bucuresti", to: "constanta", slug: "bucuresti-constanta", searchVolume: 12000, priority: 10 },
   { from: "bucuresti", to: "brasov", slug: "bucuresti-brasov", searchVolume: 9200, priority: 10 },
-  { from: "bucuresti", to: "craiova", slug: "bucuresti-craiova", searchVolume: 4500, priority: 8 },
-  { from: "bucuresti", to: "galati", slug: "bucuresti-galati", searchVolume: 3200, priority: 7 },
-  { from: "bucuresti", to: "ploiesti", slug: "bucuresti-ploiesti", searchVolume: 2800, priority: 7 },
-  { from: "bucuresti", to: "pitesti", slug: "bucuresti-pitesti", searchVolume: 2400, priority: 7 },
-  { from: "bucuresti", to: "sibiu", slug: "bucuresti-sibiu", searchVolume: 3100, priority: 7 },
-  
-  // Major inter-city routes
+  { from: "bucuresti", to: "sibiu", slug: "bucuresti-sibiu", searchVolume: 3100, priority: 8 },
+  { from: "bucuresti", to: "oradea", slug: "bucuresti-oradea", searchVolume: 2000, priority: 7 },
+
+  // Tourist routes
+  { from: "bucuresti", to: "sinaia", slug: "bucuresti-sinaia", searchVolume: 2200, priority: 8 },
+  { from: "bucuresti", to: "busteni", slug: "bucuresti-busteni", searchVolume: 2100, priority: 8 },
+  { from: "bucuresti", to: "bran", slug: "bucuresti-bran", searchVolume: 2500, priority: 8 },
+  { from: "bucuresti", to: "sighisoara", slug: "bucuresti-sighisoara", searchVolume: 1800, priority: 7 },
+  { from: "bucuresti", to: "murighiol", slug: "bucuresti-delta-dunarii", searchVolume: 2000, priority: 8 },
+  { from: "bucuresti", to: "mamaia", slug: "bucuresti-mamaia", searchVolume: 4500, priority: 8 },
+
+  // Regional routes
   { from: "cluj-napoca", to: "timisoara", slug: "cluj-napoca-timisoara", searchVolume: 2800, priority: 8 },
   { from: "cluj-napoca", to: "iasi", slug: "cluj-napoca-iasi", searchVolume: 2200, priority: 7 },
   { from: "cluj-napoca", to: "brasov", slug: "cluj-napoca-brasov", searchVolume: 2600, priority: 7 },
-  { from: "timisoara", to: "arad", slug: "timisoara-arad", searchVolume: 1800, priority: 6 },
-  { from: "timisoara", to: "craiova", slug: "timisoara-craiova", searchVolume: 1500, priority: 6 },
-  { from: "iasi", to: "bacau", slug: "iasi-bacau", searchVolume: 1600, priority: 6 },
   { from: "iasi", to: "suceava", slug: "iasi-suceava", searchVolume: 1400, priority: 6 },
-  { from: "constanta", to: "galati", slug: "constanta-galati", searchVolume: 1200, priority: 6 },
-  { from: "constanta", to: "braila", slug: "constanta-braila", searchVolume: 900, priority: 5 },
-  { from: "craiova", to: "galati", slug: "craiova-galati", searchVolume: 800, priority: 5 },
-  { from: "brasov", to: "sibiu", slug: "brasov-sibiu", searchVolume: 1100, priority: 6 },
-  
-  // Tourist routes (seasonal high search volume)
-  { from: "bucuresti", to: "mamaia", slug: "bucuresti-mamaia", searchVolume: 4500, priority: 8 },
-  { from: "bucuresti", to: "sinaia", slug: "bucuresti-sinaia", searchVolume: 2200, priority: 7 },
-  { from: "bucuresti", to: "predeal", slug: "bucuresti-predeal", searchVolume: 1800, priority: 6 },
-  { from: "bucuresti", to: "poiana-brasov", slug: "bucuresti-poiana-brasov", searchVolume: 1600, priority: 6 },
-  { from: "cluj-napoca", to: "mamaia", slug: "cluj-napoca-mamaia", searchVolume: 1200, priority: 5 },
-  { from: "timisoara", to: "mamaia", slug: "timisoara-mamaia", searchVolume: 1000, priority: 5 },
-  { from: "constanta", to: "vama-veche", slug: "constanta-vama-veche", searchVolume: 800, priority: 5 },
-  
-  // Regional routes
-  { from: "oradea", to: "cluj-napoca", slug: "oradea-cluj-napoca", searchVolume: 1500, priority: 6 },
-  { from: "oradea", to: "timisoara", slug: "oradea-timisoara", searchVolume: 1200, priority: 5 },
-  { from: "targu-mures", to: "cluj-napoca", slug: "targu-mures-cluj-napoca", searchVolume: 1100, priority: 5 },
-  { from: "baia-mare", to: "cluj-napoca", slug: "baia-mare-cluj-napoca", searchVolume: 1000, priority: 5 },
-  { from: "satu-mare", to: "oradea", slug: "satu-mare-oradea", searchVolume: 800, priority: 4 },
-  { from: "deva", to: "timisoara", slug: "deva-timisoara", searchVolume: 700, priority: 4 },
-  { from: "alba-iulia", to: "cluj-napoca", slug: "alba-iulia-cluj-napoca", searchVolume: 900, priority: 4 },
-  
-  // Reverse routes (important for SEO)
+  { from: "timisoara", to: "arad", slug: "timisoara-arad", searchVolume: 1800, priority: 6 },
+
+  // Reverse (important SEO)
   { from: "cluj-napoca", to: "bucuresti", slug: "cluj-napoca-bucuresti", searchVolume: 8900, priority: 10 },
-  { from: "timisoara", to: "bucuresti", slug: "timisoara-bucuresti", searchVolume: 6700, priority: 9 },
-  { from: "iasi", to: "bucuresti", slug: "iasi-bucuresti", searchVolume: 5800, priority: 9 },
   { from: "constanta", to: "bucuresti", slug: "constanta-bucuresti", searchVolume: 12000, priority: 10 },
   { from: "brasov", to: "bucuresti", slug: "brasov-bucuresti", searchVolume: 9200, priority: 10 },
-  { from: "craiova", to: "bucuresti", slug: "craiova-bucuresti", searchVolume: 4500, priority: 8 },
-  { from: "galati", to: "bucuresti", slug: "galati-bucuresti", searchVolume: 3200, priority: 7 },
-  { from: "mamaia", to: "bucuresti", slug: "mamaia-bucuresti", searchVolume: 4500, priority: 8 },
+  { from: "bran", to: "bucuresti", slug: "bran-bucuresti", searchVolume: 2500, priority: 8 },
+  { from: "sinaia", to: "bucuresti", slug: "sinaia-bucuresti", searchVolume: 2200, priority: 8 },
 ];
+
 
 // Helper functions
 export const getCityBySlug = (slug: string): City | undefined => {
