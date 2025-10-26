@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { TollService, type VehicleType as TollVehicleType } from '../../../services/tollService';
 import { useRouteDetails } from '../../../contexts/RouteDetailsContext';
 import RouteAlternatives from './RouteAlternatives';
@@ -7,6 +7,7 @@ import VehicleSettings from '../vehicle/VehicleSettings';
 import RouteMetrics from './RouteMetrics';
 import { AlertBanner } from '../../common';
 import { TollInfo } from '../toll';
+import { SaveFavoriteButton } from '../favorites';
 
 interface RouteData {
   route: [number, number][];
@@ -26,10 +27,14 @@ interface RouteDetailsProps {
   selectedRouteIndex: number;
   onRouteSelected: (index: number) => void;
   waypoints?: Waypoint[];
-  onTollModalOpen?: (tollSummary: { 
-    bridges: any[]; 
-    totalRON: number; 
-    totalEUR: number; 
+  startLocation?: [number, number] | null;
+  endLocation?: [number, number] | null;
+  startName?: string;
+  endName?: string;
+  onTollModalOpen?: (tollSummary: {
+    bridges: any[];
+    totalRON: number;
+    totalEUR: number;
     vehicleType: TollVehicleType;
   }) => void;
 }
@@ -39,17 +44,22 @@ const RouteDetails = ({
   selectedRouteIndex,
   onRouteSelected,
   waypoints = [],
+  startLocation,
+  endLocation,
+  startName,
+  endName,
   onTollModalOpen,
 }: RouteDetailsProps) => {
   const { t } = useTranslation();
-  const { 
-    vehicleType, 
-    fuelConsumption, 
+  const {
+    vehicleType,
+    fuelConsumption,
     fuelPriceData,
     priceError,
     isApiAvailable,
     isCheckingHealth
   } = useRouteDetails();
+  const [showSaved, setShowSaved] = useState(false);
 
   if (!routes || routes.length === 0) {
     return null;
@@ -149,6 +159,38 @@ const RouteDetails = ({
         tollSummary={tollSummary}
         onTollModalOpen={onTollModalOpen}
       />
+
+      {/* Save to Favorites */}
+      {startLocation && endLocation && startName && endName && (
+        <div className="mt-4 px-4 md:px-0">
+          {showSaved ? (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {t('favorites.saved', 'Route saved to favorites!')}
+            </div>
+          ) : (
+            <SaveFavoriteButton
+              startName={startName}
+              startCoords={startLocation}
+              endName={endName}
+              endCoords={endLocation}
+              waypoints={waypoints}
+              onSaved={() => setShowSaved(true)}
+            />
+          )}
+        </div>
+      )}
 
       {/* Desktop footnote */}
       <div className="hidden md:block mt-4 px-2 text-xs text-slate-700">

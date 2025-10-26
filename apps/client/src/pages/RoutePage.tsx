@@ -5,6 +5,7 @@ import { parseRouteSlug } from '../data/popularRoutes';
 import { useRouteFromUrl } from '../hooks/useRouteFromUrl';
 import { RouteDetailsProvider } from '../contexts/RouteDetailsContext';
 import { AppStateProvider } from '../contexts/AppStateContext';
+import { FavoritesProvider } from '../contexts/FavoritesContext';
 import { AppLayout } from '../components/layout';
 
 const RoutePage = () => {
@@ -35,10 +36,12 @@ const RoutePage = () => {
         initialEndLocation={initialEndLocation}
       >
         <RouteDetailsProvider>
-          <AppLayout 
-            initialStartInput={initialStartInput}
-            initialEndInput={initialEndInput}
-          />
+          <FavoritesProvider>
+            <AppLayout
+              initialStartInput={initialStartInput}
+              initialEndInput={initialEndInput}
+            />
+          </FavoritesProvider>
         </RouteDetailsProvider>
       </AppStateProvider>
     </>

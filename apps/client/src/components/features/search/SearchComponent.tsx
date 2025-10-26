@@ -3,15 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FormEvent } from 'react';
 import type { SearchComponentProps, LocationResult } from '../../../types/location';
+import type { FavoriteRoute } from '../../../services/favoritesService';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { useWaypoints } from '../../../hooks/useWaypoints';
 import { RouteService } from '../../../services/routeService';
 import LocationInput from './LocationInput';
 import WaypointInput from './WaypointInput';
+import { FavoritesSection } from '../favorites';
 
 const SearchComponent = ({
   onRouteCalculated,
   onMobileSubmit,
+  onLocationNamesChange,
   initialStartInput = '',
   initialEndInput = '',
   initialStartLocation = null,
@@ -223,6 +226,48 @@ const SearchComponent = ({
     }
   };
 
+  const handleFavoriteSelect = async (favorite: FavoriteRoute) => {
+    setStartInput(favorite.startName);
+    setEndInput(favorite.endName);
+    setHasStartSelection(true);
+    setHasEndSelection(true);
+    setError(null);
+    setIsCalculating(true);
+
+    if (onMobileSubmit) {
+      onMobileSubmit();
+    }
+
+    try {
+      const startCoords: [number, number] = [favorite.startLat, favorite.startLng];
+      const endCoords: [number, number] = [favorite.endLat, favorite.endLng];
+
+      const waypointsList = favorite.waypoints || [];
+
+      const routeData = await RouteService.calculateRoute(
+        startCoords,
+        endCoords,
+        waypointsList.map(wp => wp.coordinates)
+      );
+
+      onRouteCalculated(
+        startCoords,
+        endCoords,
+        waypointsList,
+        routeData.routes,
+        0
+      );
+
+      setHasCalculatedRoute(true);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : 'An unknown error occurred'
+      );
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setShowStartSuggestions(false);
@@ -271,6 +316,11 @@ const SearchComponent = ({
         0
       );
 
+      // Update location names in parent
+      if (onLocationNamesChange) {
+        onLocationNamesChange(startLocation.name, endLocation.name);
+      }
+
       setHasCalculatedRoute(true);
     } catch (err) {
       setError(
@@ -286,6 +336,8 @@ const SearchComponent = ({
       <h2 className="text-lg font-medium text-blue-900 mb-4">
         {t('search.title')}
       </h2>
+
+      <FavoritesSection onFavoriteSelect={handleFavoriteSelect} />
 
       <form onSubmit={handleSubmit} className="space-y-5 pb-12 md:pb-4">
         <LocationInput

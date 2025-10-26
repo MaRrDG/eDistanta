@@ -35,6 +35,7 @@ export interface SearchComponentProps {
     routes: RouteData[],
     selectedRouteIndex: number
   ) => void;
+  onLocationNamesChange?: (startName: string, endName: string) => void;
   onMobileSubmit?: () => void;
   initialStartInput?: string;
   initialEndInput?: string;

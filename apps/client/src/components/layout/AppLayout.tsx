@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from './Header';
 import { useApiHealth } from '../../hooks/useFuelPrice';
@@ -19,7 +20,9 @@ const AppLayout = ({
 }: AppLayoutProps) => {
   const { t } = useTranslation();
   const { data: isApiHealthy } = useApiHealth();
-  
+  const [startName, setStartName] = useState(initialStartInput);
+  const [endName, setEndName] = useState(initialEndInput);
+
   const {
     // Route state
     startLocation,
@@ -27,14 +30,14 @@ const AppLayout = ({
     waypoints,
     routes,
     selectedRouteIndex,
-    
+
     // UI state
     isSidebarOpen,
     setIsSidebarOpen,
     isDetailsExpanded,
     setIsDetailsExpanded,
     safeAreaBottom,
-    
+
     // Modal state
     isTermsModalOpen,
     setIsTermsModalOpen,
@@ -43,11 +46,11 @@ const AppLayout = ({
     isTollModalOpen,
     setIsTollModalOpen,
     tollModalData,
-    
+
     // Computed values
     distance,
     duration,
-    
+
     // Actions
     handleRouteCalculated,
     handleRouteSelected,
@@ -74,7 +77,14 @@ const AppLayout = ({
         >
           <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent
-              onRouteCalculated={handleRouteCalculated}
+              onRouteCalculated={(start, end, waypointsList, routesData, selectedIdx) => {
+                // Get location names from waypoints if available, otherwise use initial values
+                handleRouteCalculated(start, end, waypointsList, routesData, selectedIdx);
+              }}
+              onLocationNamesChange={(start, end) => {
+                setStartName(start);
+                setEndName(end);
+              }}
               onMobileSubmit={() => {
                 if (window.innerWidth < 768) {
                   setIsSidebarOpen(false);
@@ -90,6 +100,10 @@ const AppLayout = ({
                   selectedRouteIndex={selectedRouteIndex}
                   onRouteSelected={handleRouteSelected}
                   waypoints={waypoints}
+                  startLocation={startLocation}
+                  endLocation={endLocation}
+                  startName={startName}
+                  endName={endName}
                   onTollModalOpen={handleTollModalOpen}
                 />
               )}
@@ -174,6 +188,10 @@ const AppLayout = ({
               selectedRouteIndex={selectedRouteIndex}
               onRouteSelected={handleRouteSelected}
               waypoints={waypoints}
+              startLocation={startLocation}
+              endLocation={endLocation}
+              startName={startName}
+              endName={endName}
               isDetailsExpanded={isDetailsExpanded}
               setIsDetailsExpanded={setIsDetailsExpanded}
               setIsSidebarOpen={setIsSidebarOpen}

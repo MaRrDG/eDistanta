@@ -7,15 +7,19 @@ interface MobileRoutePanelProps {
   selectedRouteIndex: number;
   onRouteSelected: (index: number) => void;
   waypoints: Waypoint[];
+  startLocation?: [number, number] | null;
+  endLocation?: [number, number] | null;
+  startName?: string;
+  endName?: string;
   isDetailsExpanded: boolean;
   setIsDetailsExpanded: (expanded: boolean) => void;
   setIsSidebarOpen: (open: boolean) => void;
   safeAreaBottom: number;
   distance: number | null;
   duration: number | null;
-  onTollModalOpen?: (tollSummary: { 
-    bridges: any[]; 
-    totalRON: number; 
+  onTollModalOpen?: (tollSummary: {
+    bridges: any[];
+    totalRON: number;
     totalEUR: number;
     vehicleType: 'car' | 'bus' | 'minibus';
   }) => void;
@@ -26,6 +30,10 @@ const MobileRoutePanel = ({
   selectedRouteIndex,
   onRouteSelected,
   waypoints,
+  startLocation,
+  endLocation,
+  startName,
+  endName,
   isDetailsExpanded,
   setIsDetailsExpanded,
   setIsSidebarOpen,
@@ -134,6 +142,10 @@ const MobileRoutePanel = ({
           selectedRouteIndex={selectedRouteIndex}
           onRouteSelected={onRouteSelected}
           waypoints={waypoints}
+          startLocation={startLocation}
+          endLocation={endLocation}
+          startName={startName}
+          endName={endName}
           onTollModalOpen={onTollModalOpen}
         />
       </div>

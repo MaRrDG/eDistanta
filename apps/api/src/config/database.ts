@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { FuelPrice } from '../entities/FuelPrice';
+import { UserFavorite } from '../entities/UserFavorite';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,7 +13,7 @@ export const AppDataSource = new DataSource({
   ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   synchronize: process.env.NODE_ENV === 'development', // Only in development
   logging: process.env.NODE_ENV === 'development',
-  entities: [FuelPrice],
+  entities: [FuelPrice, UserFavorite],
   migrations: ['src/migrations/*.ts'],
   subscribers: ['src/subscribers/*.ts'],
   extra: {
@@ -26,6 +27,9 @@ export const initializeDatabase = async (): Promise<void> => {
   try {
     await AppDataSource.initialize();
     console.info('Database connection initialized successfully');
+
+    // Enable UUID extension for PostgreSQL
+    
 
     // Run migrations if in production
     if (process.env.NODE_ENV === 'production') {

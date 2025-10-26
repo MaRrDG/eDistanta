@@ -9,11 +9,6 @@ COPY apps/client/package.json ./apps/client/
 COPY apps/api/package.json ./apps/api/
 RUN npm ci
 
-# API production dependencies
-FROM base AS api-deps
-COPY apps/api/package.json ./
-RUN npm install --omit=dev
-
 # Build image
 FROM deps AS builder
 COPY . .
@@ -32,16 +27,24 @@ RUN adduser --system --uid 1001 appuser
 COPY --from=builder /app/apps/client/dist ./client/dist
 COPY --from=builder /app/apps/api/dist ./api/dist
 COPY --from=builder /app/apps/api/package.json ./api/
-COPY --from=api-deps /app/node_modules ./api/node_modules
+
+# Copy node_modules (în monorepo sunt de obicei în root)
+COPY --from=builder /app/node_modules ./node_modules
 
 # Create logs directory for API
 RUN mkdir -p api/logs && chown -R appuser:nodejs api/logs
 
-# Create startup script
+# Create startup script with argument support
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'serve -s client/dist -l 3002 &' >> /app/start.sh && \
-    echo 'cd api && NODE_ENV=production PORT=9001 node dist/index.js &' >> /app/start.sh && \
-    echo 'wait' >> /app/start.sh && \
+    echo 'if [ "$1" = "api" ]; then' >> /app/start.sh && \
+    echo '  cd /app/api && NODE_PATH=/app/node_modules NODE_ENV=production PORT=9001 node dist/index.js' >> /app/start.sh && \
+    echo 'elif [ "$1" = "web" ]; then' >> /app/start.sh && \
+    echo '  serve -s /app/client/dist -l 3002' >> /app/start.sh && \
+    echo 'else' >> /app/start.sh && \
+    echo '  serve -s /app/client/dist -l 3002 &' >> /app/start.sh && \
+    echo '  cd /app/api && NODE_PATH=/app/node_modules NODE_ENV=production PORT=9001 node dist/index.js &' >> /app/start.sh && \
+    echo '  wait' >> /app/start.sh && \
+    echo 'fi' >> /app/start.sh && \
     chmod +x /app/start.sh
 
 # Switch to non-root user
@@ -53,6 +56,7 @@ EXPOSE 3002 9001
 # Environment variables for API (runtime)
 ENV NODE_ENV=production
 ENV PORT=9001
+ENV NODE_PATH=/app/node_modules
 
 # Health check for both services
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
@@ -60,4 +64,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
       node -e "require('http').get('http://localhost:9001/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
 
 # Start both applications
-CMD ["/app/start.sh"] 
+CMD ["/app/start.sh"]
