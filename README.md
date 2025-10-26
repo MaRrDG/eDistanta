@@ -22,9 +22,12 @@ travel decisions.
   Romanian locations
 - **Multiple Route Options**: View and compare alternative routes between destinations
 - **Multi-Stop Routes**: Add multiple waypoints between start and destination
+- **Favorite Routes**: Save your frequently used routes for quick access with optional custom names
+- **Browser Fingerprint Authentication**: Anonymous favorites system without requiring user accounts
 - **Detailed Route Information**: Get accurate distance and estimated travel time
 - **Fuel Consumption Estimates**: Calculate fuel usage and CO₂ emissions based on vehicle type
 - **Interactive Map**: Visualize routes using OpenStreetMap integration
+- **Bridge Toll Information**: Automatic detection and cost calculation for toll bridges on routes
 
 ### Fuel Price Tracking
 
@@ -57,6 +60,7 @@ travel decisions.
 - **Scraping**: Axios and Cheerio for web scraping
 - **Scheduling**: Node-cron for automated tasks
 - **Security**: Helmet, CORS, and rate limiting
+- **Logging**: Winston for structured logging with JSON format in production
 
 ### Development
 
@@ -68,10 +72,55 @@ travel decisions.
 
 ### Prerequisites
 
+#### Option 1: Local Development
 - Node.js 18 or higher
 - npm 10 or higher
+- PostgreSQL 16 or higher
+
+#### Option 2: Docker (Recommended)
+- Docker 20.10 or higher
+- Docker Compose 2.0 or higher
 
 ### Installation
+
+#### Option A: Using Docker Compose (Recommended)
+
+Docker Compose provides the easiest way to get started with eDistanta, handling all dependencies automatically.
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/yourusername/eDistanta.git
+cd eDistanta
+```
+
+2. Create environment file:
+
+```sh
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+3. Start the application with Docker Compose:
+
+```sh
+# Start all services (API + Web)
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+The application will be available at:
+- **Frontend**: http://localhost:3002
+- **API**: http://localhost:9001
+
+**Note**: The Docker setup includes Loki integration for centralized logging. Make sure Loki is running on `localhost:3100` or adjust the configuration in `docker-compose.yml`.
+
+#### Option B: Local Development Setup
 
 1. Clone the repository:
 
@@ -141,11 +190,21 @@ eDistanta/
 
 The application provides a comprehensive RESTful API for accessing fuel price data:
 
-- **GET** `/api/fuel-prices` - Get all fuel prices with filtering and pagination
-- **GET** `/api/fuel-prices/latest` - Get latest prices for each station
-- **GET** `/api/fuel-prices/station/:name` - Get prices for specific station
-- **POST** `/api/fuel-prices/scrape` - Trigger manual price scraping
-- **GET** `/api/fuel-prices/scrape/status` - Get scraping status
+- **GET** `/api/v1/fuel-prices` - Get all fuel prices with filtering and pagination
+- **GET** `/api/v1/fuel-prices/latest` - Get latest prices for each station
+- **GET** `/api/v1/fuel-prices/station/:name` - Get prices for specific station
+- **POST** `/api/v1/fuel-prices/scrape` - Trigger manual price scraping
+- **GET** `/api/v1/fuel-prices/scrape/status` - Get scraping status
+
+### User Favorites API
+
+Anonymous route favorites management using browser fingerprinting:
+
+- **GET** `/api/v1/favorites` - Get all favorite routes for the current browser
+- **GET** `/api/v1/favorites/:id` - Get a specific favorite route by ID
+- **POST** `/api/v1/favorites` - Create a new favorite route
+- **PUT** `/api/v1/favorites/:id` - Update a favorite route (edit name)
+- **DELETE** `/api/v1/favorites/:id` - Delete a favorite route
 
 For detailed API documentation, see [`apps/api/README.md`](apps/api/README.md).
 
@@ -157,14 +216,20 @@ Here are the planned features and improvements for future releases:
    between start and destination
 2. ✅ **Real-Time Fuel Price Integration** [Implemented]: Automated scraping of current fuel prices
    from Romanian gas stations
-3. **Enhanced Fuel Price Sources**: Add more fuel price websites and improve data accuracy
-4. **Route Optimization**: Integrate fuel prices with route planning for cost-effective travel
-5. **Public API**: Create a public API allowing developers to access route information and
+3. ✅ **Favorite Routes System** [Implemented]: Anonymous route saving using browser fingerprinting
+   with custom naming and quick access
+4. ✅ **Bridge Toll Detection** [Implemented]: Automatic detection and cost calculation for toll
+   bridges on routes
+5. ✅ **Structured Logging** [Implemented]: Winston-based logging with JSON format for production and
+   Grafana integration
+6. **Enhanced Fuel Price Sources**: Add more fuel price websites and improve data accuracy
+7. **Route Optimization**: Integrate fuel prices with route planning for cost-effective travel
+8. **Public API**: Create a public API allowing developers to access route information and
    calculations
-6. **Mobile App**: Develop native mobile applications for iOS and Android
-7. **Monetization**: Integrate Google Ads for sustainable project development
-8. ✅ **Expanded Location Coverage** [Implemented]: Ensure all localities in Romania and Moldova are
-   available in the application
+9. **Mobile App**: Develop native mobile applications for iOS and Android
+10. **Monetization**: Integrate Google Ads for sustainable project development
+11. ✅ **Expanded Location Coverage** [Implemented]: Ensure all localities in Romania and Moldova are
+    available in the application
 
 ## Contributing
 
