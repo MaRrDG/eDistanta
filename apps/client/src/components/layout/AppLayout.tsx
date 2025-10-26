@@ -1,15 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import MapComponent from './MapComponent';
-import SearchComponent from './SearchComponent';
-import RouteDetails from './RouteDetails';
-import TermsAndConditionsModal from './TermsAndConditionsModal';
-import ProjectInfoModal from './ProjectInfoModal';
-import TollInfoModal from './TollInfoModal';
 import Header from './Header';
-import ApiStatusBanner from './ApiStatusBanner';
-import MobileRoutePanel from './MobileRoutePanel';
-import { useApiHealth } from '../hooks/useFuelPrice';
-import { useAppState } from '../contexts/AppStateContext';
+import { useApiHealth } from '../../hooks/useFuelPrice';
+import { ApiStatusBanner } from '../common';
+import { SearchComponent } from '../features/search';
+import { MobileRoutePanel, RouteDetails } from '../features/route';
+import { MapComponent } from '../features/map';
+import { ProjectInfoModal, TermsAndConditionsModal, TollInfoModal } from '../modals';
+import { useAppState } from '../../contexts/AppStateContext';
 
 interface AppLayoutProps {
   initialStartInput?: string;

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import RouteDetails from './RouteDetails';
-import type { RouteData, Waypoint } from '../types/route';
+import type { RouteData, Waypoint } from '../../../types/route';
 
 interface MobileRoutePanelProps {
   routes: RouteData[];

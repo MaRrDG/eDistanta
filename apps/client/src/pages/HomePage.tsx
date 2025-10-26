@@ -1,4 +1,4 @@
-import AppLayout from '../components/AppLayout';
+import { AppLayout } from '../components/layout';
 import { RouteDetailsProvider } from '../contexts/RouteDetailsContext';
 import { AppStateProvider } from '../contexts/AppStateContext';
 

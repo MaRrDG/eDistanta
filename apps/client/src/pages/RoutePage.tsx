@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import NotFoundPage from '../components/NotFoundPage';
-import RoutePageSEO from '../components/RoutePageSEO';
+import { RoutePageSEO } from '../components/features/route';
 import { parseRouteSlug } from '../data/popularRoutes';
 import { useRouteFromUrl } from '../hooks/useRouteFromUrl';
 import { RouteDetailsProvider } from '../contexts/RouteDetailsContext';
 import { AppStateProvider } from '../contexts/AppStateContext';
-import AppLayout from '../components/AppLayout';
+import { AppLayout } from '../components/layout';
 
 const RoutePage = () => {
   const { routeSlug } = useParams<{ routeSlug: string }>();

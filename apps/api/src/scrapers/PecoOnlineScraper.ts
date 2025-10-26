@@ -13,8 +13,6 @@ export class PecoOnlineScraper {
           try {
             const prices = await this.scrapeFuelTypeForCity(fuelType, city);
 
-            console.log('prices', prices);
-
             prices.forEach(price => {
               const stationKey = `${price.stationName}_${fuelType}`;
               if (!stationMap.has(stationKey)) {

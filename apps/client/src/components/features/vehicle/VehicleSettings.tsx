@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useRouteDetails, VEHICLE_TYPES, FUEL_TYPES, DEFAULT_FUEL_CONSUMPTION } from '../contexts/RouteDetailsContext';
+import { useRouteDetails, VEHICLE_TYPES, FUEL_TYPES, DEFAULT_FUEL_CONSUMPTION } from '../../../contexts/RouteDetailsContext';
 
 const getPriceAsNumber = (price: number | string | undefined): number => {
   if (typeof price === 'number') return price;

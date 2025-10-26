@@ -1,15 +1,7 @@
-export interface RouteData {
-  route: [number, number][];
-  distance: number;
-  duration: number;
-  index: number;
-}
+import type { Waypoint, RouteData } from './location';
 
-export interface Waypoint {
-  id: string;
-  name: string;
-  coordinates: [number, number];
-}
+// Re-export for convenience
+export type { Waypoint, RouteData };
 
 export interface AppLayoutProps {
   startLocation: [number, number] | null;

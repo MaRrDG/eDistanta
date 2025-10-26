@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
-import { TollService, type VehicleType as TollVehicleType } from '../services/tollService';
-import { useRouteDetails } from '../contexts/RouteDetailsContext';
+import { TollService, type VehicleType as TollVehicleType } from '../../../services/tollService';
+import { useRouteDetails } from '../../../contexts/RouteDetailsContext';
 import RouteAlternatives from './RouteAlternatives';
-import VehicleSettings from './VehicleSettings';
+import VehicleSettings from '../vehicle/VehicleSettings';
 import RouteMetrics from './RouteMetrics';
-import TollInfo from './TollInfo';
-import AlertBanner from './AlertBanner';
+import { AlertBanner } from '../../common';
+import { TollInfo } from '../toll';
 
 interface RouteData {
   route: [number, number][];

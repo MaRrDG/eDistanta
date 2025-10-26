@@ -122,27 +122,6 @@ export class TollService {
   }
 
   /**
-   * Find the minimum distance from a point to any segment of the route
-   * This is more accurate than just checking individual points
-   */
-  private static minDistanceToRoute(
-    point: [number, number],
-    routeCoordinates: [number, number][]
-  ): number {
-    let minDistance = Infinity;
-
-    // Check distance to each route point
-    for (const routePoint of routeCoordinates) {
-      const distance = this.calculateDistance(point, routePoint);
-      if (distance < minDistance) {
-        minDistance = distance;
-      }
-    }
-
-    return minDistance;
-  }
-
-  /**
    * Check if a route crosses from one side of a bridge to the other
    * This helps prevent false positives when a route passes near but doesn't cross the bridge
    */
@@ -185,12 +164,9 @@ export class TollService {
 
       // Early exit if we found both sides
       if (foundNorthSide && foundSouthSide) {
-        console.log(`  ✓ Route crosses both sides (N: ${minDistanceNorth.toFixed(3)}km, S: ${minDistanceSouth.toFixed(3)}km)`);
         return true;
       }
     }
-
-    console.log(`  ✗ Crossing check failed - North: ${minDistanceNorth.toFixed(3)}km (${foundNorthSide ? '✓' : '✗'}), South: ${minDistanceSouth.toFixed(3)}km (${foundSouthSide ? '✓' : '✗'}), threshold: ${sideDetectionRadius.toFixed(1)}km`);
 
     // Route crosses the bridge if it passes near both sides
     return foundNorthSide && foundSouthSide;
@@ -202,8 +178,6 @@ export class TollService {
    */
   static detectTollBridges(routeCoordinates: [number, number][]): TollBridge[] {
     const detectedBridges: TollBridge[] = [];
-
-    console.log(`🔍 Checking ${routeCoordinates.length} route points for toll bridges...`);
 
     for (const bridge of ROMANIAN_TOLL_BRIDGES) {
       const detectionRadius = bridge.detectionRadius || 0.5; // Default 500m radius
@@ -218,10 +192,6 @@ export class TollService {
         }
       }
 
-      console.log(
-        `📍 ${bridge.name}: closest point at ${minDistanceFound.toFixed(3)}km (threshold: ${detectionRadius}km)`
-      );
-
       // Check if the route is within detection radius
       const isNearBridge = minDistanceFound <= detectionRadius;
 
@@ -231,20 +201,16 @@ export class TollService {
         if (bridge.northSide && bridge.southSide) {
           const crossesBridge = this.detectsBridgeCrossing(routeCoordinates, bridge);
           if (crossesBridge) {
-            console.log(`✅ ${bridge.name} detected (crosses both sides)`);
             detectedBridges.push(bridge);
           } else {
-            console.log(`⚠️ ${bridge.name} is nearby but route doesn't cross both sides`);
           }
         } else {
           // No crossing data available, trust the proximity check
-          console.log(`✅ ${bridge.name} detected (proximity only)`);
           detectedBridges.push(bridge);
         }
       }
     }
 
-    console.log(`🎯 Total bridges detected: ${detectedBridges.length}`);
     return detectedBridges;
   }
 

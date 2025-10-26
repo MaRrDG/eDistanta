@@ -4,7 +4,7 @@ import {
   getRouteTitle, 
   getRouteDescription, 
   getRouteKeywords
-} from '../data/popularRoutes';
+} from '../../../data/popularRoutes';
 
 interface RoutePageSEOProps {
   fromCity: string;

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import LanguageSelector from './LanguageSelector';
+import { LanguageSelector } from '../common';
 
 interface HeaderProps {
   setIsInfoModalOpen: (isInfoModalOpen: boolean) => void;

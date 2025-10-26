@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { FormEvent } from 'react';
-import type { SearchComponentProps, LocationResult } from '../types/location';
-import { useLocationSearch } from '../hooks/useLocationSearch';
-import { useWaypoints } from '../hooks/useWaypoints';
-import { RouteService } from '../services/routeService';
+import type { SearchComponentProps, LocationResult } from '../../../types/location';
+import { useLocationSearch } from '../../../hooks/useLocationSearch';
+import { useWaypoints } from '../../../hooks/useWaypoints';
+import { RouteService } from '../../../services/routeService';
 import LocationInput from './LocationInput';
 import WaypointInput from './WaypointInput';
 
@@ -180,7 +180,6 @@ const SearchComponent = ({
       setStartInput(location.name);
       setShowStartSuggestions(false);
       setHasStartSelection(true);
-      console.log('hasStartSelection', hasStartSelection);
     } else if (type === 'end') {
       setEndInput(location.name);
       setHasRouteChanges(true);

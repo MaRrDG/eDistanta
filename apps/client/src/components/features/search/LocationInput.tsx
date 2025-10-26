@@ -1,6 +1,6 @@
 import { useRef, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { LocationResult } from '../types/location';
+import type { LocationResult } from '../../../types/location';
 
 interface LocationInputProps {
   id: string;

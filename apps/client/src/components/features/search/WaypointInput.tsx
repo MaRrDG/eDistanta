@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import type { Waypoint, LocationResult } from '../types/location';
+import type { Waypoint, LocationResult } from '../../../types/location';
 
 interface WaypointInputProps {
   waypoint: Waypoint;
