@@ -60,6 +60,7 @@ const Header = ({
             setIsDetailsExpanded(false);
           }}
           className="md:hidden bg-blue-50 hover:bg-blue-100 p-2 rounded-full text-blue-600"
+          aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

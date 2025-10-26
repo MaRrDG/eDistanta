@@ -25,7 +25,7 @@ const NotFoundPage = () => {
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             {t('404.title', 'Pagina nu a fost găsită')}
           </h2>
-          <p className="text-gray-600 text-lg mb-8">
+          <p className="text-gray-800 text-lg mb-8">
             {t('404.description', 'Ne pare rău, dar pagina pe care o căutați nu există sau a fost mutată.')}
           </p>
         </div>
@@ -73,7 +73,7 @@ const NotFoundPage = () => {
 
         {/* Helpful Links */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-500 text-sm mb-4">
+          <p className="text-gray-700 text-sm mb-4">
             {t('404.helpfulLinks', 'Poate te interesează:')}
           </p>
           <div className="flex justify-center">
@@ -88,7 +88,7 @@ const NotFoundPage = () => {
 
         {/* Contact Info */}
         <div className="mt-8 text-center">
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-700 text-sm">
             {t('404.contact', 'Dacă problema persistă, vă rugăm să ne contactați.')}
           </p>
         </div>

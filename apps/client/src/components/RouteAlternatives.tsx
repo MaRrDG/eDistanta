@@ -24,7 +24,7 @@ const RouteAlternatives = ({ routes, selectedRouteIndex, onRouteSelected }: Rout
 
   return (
     <div className="mb-4 px-4 md:px-0">
-      <p className="text-sm text-slate-600 mb-2">
+      <p className="text-sm text-slate-800 mb-2">
         {t('routeDetails.alternatives')}
       </p>
       <div className="flex flex-wrap gap-2">
@@ -55,10 +55,10 @@ const RouteAlternatives = ({ routes, selectedRouteIndex, onRouteSelected }: Rout
               <span className="font-medium">
                 {t('routeDetails.route')} {index + 1}
               </span>
-              <span className="mx-1.5 text-slate-400">•</span>
-              <span className="text-slate-600">{routeDuration}</span>
-              <span className="mx-1.5 text-slate-400">•</span>
-              <span className="text-slate-600">
+              <span className="mx-1.5 text-slate-600">•</span>
+              <span className="text-slate-800">{routeDuration}</span>
+              <span className="mx-1.5 text-slate-600">•</span>
+              <span className="text-slate-800">
                 {route.distance.toFixed(1)} {t('units.km')}
               </span>
             </button>

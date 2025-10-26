@@ -113,7 +113,7 @@ const AppLayout = ({
 
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 p-3 rounded-full text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="md:hidden absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 p-3 rounded-full text-white min-w-[48px] min-h-[48px] flex items-center justify-center z-20"
             aria-label="Close sidebar"
           >
             <svg

@@ -44,14 +44,14 @@ const VehicleSettings = () => {
   if (!isApiAvailable) {
     return (
       <div className="mb-4 px-4 md:px-0">
-        <p className="text-sm text-slate-600 mb-2">
+        <p className="text-sm text-slate-800 mb-2">
           {t('routeDetails.basicVehicleSettings')}
         </p>
         <div className="grid grid-cols-1 gap-3 mb-3">
           <div>
             <label
               htmlFor="vehicleTypeBasic"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
             >
               {t('routeDetails.vehicleType')}
             </label>
@@ -73,7 +73,7 @@ const VehicleSettings = () => {
           <div>
             <label
               htmlFor="fuelTypeBasic"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
             >
               {t('routeDetails.fuelType')}
             </label>
@@ -93,7 +93,7 @@ const VehicleSettings = () => {
           <div>
             <label
               htmlFor="fuelConsumptionBasic"
-              className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+              className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
             >
               {t('routeDetails.consumption')}{' '}
               <span className="text-[9px]">(L/100km)</span>
@@ -116,14 +116,14 @@ const VehicleSettings = () => {
 
   return (
     <div className="mb-4 px-4 md:px-0">
-      <p className="text-sm text-slate-600 mb-2">
+      <p className="text-sm text-slate-800 mb-2">
         {t('routeDetails.vehicleSettings')}
       </p>
       <div className="grid grid-cols-1 gap-3 mb-3">
         <div>
           <label
             htmlFor="vehicleType"
-            className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+            className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
           >
             {t('routeDetails.vehicleType')}
           </label>
@@ -143,7 +143,7 @@ const VehicleSettings = () => {
         <div>
           <label
             htmlFor="fuelStation"
-            className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+            className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
           >
             {t('routeDetails.fuelStation')}
           </label>
@@ -177,7 +177,7 @@ const VehicleSettings = () => {
         <div>
           <label
             htmlFor="fuelType"
-            className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+            className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
           >
             {t('routeDetails.fuelType')}
           </label>
@@ -197,7 +197,7 @@ const VehicleSettings = () => {
         <div>
           <label
             htmlFor="fuelConsumption"
-            className="block text-xs text-slate-500 mb-1 min-h-[1.25rem]"
+            className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
           >
             {t('routeDetails.consumption')}{' '}
             <span className="text-[9px]">(L/100km)</span>
@@ -218,7 +218,7 @@ const VehicleSettings = () => {
       {selectedStation && (
         <div className="mt-3 p-3 bg-blue-50 rounded-md">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-600">
+            <span className="text-sm text-slate-800">
               {t('routeDetails.currentPrice')} ({t(`fuelTypes.${fuelType}`)}):
             </span>
             <span className="text-sm font-medium text-slate-900">
@@ -232,7 +232,7 @@ const VehicleSettings = () => {
             </span>
           </div>
           {fuelPriceData?.scrapedAt && (
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-xs text-slate-700 mt-1">
               {t('routeDetails.lastUpdated')}:{' '}
               {new Date(fuelPriceData.scrapedAt).toLocaleString()}
             </div>

@@ -202,7 +202,7 @@ const MapComponent = ({
   };
 
   return (
-    <div className="w-full h-full relative overflow-hidden">
+    <div className="w-full h-full relative overflow-hidden" role="main" aria-label={t('map.interactiveMap')}>
       <MapContainer
         center={ROMANIA_CENTER}
         zoom={DEFAULT_ZOOM}
@@ -278,11 +278,12 @@ const MapComponent = ({
       {routes && routes.length > 0 && (
         <button
           onClick={fitMapToRoute}
-          className="absolute top-20 right-2 z-[1] bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-lg px-3 py-2 flex items-center transition-all duration-200 hover:shadow-xl sm:space-x-2"
+          className="absolute top-20 right-2 z-[1] bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-lg px-3 py-2 flex items-center transition-all duration-200 hover:shadow-xl sm:space-x-2 min-w-[44px] min-h-[44px]"
           title={t('map.fitToRoute')}
+          aria-label={t('map.fitToRoute')}
         >
           <svg
-            className="w-5 h-5 text-gray-600"
+            className="w-5 h-5 text-gray-800"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -295,20 +296,25 @@ const MapComponent = ({
               d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
             />
           </svg>
-          <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+          <span className="text-sm font-medium text-gray-900 hidden sm:inline">
             {t('map.fitToRoute')}
           </span>
         </button>
       )}
 
       {isLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-20">
-          <div className="bg-white p-4 rounded-lg shadow-lg flex items-center">
+        <div
+          className="absolute inset-0 bg-white bg-opacity-60 flex items-center justify-center z-20"
+          aria-live="polite"
+          aria-label={t('map.loadingRoute')}
+        >
+          <div className="bg-white p-4 rounded-lg shadow-lg flex items-center" role="status">
             <svg
               className="animate-spin h-6 w-6 text-blue-600 mr-3"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <circle
                 className="opacity-25"

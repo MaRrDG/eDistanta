@@ -24,7 +24,7 @@ const TermsAndConditionsModal = ({
           </h2>
           <button
             onClick={() => setIsTermsModalOpen(false)}
-            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
           >
             <svg
               className="w-6 h-6"
@@ -64,7 +64,7 @@ const TermsAndConditionsModal = ({
               </ul>
             </div>
 
-            <p className="text-xs text-gray-500">{t('terms.lastUpdated')}</p>
+            <p className="text-xs text-gray-700">{t('terms.lastUpdated')}</p>
           </div>
         </div>
         <div className="p-6 pb-8 sm:pb-6 border-t border-gray-200 flex justify-end">

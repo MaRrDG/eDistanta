@@ -87,7 +87,7 @@ const MobileRoutePanel = ({
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-900">
               {duration && Math.floor(duration / 60)}
               {t('units.hour')} {duration && Math.round(duration % 60)}
               {t('units.min')}
@@ -107,7 +107,7 @@ const MobileRoutePanel = ({
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-900">
               {distance && distance.toFixed(1)} {t('units.km')}
             </span>
           </div>

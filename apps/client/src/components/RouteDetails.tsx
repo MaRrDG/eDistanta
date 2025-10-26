@@ -60,7 +60,7 @@ const RouteDetails = ({
       <div className="w-full md:mt-6 md:pt-5 md:border-t md:border-blue-100">
         <div className="px-4 py-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">{t('common.loading')}</p>
+          <p className="text-slate-800">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -72,14 +72,14 @@ const RouteDetails = ({
 
   // Calculate toll bridges for the selected route
   const tollSummary = useMemo(() => {
-    if (!selectedRoute?.route) return { 
-      totalRON: 0, 
-      totalEUR: 0, 
-      bridges: [], 
-      hasTolls: false, 
+    if (!selectedRoute?.route) return {
+      totalRON: 0,
+      totalEUR: 0,
+      bridges: [],
+      hasTolls: false,
       vehicleType: vehicleType as TollVehicleType
     };
-    
+
     const detectedBridges = TollService.detectTollBridges(selectedRoute.route);
     return TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
   }, [selectedRoute, vehicleType]);
@@ -114,14 +114,14 @@ const RouteDetails = ({
       {/* Waypoints summary */}
       {waypoints.length > 0 && (
         <div className="mb-4 px-4 md:px-0">
-          <p className="text-sm text-slate-600 mb-2">
+          <p className="text-sm text-slate-800 mb-2">
             {t('routeDetails.waypoints')}
           </p>
           <div className="space-y-2">
             {waypoints.map((waypoint, index) => (
               <div key={waypoint.id} className="flex items-center text-sm">
                 <span className="w-3 h-3 rounded-full mr-2 bg-orange-500"></span>
-                <span className="text-slate-700">
+                <span className="text-slate-900">
                   {t('search.waypoint')} {index + 1}: {waypoint.name}
                 </span>
               </div>
@@ -151,7 +151,7 @@ const RouteDetails = ({
       />
 
       {/* Desktop footnote */}
-      <div className="hidden md:block mt-4 px-2 text-xs text-slate-500">
+      <div className="hidden md:block mt-4 px-2 text-xs text-slate-700">
         <p>{t('routeDetails.estimateNote')}</p>
       </div>
     </div>

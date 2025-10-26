@@ -22,7 +22,7 @@ const ProjectInfoModal = ({ setIsInfoModalOpen }: ProjectInfoModalProps) => {
           </h2>
           <button
             onClick={() => setIsInfoModalOpen(false)}
-            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
           >
             <svg
               className="w-6 h-6"
@@ -67,7 +67,7 @@ const ProjectInfoModal = ({ setIsInfoModalOpen }: ProjectInfoModalProps) => {
               </div>
             </div>
 
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-800">
               <h4 className="font-medium text-gray-800 mb-2">
                 {t('info.featuresTitle')}
               </h4>

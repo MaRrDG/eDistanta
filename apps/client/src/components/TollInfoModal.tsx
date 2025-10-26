@@ -59,7 +59,7 @@ const TollInfoModal = ({ setIsTollModalOpen, bridges, totalRON, totalEUR, vehicl
           </h2>
           <button
             onClick={() => setIsTollModalOpen(false)}
-            className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
           >
             <svg
               className="w-6 h-6"
@@ -111,7 +111,7 @@ const TollInfoModal = ({ setIsTollModalOpen, bridges, totalRON, totalEUR, vehicl
                         <h4 className="font-medium text-gray-900 text-sm">
                           {bridge.nameRo}
                         </h4>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-800 mt-1">
                           {bridge.descriptionRo}
                         </p>
                         {bridge.highway && (
@@ -125,11 +125,11 @@ const TollInfoModal = ({ setIsTollModalOpen, bridges, totalRON, totalEUR, vehicl
                           {getBridgeCost(bridge, 'RON')} RON
                         </span>
                         {getBridgeCost(bridge, 'EUR') > 0 && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-700">
                             (~{getBridgeCost(bridge, 'EUR')} EUR)
                           </p>
                         )}
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-700">
                           {t('tollModal.perPass')}
                         </p>
                         {bridge.crossesBorder && (
@@ -172,7 +172,7 @@ const TollInfoModal = ({ setIsTollModalOpen, bridges, totalRON, totalEUR, vehicl
               </div>
             </div>
 
-            <p className="text-xs text-gray-500">{t('tollModal.disclaimer')}</p>
+            <p className="text-xs text-gray-700">{t('tollModal.disclaimer')}</p>
           </div>
         </div>
         <div className="p-6 pb-8 sm:pb-6 border-t border-gray-200 flex justify-end">
