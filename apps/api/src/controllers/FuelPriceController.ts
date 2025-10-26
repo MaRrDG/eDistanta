@@ -4,12 +4,14 @@ import { FuelPrice } from '../entities/FuelPrice';
 import { scraperService } from '../services/ScraperService';
 import { FuelPriceQueryService } from '../services/FuelPriceQueryService';
 import { FuelPriceQuery, ApiResponse } from '../types/scraper';
+import { logError, logInfo, logDebug } from '../config/logger';
 
 export class FuelPriceController {
   private fuelPriceRepository = AppDataSource.getRepository(FuelPrice);
   private queryService = new FuelPriceQueryService(this.fuelPriceRepository);
 
   public getFuelPrices = async (req: Request, res: Response): Promise<void> => {
+    const requestId = req.headers['x-request-id'];
     try {
       const query: FuelPriceQuery = {
         page: req.query.page ? Number(req.query.page) : undefined,
@@ -26,7 +28,14 @@ export class FuelPriceController {
         latestOnly: req.query.latestOnly === 'true',
       };
 
+      logDebug('Fetching fuel prices', { query, requestId });
+
       const result = await this.queryService.getFuelPrices(query);
+
+      logInfo('Fuel prices fetched successfully', {
+        count: result.data.length,
+        requestId,
+      });
 
       const response: ApiResponse<FuelPrice[]> = {
         success: true,
@@ -36,7 +45,11 @@ export class FuelPriceController {
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching fuel prices:', error);
+      logError('Error fetching fuel prices', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        requestId,
+      });
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error fetching fuel prices',
@@ -50,14 +63,28 @@ export class FuelPriceController {
     req: Request,
     res: Response
   ): Promise<void> => {
+    const requestId = req.headers['x-request-id'];
     try {
       const { stationName, fuelType } = req.params;
+
+      logDebug('Fetching latest fuel price by station and fuel type', {
+        stationName,
+        fuelType,
+        requestId,
+      });
 
       const fuelPrice =
         await this.queryService.getLatestFuelPriceByStationAndFuelType(
           stationName,
           fuelType
         );
+
+      logInfo('Latest fuel price fetched successfully', {
+        stationName,
+        fuelType,
+        found: !!fuelPrice,
+        requestId,
+      });
 
       const response: ApiResponse<FuelPrice | null> = {
         success: true,
@@ -67,7 +94,13 @@ export class FuelPriceController {
 
       res.json(response);
     } catch (error) {
-      console.error('Error fetching fuel prices by station:', error);
+      logError('Error fetching fuel prices by station', {
+        stationName: req.params.stationName,
+        fuelType: req.params.fuelType,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        requestId,
+      });
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error fetching fuel prices by station',
@@ -81,8 +114,18 @@ export class FuelPriceController {
     req: Request,
     res: Response
   ): Promise<void> => {
+    const requestId = req.headers['x-request-id'];
     try {
+      logInfo('Manual scraping triggered', { requestId });
+
       const result = await scraperService.manualScrape();
+
+      logInfo('Manual scraping completed', {
+        success: result.success,
+        count: result.count,
+        message: result.message,
+        requestId,
+      });
 
       const response: ApiResponse<never> = {
         success: result.success,
@@ -93,7 +136,11 @@ export class FuelPriceController {
       const statusCode = result.success ? 200 : 400;
       res.status(statusCode).json(response);
     } catch (error) {
-      console.error('Error triggering manual scraping:', error);
+      logError('Error triggering manual scraping', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        requestId,
+      });
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error triggering manual scraping',
@@ -107,7 +154,10 @@ export class FuelPriceController {
     req: Request,
     res: Response
   ): Promise<void> => {
+    const requestId = req.headers['x-request-id'];
     try {
+      logDebug('Fetching scraping status', { requestId });
+
       const status = scraperService.getScrapingStatus();
 
       const response: ApiResponse<typeof status> = {
@@ -117,7 +167,11 @@ export class FuelPriceController {
 
       res.json(response);
     } catch (error) {
-      console.error('Error getting scraping status:', error);
+      logError('Error getting scraping status', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        requestId,
+      });
       const response: ApiResponse<never> = {
         success: false,
         message: 'Error getting scraping status',

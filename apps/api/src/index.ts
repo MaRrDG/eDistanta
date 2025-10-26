@@ -11,9 +11,17 @@ import compression from 'compression';
 
 import { initializeDatabase, closeDatabase } from './config/database';
 import v1Routes from './routes/v1';
+import { logInfo, logError } from './config/logger';
+import { httpLogger, requestIdMiddleware } from './middleware/httpLogger';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Request ID middleware (for tracing requests)
+app.use(requestIdMiddleware);
+
+// HTTP request logging middleware
+app.use(httpLogger);
 
 // Security middleware
 app.use(helmet());
@@ -68,7 +76,13 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    console.error('Unhandled error:', err);
+    logError('Unhandled error:', {
+      error: err.message,
+      stack: err.stack,
+      method: req.method,
+      url: req.url,
+      requestId: req.headers['x-request-id'],
+    });
     res.status(500).json({
       success: false,
       message: 'Internal server error',
@@ -90,7 +104,7 @@ app.use('*', (req, res) => {
 
 // Graceful shutdown
 const gracefulShutdown = async (signal: string) => {
-  console.info(`Received ${signal}. Starting graceful shutdown...`);
+  logInfo(`Received ${signal}. Starting graceful shutdown...`);
 
   // Close database connection
   await closeDatabase();
@@ -106,17 +120,23 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 const startServer = async () => {
   try {
     // Initialize database
+    logInfo('Initializing database connection...');
     await initializeDatabase();
+    logInfo('Database connection established successfully');
 
     // Start Express server
     app.listen(PORT, () => {
-      console.info(`Server is running on port ${PORT}`);
-      console.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.info(`Health check: http://localhost:${PORT}/health`);
-      console.info(`API v1 endpoints: http://localhost:${PORT}/api/v1`);
+      logInfo(`Server is running on port ${PORT}`);
+      logInfo(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      logInfo(`Health check: http://localhost:${PORT}/health`);
+      logInfo(`API v1 endpoints: http://localhost:${PORT}/api/v1`);
+      logInfo('Application started successfully');
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    logError('Failed to start server:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     process.exit(1);
   }
 };
