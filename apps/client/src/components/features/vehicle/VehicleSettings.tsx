@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteDetails, VEHICLE_TYPES, FUEL_TYPES, DEFAULT_FUEL_CONSUMPTION } from '../../../contexts/RouteDetailsContext';
+import PriceHistoryModal from '../../modals/PriceHistoryModal';
 
 const getPriceAsNumber = (price: number | string | undefined): number => {
   if (typeof price === 'number') return price;
@@ -9,6 +11,7 @@ const getPriceAsNumber = (price: number | string | undefined): number => {
 
 const VehicleSettings = () => {
   const { t } = useTranslation();
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const {
     vehicleType,
     setVehicleType,
@@ -237,7 +240,28 @@ const VehicleSettings = () => {
               {new Date(fuelPriceData.scrapedAt).toLocaleString()}
             </div>
           )}
+
+          <div className="mt-2 pt-2 border-t border-blue-200 flex justify-end">
+            <button
+              onClick={() => setIsHistoryModalOpen(true)}
+              className="text-xs text-blue-700 hover:text-blue-900 font-medium flex items-center gap-1 transition-colors px-2 py-1 hover:bg-blue-100 rounded cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+              </svg>
+              {t('routeDetails.viewHistory', 'View Price History')}
+            </button>
+          </div>
         </div>
+      )}
+
+      {selectedStation && (
+        <PriceHistoryModal
+          isOpen={isHistoryModalOpen}
+          onClose={() => setIsHistoryModalOpen(false)}
+          stationName={selectedStation}
+          fuelType={fuelType}
+        />
       )}
     </div>
   );

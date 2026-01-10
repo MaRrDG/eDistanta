@@ -71,6 +71,11 @@ const enTranslations = {
     tolls: 'Tolls',
     tollBridgesDetected: 'Bridge tolls detected on this route:',
     internationalBridge: 'international',
+    viewHistory: 'View Price History',
+    historyTitle: 'Price History - Last 30 Days',
+    noHistoryData: 'No historical data available',
+    date: 'Date',
+    price: 'Price',
   },
   tollModal: {
     title: 'Bridge Toll Information',
@@ -260,6 +265,11 @@ const roTranslations = {
     tolls: 'Taxe',
     tollBridgesDetected: 'Taxe de pod detectate pe această rută:',
     internationalBridge: 'internațional',
+    viewHistory: 'Vezi Istoric Prețuri',
+    historyTitle: 'Istoric Prețuri - Ultimele 30 Zile',
+    noHistoryData: 'Nu există date istorice disponibile',
+    date: 'Dată',
+    price: 'Preț',
   },
   tollModal: {
     title: 'Informații Taxe Poduri',
@@ -272,7 +282,7 @@ const roTranslations = {
     commercialMessage: 'Promovează-ți serviciile de plată sau afacerea legată de taxe direct către mii de călători români care își planifică rutele. Devino partenerul nostru și crește-ți vizibilitatea!',
     contactButton: 'Contactează-ne',
     disclaimer: 'Prețurile afișate sunt estimative, bazate pe tarifele curente, și pot varia. Verifică întotdeauna tarifele oficiale înainte de călătorie.',
-    
+
   },
   fuelTypes: {
     'benzina-regular': 'Benzină',

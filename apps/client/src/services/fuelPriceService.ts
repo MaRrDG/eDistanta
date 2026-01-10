@@ -5,7 +5,7 @@ export interface FuelPrice {
   id: number;
   stationName: string;
   fuelType: string;
-  price: number | string; 
+  price: number | string;
   currency: string;
   location: string;
   address: string;
@@ -36,11 +36,11 @@ export class FuelPriceService {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         return false;
       }
-      
+
       const result = await response.json();
       return result.success === true;
     } catch (error) {
@@ -72,6 +72,48 @@ export class FuelPriceService {
     } catch (error) {
       console.error('Error fetching fuel price:', error);
       throw error;
+    }
+  }
+
+  static async getFuelPriceHistory(
+    stationName: string,
+    fuelType: string,
+    days: number = 30
+  ): Promise<FuelPrice[]> {
+    try {
+      const dateFrom = new Date();
+      dateFrom.setDate(dateFrom.getDate() - days);
+
+      const dateFromStr = dateFrom.toISOString().split('T')[0];
+
+      const params = new URLSearchParams({
+        stationName,
+        fuelType,
+        dateFrom: dateFromStr,
+        sortBy: 'scrapedAt',
+        sortOrder: 'ASC',
+        latestOnly: 'false',
+        limit: '1000'
+      });
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/v1/fuel-prices?${params.toString()}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: ApiResponse<FuelPrice[]> = await response.json();
+
+      if (result.success && result.data) {
+        return result.data;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching fuel price history:', error);
+      return [];
     }
   }
 

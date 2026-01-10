@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import BaseModal from '../common/BaseModal';
 
 interface TollBridge {
   id: string;
@@ -45,146 +46,118 @@ const TollInfoModal = ({ setIsTollModalOpen, bridges, totalRON, totalEUR, vehicl
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-gray-200 bg-opacity-10 flex items-center justify-center z-50 p-4 transition-all duration-300 ease-out"
-      style={{ animation: 'fadeIn 0.3s ease-out' }}
+    <BaseModal
+      isOpen={true}
+      onClose={() => setIsTollModalOpen(false)}
+      title={t('tollModal.title')}
+      footer={
+        <button
+          onClick={() => setIsTollModalOpen(false)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+        >
+          {t('common.close')}
+        </button>
+      }
+      maxWidth="max-w-2xl"
     >
-      <div
-        className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-hidden transition-all duration-300 ease-out transform my-auto"
-        style={{ animation: 'modalSlideIn 0.3s ease-out' }}
-      >
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {t('tollModal.title')}
-          </h2>
-          <button
-            onClick={() => setIsTollModalOpen(false)}
-            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="p-6 overflow-y-auto max-h-[calc(85vh-10rem)] sm:max-h-[calc(90vh-8rem)]">
-          <div className="space-y-4 text-gray-700 text-sm leading-relaxed">
-            {/* Total Cost Summary */}
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-blue-700 font-medium">
-                  {t('tollModal.totalCost')} ({t(`vehicleTypes.${vehicleType}`)}):
+      <div className="space-y-4 text-gray-700 text-sm leading-relaxed">
+        {/* Total Cost Summary */}
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-blue-700 font-medium">
+              {t('tollModal.totalCost')} ({t(`vehicleTypes.${vehicleType}`)}):
+            </span>
+            <span className="text-lg font-semibold text-blue-900">
+              {totalRON} RON
+              {totalEUR > 0 && (
+                <span className="text-sm text-blue-600 ml-1">
+                  (~{totalEUR} EUR)
                 </span>
-                <span className="text-lg font-semibold text-blue-900">
-                  {totalRON} RON
-                  {totalEUR > 0 && (
-                    <span className="text-sm text-blue-600 ml-1">
-                      (~{totalEUR} EUR)
-                    </span>
-                  )}
-                </span>
-              </div>
-              <div className="mt-2 text-sm text-blue-600">
-                {bridges.length} {bridges.length === 1 ? t('tollModal.bridge') : t('tollModal.bridges')}
-              </div>
-            </div>
-
-            {/* Bridge Details */}
-            <div>
-              <h3 className="font-medium text-gray-800 mb-3">
-                {t('tollModal.bridgeDetails')}:
-              </h3>
-              <div className="space-y-3">
-                {bridges.map((bridge) => (
-                  <div key={bridge.id} className="border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 text-sm">
-                          {bridge.nameRo}
-                        </h4>
-                        <p className="text-xs text-gray-800 mt-1">
-                          {bridge.descriptionRo}
-                        </p>
-                        {bridge.highway && (
-                          <p className="text-xs text-blue-600 mt-1">
-                            {bridge.highway}
-                          </p>
-                        )}
-                      </div>
-                      <div className="text-right ml-3">
-                        <span className="text-sm font-semibold text-gray-900">
-                          {getBridgeCost(bridge, 'RON')} RON
-                        </span>
-                        {getBridgeCost(bridge, 'EUR') > 0 && (
-                          <p className="text-xs text-gray-700">
-                            (~{getBridgeCost(bridge, 'EUR')} EUR)
-                          </p>
-                        )}
-                        <p className="text-xs text-gray-700">
-                          {t('tollModal.perPass')}
-                        </p>
-                        {bridge.crossesBorder && (
-                          <p className="text-xs text-orange-600">
-                            {t('routeDetails.internationalBridge')}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Commercial Section */}
-            <div className="bg-amber-50 p-4 rounded-lg">
-              <div className="flex items-start">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
-                  <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m0-4.344a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.102m-4.344 0" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-amber-800 mb-2">
-                    {t('tollModal.commercialTitle')}
-                  </h3>
-                  <p className="text-amber-700 mb-3">
-                    {t('tollModal.commercialMessage')}
-                  </p>
-                  <a 
-                    href="mailto:contact@edistanta.ro?subject=Partnership Opportunity - Toll Services"
-                    className="inline-flex items-center px-3 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors cursor-pointer"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    {t('tollModal.contactButton')}
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-gray-700">{t('tollModal.disclaimer')}</p>
+              )}
+            </span>
+          </div>
+          <div className="mt-2 text-sm text-blue-600">
+            {bridges.length} {bridges.length === 1 ? t('tollModal.bridge') : t('tollModal.bridges')}
           </div>
         </div>
-        <div className="p-6 pb-8 sm:pb-6 border-t border-gray-200 flex justify-end">
-          <button
-            onClick={() => setIsTollModalOpen(false)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
-          >
-            {t('common.close')}
-          </button>
+
+        {/* Bridge Details */}
+        <div>
+          <h3 className="font-medium text-gray-800 mb-3">
+            {t('tollModal.bridgeDetails')}:
+          </h3>
+          <div className="space-y-3">
+            {bridges.map((bridge) => (
+              <div key={bridge.id} className="border border-gray-200 rounded-lg p-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900 text-sm">
+                      {bridge.nameRo}
+                    </h4>
+                    <p className="text-xs text-gray-800 mt-1">
+                      {bridge.descriptionRo}
+                    </p>
+                    {bridge.highway && (
+                      <p className="text-xs text-blue-600 mt-1">
+                        {bridge.highway}
+                      </p>
+                    )}
+                  </div>
+                  <div className="text-right ml-3">
+                    <span className="text-sm font-semibold text-gray-900">
+                      {getBridgeCost(bridge, 'RON')} RON
+                    </span>
+                    {getBridgeCost(bridge, 'EUR') > 0 && (
+                      <p className="text-xs text-gray-700">
+                        (~{getBridgeCost(bridge, 'EUR')} EUR)
+                      </p>
+                    )}
+                    <p className="text-xs text-gray-700">
+                      {t('tollModal.perPass')}
+                    </p>
+                    {bridge.crossesBorder && (
+                      <p className="text-xs text-orange-600">
+                        {t('routeDetails.internationalBridge')}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Commercial Section */}
+        <div className="bg-amber-50 p-4 rounded-lg">
+          <div className="flex items-start">
+            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center mr-3 mt-0.5">
+              <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m0-4.344a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.102m-4.344 0" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-amber-800 mb-2">
+                {t('tollModal.commercialTitle')}
+              </h3>
+              <p className="text-amber-700 mb-3">
+                {t('tollModal.commercialMessage')}
+              </p>
+              <a
+                href="mailto:contact@edistanta.ro?subject=Partnership Opportunity - Toll Services"
+                className="inline-flex items-center px-3 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors cursor-pointer"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                {t('tollModal.contactButton')}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-gray-700">{t('tollModal.disclaimer')}</p>
       </div>
-    </div>
+    </BaseModal>
   );
 };
 
