@@ -175,30 +175,64 @@ export const AppStateProvider = ({
     );
 
     if (isMobile) {
-      setSafeAreaBottom(0);
+      // Try to get CSS env variable first (most reliable)
+      const computedStyle = getComputedStyle(document.documentElement);
+      const cssEnvValue = computedStyle.getPropertyValue('--safe-area-bottom');
 
-      const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
-      if (isSamsungBrowser) {
-        setSafeAreaBottom(16);
-      }
+      if (cssEnvValue && cssEnvValue !== '0px') {
+        // CSS env() is available and has a value
+        setSafeAreaBottom(parseInt(cssEnvValue, 10) || 0);
+      } else {
+        // Fallback to browser-specific detection
+        const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
+        const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) &&
+                           !(window as any).MSStream;
 
-      const handleResize = () => {
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.clientHeight;
-
-        if (windowHeight - documentHeight > 30 && isSamsungBrowser) {
-          setSafeAreaBottom(windowHeight - documentHeight + 16);
+        // Set initial safe area based on browser
+        if (isSamsungBrowser) {
+          setSafeAreaBottom(16); // Samsung Internet bottom bar
+        } else if (isIOSSafari) {
+          setSafeAreaBottom(20); // iOS Safari gesture bar
+        } else {
+          setSafeAreaBottom(0);
         }
-      };
 
-      window.addEventListener('resize', handleResize);
-      handleResize();
+        // Handle dynamic browser UI (Samsung Internet, Chrome Android)
+        const handleResize = () => {
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.clientHeight;
+          const heightDifference = windowHeight - documentHeight;
 
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
+          // Only adjust if there's a significant difference (browser UI present)
+          if (heightDifference > 30 && isSamsungBrowser) {
+            setSafeAreaBottom(heightDifference + 16);
+          } else if (isSamsungBrowser && heightDifference <= 30) {
+            // Browser UI hidden, reset to base value
+            setSafeAreaBottom(16);
+          }
+        };
+
+        // Listen to various events that might affect safe area
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+
+        // Initial calculation
+        handleResize();
+
+        return () => {
+          window.removeEventListener('resize', handleResize);
+          window.removeEventListener('orientationchange', handleResize);
+        };
+      }
     }
   }, []);
+
+  // Collapse route panel when any modal opens
+  useEffect(() => {
+    if (isTermsModalOpen || isInfoModalOpen || isTollModalOpen) {
+      setIsDetailsExpanded(false);
+    }
+  }, [isTermsModalOpen, isInfoModalOpen, isTollModalOpen]);
 
   const value: AppStateContextType = {
     // Route state

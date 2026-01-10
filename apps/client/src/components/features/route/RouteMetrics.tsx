@@ -68,7 +68,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-5 h-5 text-blue-600"
+                className="w-5 h-5 text-blue-700"
               >
                 <path
                   fillRule="evenodd"
@@ -78,7 +78,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
               </svg>
             </div>
             <div>
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-800">
                 {t('routeDetails.distance')}
               </p>
               <p className="text-lg font-semibold text-slate-900">
@@ -93,7 +93,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-5 h-5 text-blue-600"
+                className="w-5 h-5 text-blue-700"
               >
                 <path
                   fillRule="evenodd"
@@ -103,7 +103,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
               </svg>
             </div>
             <div>
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-800">
                 {t('routeDetails.estimatedTime')}
               </p>
               <p className="text-lg font-semibold text-slate-900">
@@ -119,13 +119,13 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-5 h-5 text-blue-600"
+                  className="w-5 h-5 text-blue-700"
                 >
                   <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9H21ZM12 7C14.8 7 17 9.2 17 12S14.8 17 12 17S7 14.8 7 12S9.2 7 12 7ZM12 9C10.3 9 9 10.3 9 12S10.3 15 12 15S15 13.7 15 12S13.7 9 12 9Z" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-slate-800">
                   {t('routeDetails.fuelCost')}
                 </p>
                 <p className="text-lg font-semibold text-slate-900">
@@ -145,13 +145,13 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-5 h-5 text-blue-600"
+                  className="w-5 h-5 text-blue-700"
                 >
                   <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2ZM8 21V19H16V21H8Z" />
                 </svg>
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-slate-800">
                   {t('routeDetails.bridgeTolls')}
                 </p>
                 <p className="text-lg font-semibold text-slate-900">
@@ -165,7 +165,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
               </div>
               <div className="ml-2">
                 <svg
-                  className="w-5 h-5 text-slate-600"
+                  className="w-5 h-5 text-slate-700"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -182,7 +182,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-5 h-5 text-blue-600"
+                className="w-5 h-5 text-blue-700"
               >
                 <path d="M3.375 4.5C2.339 4.5 1.5 5.34 1.5 6.375V13.5h12V6.375c0-1.036-.84-1.875-1.875-1.875h-8.25zM13.5 15h-12v2.625c0 1.035.84 1.875 1.875 1.875h.375a3 3 0 116 0h3a.75.75 0 00.75-.75V15z" />
                 <path d="M8.25 19.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0zM15.75 6.75a.75.75 0 00-.75.75v11.25c0 .087.015.17.042.248a3 3 0 015.958.464c.853-.175 1.522-.935 1.464-1.883a18.659 18.659 0 00-3.732-10.104 1.837 1.837 0 00-1.47-.725H15.75z" />
@@ -190,7 +190,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
               </svg>
             </div>
             <div>
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-800">
                 {t('routeDetails.fuelConsumption')}
               </p>
               <p className="text-lg font-semibold text-slate-900">
@@ -205,7 +205,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="w-5 h-5 text-blue-600"
+                className="w-5 h-5 text-blue-700"
               >
                 <path
                   fillRule="evenodd"
@@ -214,7 +214,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
               </svg>
             </div>
             <div>
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-800">
                 {t('routeDetails.co2Emissions')}
               </p>
               <p className="text-lg font-semibold text-slate-900">
@@ -235,7 +235,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-3.5 h-3.5 text-blue-600"
+                  className="w-3.5 h-3.5 text-blue-700"
                 >
                   <path
                     fillRule="evenodd"
@@ -244,7 +244,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   />
                 </svg>
               </div>
-              <p className="text-xs text-slate-700">
+              <p className="text-xs text-slate-800">
                 {t('routeDetails.estimatedTime')}
               </p>
             </div>
@@ -260,7 +260,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-3.5 h-3.5 text-blue-600"
+                  className="w-3.5 h-3.5 text-blue-700"
                 >
                   <path
                     fillRule="evenodd"
@@ -269,7 +269,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   />
                 </svg>
               </div>
-              <p className="text-xs text-slate-700">
+              <p className="text-xs text-slate-800">
                 {t('routeDetails.distance')}
               </p>
             </div>
@@ -285,14 +285,14 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-3.5 h-3.5 text-blue-600"
+                  className="w-3.5 h-3.5 text-blue-700"
                 >
                   <path d="M3.375 4.5C2.339 4.5 1.5 5.34 1.5 6.375V13.5h12V6.375c0-1.036-.84-1.875-1.875-1.875h-8.25zM13.5 15h-12v2.625c0 1.035.84 1.875 1.875 1.875h.375a3 3 0 116 0h3a.75.75 0 00.75-.75V15z" />
                   <path d="M8.25 19.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0zM15.75 6.75a.75.75 0 00-.75.75v11.25c0 .087.015.17.042.248a3 3 0 015.958.464c.853-.175 1.522-.935 1.464-1.883a18.659 18.659 0 00-3.732-10.104 1.837 1.837 0 00-1.47-.725H15.75z" />
                   <path d="M19.5 19.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z" />
                 </svg>
               </div>
-              <p className="text-xs text-slate-700">{t('routeDetails.fuel')}</p>
+              <p className="text-xs text-slate-800">{t('routeDetails.fuel')}</p>
             </div>
             <p className="text-base font-semibold text-slate-900">
               {totalFuelConsumption} {t('units.liters')}
@@ -306,7 +306,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="w-3.5 h-3.5 text-blue-600"
+                  className="w-3.5 h-3.5 text-blue-700"
                 >
                   <path
                     fillRule="evenodd"
@@ -314,7 +314,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                   />
                 </svg>
               </div>
-              <p className="text-xs text-slate-700">{t('routeDetails.co2')}</p>
+              <p className="text-xs text-slate-800">{t('routeDetails.co2')}</p>
             </div>
             <p className="text-base font-semibold text-slate-900">
               {co2Emissions} {t('units.kg')}
@@ -329,12 +329,12 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-3.5 h-3.5 text-blue-600"
+                    className="w-3.5 h-3.5 text-blue-700"
                   >
                     <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9H21ZM12 7C14.8 7 17 9.2 17 12S14.8 17 12 17S7 14.8 7 12S9.2 7 12 7ZM12 9C10.3 9 9 10.3 9 12S10.3 15 12 15S15 13.7 15 12S13.7 9 12 9Z" />
                   </svg>
                 </div>
-                <p className="text-xs text-slate-700">
+                <p className="text-xs text-slate-800">
                   {t('routeDetails.cost')}
                 </p>
               </div>
@@ -355,17 +355,17 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-3.5 h-3.5 text-blue-600"
+                    className="w-3.5 h-3.5 text-blue-700"
                   >
                     <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2ZM8 21V19H16V21H8Z" />
                   </svg>
                 </div>
-                <p className="text-xs text-slate-700">
+                <p className="text-xs text-slate-800">
                   {t('routeDetails.tolls')}
                 </p>
                 <div className="ml-auto">
                   <svg
-                    className="w-4 h-4 text-slate-600"
+                    className="w-4 h-4 text-slate-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -381,7 +381,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
           )}
         </div>
 
-        <div className="mt-3 text-xs text-slate-700 text-center">
+        <div className="mt-3 text-xs text-slate-800 text-center">
           <p>{t('routeDetails.estimateNote')}</p>
         </div>
       </div>

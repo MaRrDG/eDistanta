@@ -61,7 +61,23 @@ const RouteDetails = ({
   } = useRouteDetails();
   const [showSaved, setShowSaved] = useState(false);
 
-  if (!routes || routes.length === 0) {
+  // Calculate toll bridges for the selected route
+  // This hook must be called before any conditional returns
+  const selectedRoute = routes?.[selectedRouteIndex];
+  const tollSummary = useMemo(() => {
+    if (!selectedRoute?.route) return {
+      totalRON: 0,
+      totalEUR: 0,
+      bridges: [],
+      hasTolls: false,
+      vehicleType: vehicleType as TollVehicleType
+    };
+
+    const detectedBridges = TollService.detectTollBridges(selectedRoute.route);
+    return TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
+  }, [selectedRoute, vehicleType]);
+
+  if (!routes || routes.length === 0 || !selectedRoute) {
     return null;
   }
 
@@ -76,23 +92,8 @@ const RouteDetails = ({
     );
   }
 
-  const selectedRoute = routes[selectedRouteIndex];
   const distance = selectedRoute.distance;
   const duration = selectedRoute.duration;
-
-  // Calculate toll bridges for the selected route
-  const tollSummary = useMemo(() => {
-    if (!selectedRoute?.route) return {
-      totalRON: 0,
-      totalEUR: 0,
-      bridges: [],
-      hasTolls: false,
-      vehicleType: vehicleType as TollVehicleType
-    };
-
-    const detectedBridges = TollService.detectTollBridges(selectedRoute.route);
-    return TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
-  }, [selectedRoute, vehicleType]);
 
   // Helper function to safely convert price to number
   const getPriceAsNumber = (price: number | string | undefined): number => {

@@ -55,9 +55,9 @@ const RouteAlternatives = ({ routes, selectedRouteIndex, onRouteSelected }: Rout
               <span className="font-medium">
                 {t('routeDetails.route')} {index + 1}
               </span>
-              <span className="mx-1.5 text-slate-600">•</span>
+              <span className="mx-1.5 text-slate-700">•</span>
               <span className="text-slate-800">{routeDuration}</span>
-              <span className="mx-1.5 text-slate-600">•</span>
+              <span className="mx-1.5 text-slate-700">•</span>
               <span className="text-slate-800">
                 {route.distance.toFixed(1)} {t('units.km')}
               </span>

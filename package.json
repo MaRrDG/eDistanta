@@ -5,6 +5,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "dev:client": "cd apps/client && npm run dev",
+    "dev:api": "cd apps/api && npm run dev",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:apps": "prettier --write \"apps/**/*.{ts,tsx,js,jsx,json,md}\"",
