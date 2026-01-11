@@ -25,14 +25,14 @@ export class LocationService {
     try {
       const response = await fetch(
         `${this.BASE_URL}?` +
-          new URLSearchParams({
-            q: `${query}, Romania`,
-            format: 'json',
-            addressdetails: '1',
-            limit: '20', // Increased limit to account for filtering
-            'accept-language': 'en',
-            class: 'place', // Only search for places, not buildings/amenities
-          })
+        new URLSearchParams({
+          q: `${query}`,
+          format: 'json',
+          addressdetails: '1',
+          limit: '20', // Increased limit to account for filtering
+          'accept-language': 'en',
+          class: 'place', // Only search for places, not buildings/amenities
+        })
       );
 
       if (!response.ok) {
@@ -73,6 +73,7 @@ export class LocationService {
             number,
             number,
           ],
+          country: location.address?.country,
         }));
     } catch (error) {
       console.error('Error searching location:', error);

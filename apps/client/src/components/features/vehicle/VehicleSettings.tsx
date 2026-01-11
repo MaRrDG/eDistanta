@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteDetails, VEHICLE_TYPES, FUEL_TYPES, DEFAULT_FUEL_CONSUMPTION } from '../../../contexts/RouteDetailsContext';
 import PriceHistoryModal from '../../modals/PriceHistoryModal';
@@ -28,6 +28,7 @@ const VehicleSettings = () => {
     fuelPriceData,
     isLoadingPrice,
     priceError,
+    isRomaniaRoute
   } = useRouteDetails();
 
   const handleVehicleTypeChange = (selectedValue: string) => {
@@ -42,6 +43,38 @@ const VehicleSettings = () => {
     if (FUEL_TYPES.includes(selectedValue as typeof FUEL_TYPES[number])) {
       setFuelType(selectedValue as typeof FUEL_TYPES[number]);
     }
+  };
+
+  // Local state for consumption input to handle "0" and formatting issues
+  const [consumptionInput, setConsumptionInput] = useState(fuelConsumption.toString());
+
+  // Sync local input when context changes (e.g. vehicle type change), 
+  // but avoid overwriting while user is typing valid equivalents (e.g. "6." vs 6)
+  useEffect(() => {
+    // Only update if the numeric values differ
+    // This allows "6." (which parses to 6) to remain as "6." in the input
+    if (Number(consumptionInput) !== fuelConsumption && consumptionInput !== '') {
+      setConsumptionInput(fuelConsumption.toString());
+    }
+  }, [fuelConsumption]);
+
+  const handleConsumptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    // Allow empty string or valid regex
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setConsumptionInput(value);
+
+      // Update context only if valid number (empty string doesn't update context to 0)
+      if (value !== '') {
+        setFuelConsumption(Number(value));
+      }
+    }
+  };
+
+  const handleConsumptionBlur = () => {
+    // On blur, format to standard number string (e.g. "6." -> "6")
+    setConsumptionInput(fuelConsumption.toString());
   };
 
   if (!isApiAvailable) {
@@ -103,12 +136,12 @@ const VehicleSettings = () => {
             </label>
             <input
               id="fuelConsumptionBasic"
-              type="number"
-              min="1"
-              max="30"
-              step="0.1"
-              value={fuelConsumption}
-              onChange={e => setFuelConsumption(Number(e.target.value))}
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*"
+              value={consumptionInput}
+              onChange={handleConsumptionChange}
+              onBlur={handleConsumptionBlur}
               className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
             />
           </div>
@@ -143,38 +176,40 @@ const VehicleSettings = () => {
             ))}
           </select>
         </div>
-        <div>
-          <label
-            htmlFor="fuelStation"
-            className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
-          >
-            {t('routeDetails.fuelStation')}
-          </label>
-          <select
-            id="fuelStation"
-            value={selectedStation}
-            onChange={e => setSelectedStation(e.target.value)}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm capitalize"
-            disabled={isLoadingStations}
-          >
-            <option value="">
-              {isLoadingStations
-                ? t('common.loading')
-                : stationsError
-                  ? t('routeDetails.stationsError')
-                  : t('routeDetails.selectStation')}
-            </option>
-            {!stationsError && availableStations.map(station => (
-              <option
-                className="capitalize"
-                key={station.stationName}
-                value={station.stationName}
-              >
-                {station.stationName}
+        {isRomaniaRoute && (
+          <div>
+            <label
+              htmlFor="fuelStation"
+              className="block text-xs text-slate-700 mb-1 min-h-[1.25rem]"
+            >
+              {t('routeDetails.fuelStation')}
+            </label>
+            <select
+              id="fuelStation"
+              value={selectedStation}
+              onChange={e => setSelectedStation(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm capitalize"
+              disabled={isLoadingStations}
+            >
+              <option value="">
+                {isLoadingStations
+                  ? t('common.loading')
+                  : stationsError
+                    ? t('routeDetails.stationsError')
+                    : t('routeDetails.selectStation')}
               </option>
-            ))}
-          </select>
-        </div>
+              {!stationsError && availableStations.map(station => (
+                <option
+                  className="capitalize"
+                  key={station.stationName}
+                  value={station.stationName}
+                >
+                  {station.stationName}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -207,18 +242,18 @@ const VehicleSettings = () => {
           </label>
           <input
             id="fuelConsumption"
-            type="number"
-            min="1"
-            max="30"
-            step="0.1"
-            value={fuelConsumption}
-            onChange={e => setFuelConsumption(Number(e.target.value))}
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*"
+            value={consumptionInput}
+            onChange={handleConsumptionChange}
+            onBlur={handleConsumptionBlur}
             className="w-full px-3 py-2 border border-slate-300 rounded-md text-sm"
           />
         </div>
       </div>
 
-      {selectedStation && (
+      {isRomaniaRoute && selectedStation && (
         <div className="mt-3 p-3 bg-blue-50 rounded-md">
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-800">

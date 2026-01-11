@@ -7,6 +7,7 @@ import type { FavoriteRoute } from '../../../services/favoritesService';
 import { useLocationSearch } from '../../../hooks/useLocationSearch';
 import { useWaypoints } from '../../../hooks/useWaypoints';
 import { RouteService } from '../../../services/routeService';
+import { useRouteDetails } from '../../../contexts/RouteDetailsContext';
 import LocationInput from './LocationInput';
 import WaypointInput from './WaypointInput';
 import { FavoritesSection } from '../favorites';
@@ -21,6 +22,7 @@ const SearchComponent = ({
   initialEndLocation = null,
 }: SearchComponentProps) => {
   const { t } = useTranslation();
+  const { setIsRomaniaRoute } = useRouteDetails();
 
   const [startInput, setStartInput] = useState(initialStartInput);
   const [endInput, setEndInput] = useState(initialEndInput);
@@ -83,10 +85,10 @@ const SearchComponent = ({
   // Auto-calculate route when both initial locations are provided
   useEffect(() => {
     if (
-      initialStartLocation && 
-      initialEndLocation && 
-      initialStartInput && 
-      initialEndInput && 
+      initialStartLocation &&
+      initialEndLocation &&
+      initialStartInput &&
+      initialEndInput &&
       !hasAutoCalculatedRef.current
     ) {
       // Auto-trigger route calculation for URL-based routes
@@ -94,7 +96,7 @@ const SearchComponent = ({
         hasAutoCalculatedRef.current = true;
         setIsCalculating(true);
         setError(null);
-        
+
         try {
           const routeData = await RouteService.calculateRoute(
             initialStartLocation,
@@ -321,6 +323,15 @@ const SearchComponent = ({
         onLocationNamesChange(startLocation.name, endLocation.name);
       }
 
+      // Check if route involves Romania
+      const isRomania =
+        startLocation.country?.toLowerCase().includes('romania') ||
+        startLocation.country?.toLowerCase().includes('românia') ||
+        endLocation.country?.toLowerCase().includes('romania') ||
+        endLocation.country?.toLowerCase().includes('românia');
+
+      setIsRomaniaRoute(!!isRomania);
+
       setHasCalculatedRoute(true);
     } catch (err) {
       setError(
@@ -474,17 +485,16 @@ const SearchComponent = ({
             </div>
           </motion.div>
         )}
-  
+
         <motion.button
           type="submit"
           disabled={isCalculating || !startInput || !endInput}
-          className={`w-full py-2.5 px-4 rounded-md font-medium text-white transition-colors flex items-center justify-center ${
-            isCalculating || !startInput || !endInput
-              ? 'bg-blue-300 cursor-not-allowed'
-              : hasRouteChanges && hasCalculatedRoute
-                ? 'bg-amber-500 hover:bg-amber-600'
-                : 'bg-blue-600 hover:bg-blue-700'
-          }`}
+          className={`w-full py-2.5 px-4 rounded-md font-medium text-white transition-colors flex items-center justify-center ${isCalculating || !startInput || !endInput
+            ? 'bg-blue-300 cursor-not-allowed'
+            : hasRouteChanges && hasCalculatedRoute
+              ? 'bg-amber-500 hover:bg-amber-600'
+              : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           whileHover={
             !isCalculating && startInput && endInput ? { scale: 1.02 } : {}
           }

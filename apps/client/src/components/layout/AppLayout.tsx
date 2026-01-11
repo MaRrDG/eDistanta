@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from './Header';
 import { useApiHealth } from '../../hooks/useFuelPrice';
-import { ApiStatusBanner } from '../common';
+import { ApiStatusBanner, InstallPrompt } from '../common';
 import { SearchComponent } from '../features/search';
 import { MobileRoutePanel, RouteDetails } from '../features/route';
 import { MapComponent } from '../features/map';
@@ -58,7 +58,7 @@ const AppLayout = ({
   } = useAppState();
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50">
+    <div className="h-screen h-[100dvh] flex flex-col bg-slate-50">
       <Header
         setIsInfoModalOpen={setIsInfoModalOpen}
         setIsTermsModalOpen={setIsTermsModalOpen}
@@ -68,12 +68,12 @@ const AppLayout = ({
       />
 
       <ApiStatusBanner isApiHealthy={isApiHealthy} />
+      <InstallPrompt />
 
       <main className="flex flex-1 overflow-hidden">
         <div
-          className={`${
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-full md:w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
+          className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-full md:w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
         >
           <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent

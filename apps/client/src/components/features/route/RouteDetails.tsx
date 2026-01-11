@@ -57,7 +57,8 @@ const RouteDetails = ({
     fuelPriceData,
     priceError,
     isApiAvailable,
-    isCheckingHealth
+    isCheckingHealth,
+    isRomaniaRoute
   } = useRouteDetails();
   const [showSaved, setShowSaved] = useState(false);
 
@@ -104,10 +105,10 @@ const RouteDetails = ({
 
   // Calculate fuel cost based on selected station price (only when API is available)
   const totalFuelConsumption = ((distance * fuelConsumption) / 100).toFixed(1);
-  const fuelCost = isApiAvailable && fuelPriceData?.price && !priceError
+  const fuelCost = isApiAvailable && isRomaniaRoute && fuelPriceData?.price && !priceError
     ? (
-        parseFloat(totalFuelConsumption) * getPriceAsNumber(fuelPriceData.price)
-      ).toFixed(2)
+      parseFloat(totalFuelConsumption) * getPriceAsNumber(fuelPriceData.price)
+    ).toFixed(2)
     : null;
 
   return (
@@ -116,7 +117,7 @@ const RouteDetails = ({
         {t('routeDetails.title')}
       </h3>
 
-      <RouteAlternatives 
+      <RouteAlternatives
         routes={routes}
         selectedRouteIndex={selectedRouteIndex}
         onRouteSelected={onRouteSelected}

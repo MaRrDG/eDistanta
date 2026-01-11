@@ -7,7 +7,7 @@ export type VehicleType = (typeof VEHICLE_TYPES)[number];
 
 export const FUEL_TYPES = [
   'benzina-regular',
-  'benzina-premium', 
+  'benzina-premium',
   'motorina-regular',
   'motorina-premium',
   'gpl',
@@ -30,7 +30,7 @@ interface RouteDetailsContextType {
   setFuelType: (type: FuelType) => void;
   selectedStation: string;
   setSelectedStation: (station: string) => void;
-  
+
   // API data
   isApiHealthy: boolean | undefined;
   isCheckingHealth: boolean;
@@ -41,9 +41,11 @@ interface RouteDetailsContextType {
   fuelPriceData: any;
   isLoadingPrice: boolean;
   priceError: any;
-  
+
   // Computed values
   isApiAvailable: boolean;
+  isRomaniaRoute: boolean;
+  setIsRomaniaRoute: (isRomania: boolean) => void;
 }
 
 const RouteDetailsContext = createContext<RouteDetailsContextType | undefined>(undefined);
@@ -61,12 +63,12 @@ export const RouteDetailsProvider = ({ children }: RouteDetailsProviderProps) =>
   const [fuelConsumption, setFuelConsumption] = useState<number>(() => {
     const savedConsumption = localStorage.getItem('fuelConsumption');
     const savedVehicleType = localStorage.getItem('vehicleType') as VehicleType;
-    const defaultForVehicle = VEHICLE_TYPES.includes(savedVehicleType) 
+    const defaultForVehicle = VEHICLE_TYPES.includes(savedVehicleType)
       ? DEFAULT_FUEL_CONSUMPTION[savedVehicleType]
       : DEFAULT_FUEL_CONSUMPTION.car;
     return savedConsumption ? parseFloat(savedConsumption) : defaultForVehicle;
   });
-  
+
   const [fuelType, setFuelType] = useState<FuelType>(() => {
     const savedFuelType = localStorage.getItem('fuelType') as FuelType;
     return FUEL_TYPES.includes(savedFuelType) ? savedFuelType : 'benzina-regular';
@@ -76,17 +78,19 @@ export const RouteDetailsProvider = ({ children }: RouteDetailsProviderProps) =>
     return localStorage.getItem('selectedStation') || '';
   });
 
+  const [isRomaniaRoute, setIsRomaniaRoute] = useState(false);
+
   // API hooks
   const { data: isApiHealthy, isLoading: isCheckingHealth, error: healthError } = useApiHealth();
-  const { 
-    data: availableStations = [], 
-    isLoading: isLoadingStations, 
-    error: stationsError 
+  const {
+    data: availableStations = [],
+    isLoading: isLoadingStations,
+    error: stationsError
   } = useAvailableStations();
-  const { 
-    data: fuelPriceData, 
-    isLoading: isLoadingPrice, 
-    error: priceError 
+  const {
+    data: fuelPriceData,
+    isLoading: isLoadingPrice,
+    error: priceError
   } = useFuelPrice(selectedStation, fuelType);
 
   // Save settings to localStorage
@@ -135,6 +139,8 @@ export const RouteDetailsProvider = ({ children }: RouteDetailsProviderProps) =>
     isLoadingPrice,
     priceError,
     isApiAvailable,
+    isRomaniaRoute,
+    setIsRomaniaRoute,
   };
 
   return (

@@ -8,6 +8,7 @@ export interface LocationResult {
   name: string;
   display_name: string;
   coordinates: [number, number];
+  country?: string;
 }
 
 export interface RouteData {

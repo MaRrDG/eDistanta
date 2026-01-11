@@ -36,7 +36,6 @@ const MobileRoutePanel = ({
   endLocation,
   startName,
   endName,
-  isDetailsExpanded,
   setIsDetailsExpanded,
   setIsSidebarOpen,
   safeAreaBottom,
@@ -193,9 +192,8 @@ const MobileRoutePanel = ({
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className={`w-5 h-5 text-blue-700 transform transition-transform ${
-                    internalExpanded ? 'rotate-180' : ''
-                  }`}
+                  className={`w-5 h-5 text-blue-700 transform transition-transform ${internalExpanded ? 'rotate-180' : ''
+                    }`}
                   aria-hidden="true"
                 >
                   <path

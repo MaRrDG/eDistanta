@@ -194,6 +194,14 @@ const enTranslations = {
     linkHome: 'Homepage',
     contact: 'If the problem persists, please contact us.',
   },
+  pwa: {
+    installTitle: 'Install App',
+    installDesc: 'Access your routes faster',
+    installButton: 'Install',
+    iosInstallTitle: 'Install on iPhone',
+    iosInstallBody: 'Tap the Share button in the bottom bar and select "Add to Home Screen"',
+    iosInstallButton: 'Got it',
+  },
 };
 
 // Romanian translations
@@ -389,6 +397,14 @@ const roTranslations = {
     helpfulLinks: 'Poate te interesează:',
     linkHome: 'Pagina principală',
     contact: 'Dacă problema persistă, vă rugăm să ne contactați.',
+  },
+  pwa: {
+    installTitle: 'Instalează Aplicatia',
+    installDesc: 'Accesează mai rapid rutele tale',
+    installButton: 'Instalează',
+    iosInstallTitle: 'Instalează pe iPhone',
+    iosInstallBody: 'Apasă pe butonul de partajare din bara de jos și selectează "Adaugă la ecranul principal"',
+    iosInstallButton: 'Am înțeles',
   },
 };
 
