@@ -15,15 +15,17 @@ interface AppStateContextType {
   setRoutes: (routes: RouteData[] | null) => void;
   selectedRouteIndex: number;
   setSelectedRouteIndex: (index: number) => void;
-  
+
   // UI state
   isSidebarOpen: boolean;
   setIsSidebarOpen: (open: boolean) => void;
   isDetailsExpanded: boolean;
   setIsDetailsExpanded: (expanded: boolean) => void;
+  isSidebarRight: boolean;
+  setIsSidebarRight: (isRight: boolean) => void;
   safeAreaBottom: number;
   setSafeAreaBottom: (bottom: number) => void;
-  
+
   // Modal state
   isTermsModalOpen: boolean;
   setIsTermsModalOpen: (open: boolean) => void;
@@ -38,12 +40,12 @@ interface AppStateContextType {
     vehicleType: 'car' | 'bus' | 'minibus';
   } | null;
   setTollModalData: (data: any) => void;
-  
+
   // Computed values
   currentRoute: RouteData | null;
   distance: number | null;
   duration: number | null;
-  
+
   // Actions
   handleRouteCalculated: (
     start: [number, number],
@@ -67,7 +69,7 @@ interface AppStateProviderProps {
   initialEndLocation?: [number, number] | null;
 }
 
-export const AppStateProvider = ({ 
+export const AppStateProvider = ({
   children,
   initialStartInput = '',
   initialEndInput = '',
@@ -80,12 +82,25 @@ export const AppStateProvider = ({
   const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
   const [routes, setRoutes] = useState<RouteData[] | null>(null);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
-  
+
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
+  const [isSidebarRight, setIsSidebarRightState] = useState(() => {
+    // Initialize from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebarPosition');
+      return saved === 'right';
+    }
+    return false;
+  });
   const [safeAreaBottom, setSafeAreaBottom] = useState(0);
-  
+
+  const setIsSidebarRight = (isRight: boolean) => {
+    setIsSidebarRightState(isRight);
+    localStorage.setItem('sidebarPosition', isRight ? 'right' : 'left');
+  };
+
   // Modal state
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -122,9 +137,9 @@ export const AppStateProvider = ({
     setSelectedRouteIndex(index);
   };
 
-  const handleTollModalOpen = (tollSummary: { 
-    bridges: any[]; 
-    totalRON: number; 
+  const handleTollModalOpen = (tollSummary: {
+    bridges: any[];
+    totalRON: number;
     totalEUR: number;
     vehicleType: 'car' | 'bus' | 'minibus';
   }) => {
@@ -135,9 +150,9 @@ export const AppStateProvider = ({
   // Auto-calculate route when initial locations are provided (for URL-based routes)
   useEffect(() => {
     if (
-      initialStartLocation && 
-      initialEndLocation && 
-      initialStartInput && 
+      initialStartLocation &&
+      initialEndLocation &&
+      initialStartInput &&
       initialEndInput &&
       !routes // Only if no routes are already calculated
     ) {
@@ -186,7 +201,7 @@ export const AppStateProvider = ({
         // Fallback to browser-specific detection
         const isSamsungBrowser = /SamsungBrowser/i.test(navigator.userAgent);
         const isIOSSafari = /iPhone|iPad|iPod/.test(navigator.userAgent) &&
-                           !(window as any).MSStream;
+          !(window as any).MSStream;
 
         // Set initial safe area based on browser
         if (isSamsungBrowser) {
@@ -246,15 +261,17 @@ export const AppStateProvider = ({
     setRoutes,
     selectedRouteIndex,
     setSelectedRouteIndex,
-    
+
     // UI state
     isSidebarOpen,
     setIsSidebarOpen,
     isDetailsExpanded,
     setIsDetailsExpanded,
+    isSidebarRight,
+    setIsSidebarRight,
     safeAreaBottom,
     setSafeAreaBottom,
-    
+
     // Modal state
     isTermsModalOpen,
     setIsTermsModalOpen,
@@ -264,12 +281,12 @@ export const AppStateProvider = ({
     setIsTollModalOpen,
     tollModalData,
     setTollModalData,
-    
+
     // Computed values
     currentRoute,
     distance,
     duration,
-    
+
     // Actions
     handleRouteCalculated,
     handleRouteSelected,

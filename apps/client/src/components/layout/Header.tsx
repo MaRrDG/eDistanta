@@ -7,6 +7,8 @@ interface HeaderProps {
   setIsSidebarOpen: (isSidebarOpen: boolean) => void;
   isSidebarOpen: boolean;
   setIsDetailsExpanded: (isDetailsExpanded: boolean) => void;
+  isSidebarRight: boolean;
+  setIsSidebarRight: (isRight: boolean) => void;
 }
 
 const Header = ({
@@ -15,6 +17,8 @@ const Header = ({
   setIsSidebarOpen,
   isSidebarOpen,
   setIsDetailsExpanded,
+  isSidebarRight,
+  setIsSidebarRight,
 }: HeaderProps) => {
   const { t } = useTranslation();
 
@@ -52,6 +56,26 @@ const Header = ({
           className="hidden sm:flex text-sm text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
         >
           {t('terms.button')}
+        </button>
+        <button
+          onClick={() => setIsSidebarRight(!isSidebarRight)}
+          className="hidden md:flex text-blue-600 hover:text-blue-800 transition-colors cursor-pointer p-1 rounded-full hover:bg-blue-50"
+          title={isSidebarRight ? t('header.dockLeft') : t('header.dockRight')}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            {isSidebarRight ? (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            )}
+          </svg>
         </button>
         <LanguageSelector />
         <button

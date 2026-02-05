@@ -36,6 +36,8 @@ const AppLayout = ({
     setIsSidebarOpen,
     isDetailsExpanded,
     setIsDetailsExpanded,
+    isSidebarRight,
+    setIsSidebarRight,
     safeAreaBottom,
 
     // Modal state
@@ -65,15 +67,17 @@ const AppLayout = ({
         setIsSidebarOpen={setIsSidebarOpen}
         isSidebarOpen={isSidebarOpen}
         setIsDetailsExpanded={setIsDetailsExpanded}
+        isSidebarRight={isSidebarRight}
+        setIsSidebarRight={setIsSidebarRight}
       />
 
       <ApiStatusBanner isApiHealthy={isApiHealthy} />
       <InstallPrompt />
 
-      <main className="flex flex-1 overflow-hidden">
+      <main className={`flex flex-1 overflow-hidden transition-all duration-300 ${isSidebarRight ? 'md:flex-row-reverse' : ''}`}>
         <div
           className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            } md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-full md:w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible`}
+            } md:translate-x-0 transition-transform duration-300 absolute md:relative z-10 w-full md:w-80 h-[calc(100%-3.5rem)] md:h-auto bg-white border-r border-blue-100 shadow-lg md:shadow-none flex flex-col overflow-visible ${isSidebarRight ? 'md:border-l md:border-r-0' : 'md:border-r'}`}
         >
           <div className="p-4 flex-1 overflow-y-auto overflow-x-visible">
             <SearchComponent
@@ -153,6 +157,7 @@ const AppLayout = ({
             routes={routes}
             selectedRouteIndex={selectedRouteIndex}
             onRouteSelected={handleRouteSelected}
+            isSidebarRight={isSidebarRight}
           />
 
           {!isSidebarOpen && (

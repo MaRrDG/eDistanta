@@ -88,6 +88,7 @@ interface MapComponentProps {
   routes: RouteData[] | null;
   selectedRouteIndex: number;
   onRouteSelected?: (index: number) => void;
+  isSidebarRight?: boolean;
 }
 
 // Map controller component to handle map initialization
@@ -141,6 +142,7 @@ const MapComponent = ({
   routes,
   selectedRouteIndex,
   onRouteSelected,
+  isSidebarRight,
 }: MapComponentProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const [isLoading, setIsLoading] = useState(false);
