@@ -62,27 +62,9 @@ export const generateRobotsTxt = (baseUrl: string = import.meta.env.VITE_SITE_UR
   return `User-agent: *
 Allow: /
 
-# Sitemaps
 Sitemap: ${baseUrl}/sitemap.xml
 
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
-
-# Block access to API endpoints and admin areas
 Disallow: /api/
-Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
-
-# Allow important pages
-Allow: /ruta/
-Allow: /
-
-# Block common bot traps
-Disallow: /*?*
-Disallow: /*#*
-Disallow: /*.json$
-Disallow: /*.xml$
 `;
 };
 

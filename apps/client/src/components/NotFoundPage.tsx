@@ -1,7 +1,24 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const NotFoundPage = () => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    // Tell search engines not to index 404 pages
+    document.title = 'Pagina nu a fost găsită - eDistanța';
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (metaRobots) {
+      metaRobots.setAttribute('content', 'noindex, nofollow');
+    }
+    return () => {
+      // Restore default on unmount
+      if (metaRobots) {
+        metaRobots.setAttribute('content', 'index, follow');
+      }
+      document.title = 'eDistanța - Calculator Distanțe Rutiere România | Prețuri Combustibil';
+    };
+  }, []);
 
   const handleGoHome = () => {
     window.location.href = '/';
