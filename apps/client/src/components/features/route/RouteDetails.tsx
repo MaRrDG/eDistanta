@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { TollService, type VehicleType as TollVehicleType } from '../../../services/tollService';
 import { useRouteDetails } from '../../../contexts/RouteDetailsContext';
+import { useAppState } from '../../../contexts/AppStateContext';
 import RouteAlternatives from './RouteAlternatives';
 import VehicleSettings from '../vehicle/VehicleSettings';
 import RouteMetrics from './RouteMetrics';
@@ -60,6 +61,7 @@ const RouteDetails = ({
     isCheckingHealth,
     isRomaniaRoute
   } = useRouteDetails();
+  const { weatherData } = useAppState();
   const [showSaved, setShowSaved] = useState(false);
 
   // Calculate toll bridges for the selected route
@@ -116,6 +118,37 @@ const RouteDetails = ({
       <h3 className="text-lg font-medium text-blue-900 mb-4 px-4 pt-2 md:px-0 md:pt-0">
         {t('routeDetails.title')}
       </h3>
+
+      {/* Weather Summary UX Hint */}
+      {weatherData && (
+        <div className="mx-4 md:mx-0 mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl flex items-center gap-3">
+          <div className="bg-white p-2 rounded-full shadow-sm">
+            <img
+              src={weatherData.start.current.condition.icon}
+              alt="Weather"
+              className="w-6 h-6"
+            />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-semibold text-blue-900 uppercase tracking-wide mb-0.5">
+              {t('weather.routeForecast', 'Route Forecast')}
+            </p>
+            <p className="text-sm text-slate-700 flex items-center gap-2">
+              <span>{Math.round(weatherData.start.current.temp_c)}°C</span>
+              <span className="text-slate-400">→</span>
+              <span>{Math.round(weatherData.end.current.temp_c)}°C</span>
+              <span className="text-xs text-slate-500 ml-1">
+                ({t(`weather.conditions.${weatherData.end.current.condition.text.replace(/ /g, '_')}`, weatherData.end.current.condition.text)})
+              </span>
+            </p>
+          </div>
+          {weatherData.end.alerts && weatherData.end.alerts.length > 0 && (
+            <div className="animate-pulse text-red-500 text-xl" title="Severe Weather Alerts">
+              ⚠️
+            </div>
+          )}
+        </div>
+      )}
 
       <RouteAlternatives
         routes={routes}

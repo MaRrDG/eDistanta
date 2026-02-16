@@ -2,7 +2,7 @@ import type { RouteData, RouteResponse } from '../types/location';
 
 export class RouteService {
   private static readonly BASE_URL =
-    'https://router.project-osrm.org/route/v1/driving';
+    import.meta.env.VITE_OSRM_URL || 'https://router.project-osrm.org/route/v1/driving';
 
   static async calculateRoute(
     startCoords: [number, number],

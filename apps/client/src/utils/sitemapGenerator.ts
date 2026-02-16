@@ -7,7 +7,7 @@ export interface SitemapUrl {
   priority: string;
 }
 
-export const generateSitemapUrls = (baseUrl: string = 'https://edistanta.ro'): SitemapUrl[] => {
+export const generateSitemapUrls = (baseUrl: string = import.meta.env.VITE_SITE_URL || 'https://edistanta.ro'): SitemapUrl[] => {
   const urls: SitemapUrl[] = [];
   const currentDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
@@ -21,12 +21,12 @@ export const generateSitemapUrls = (baseUrl: string = 'https://edistanta.ro'): S
 
   // Popular routes - sorted by priority
   const sortedRoutes = [...POPULAR_ROUTES].sort((a, b) => b.priority - a.priority);
-  
+
   sortedRoutes.forEach(route => {
-    const priority = route.priority >= 9 ? '0.9' : 
-                    route.priority >= 7 ? '0.8' : 
-                    route.priority >= 5 ? '0.7' : '0.6';
-    
+    const priority = route.priority >= 9 ? '0.9' :
+      route.priority >= 7 ? '0.8' :
+        route.priority >= 5 ? '0.7' : '0.6';
+
     urls.push({
       loc: `${baseUrl}/ruta/${route.slug}`,
       lastmod: currentDate,
@@ -58,7 +58,7 @@ ${urlsetClose}`;
 };
 
 // Generate robots.txt content
-export const generateRobotsTxt = (baseUrl: string = 'https://edistanta.ro'): string => {
+export const generateRobotsTxt = (baseUrl: string = import.meta.env.VITE_SITE_URL || 'https://edistanta.ro'): string => {
   return `User-agent: *
 Allow: /
 
@@ -90,7 +90,7 @@ Disallow: /*.xml$
 export const getRouteMetaTags = (fromCity: string, toCity: string) => {
   const fromCityData = ROMANIAN_CITIES.find(city => city.slug === fromCity);
   const toCityData = ROMANIAN_CITIES.find(city => city.slug === toCity);
-  
+
   if (!fromCityData || !toCityData) {
     return {
       title: 'Calculează Distanța - eDistanta',
@@ -110,7 +110,7 @@ export const getRouteMetaTags = (fromCity: string, toCity: string) => {
 export const generateRouteStructuredData = (fromCity: string, toCity: string, distance?: number, duration?: number) => {
   const fromCityData = ROMANIAN_CITIES.find(city => city.slug === fromCity);
   const toCityData = ROMANIAN_CITIES.find(city => city.slug === toCity);
-  
+
   if (!fromCityData || !toCityData) return null;
 
   const baseData = {

@@ -7,10 +7,13 @@ import {
   Polyline,
   ZoomControl,
   useMap,
+  Tooltip,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
+import type { RouteWeather } from '../../../types/weather';
+import { WeatherInfo } from '../weather/WeatherInfo';
 
 // Fix for default marker icons in React Leaflet
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -89,6 +92,7 @@ interface MapComponentProps {
   selectedRouteIndex: number;
   onRouteSelected?: (index: number) => void;
   isSidebarRight?: boolean;
+  weatherData?: RouteWeather | null;
 }
 
 // Map controller component to handle map initialization
@@ -142,11 +146,23 @@ const MapComponent = ({
   routes,
   selectedRouteIndex,
   onRouteSelected,
-  isSidebarRight,
+  // isSidebarRight, // kept in props but currently unused in this component
+  weatherData,
 }: MapComponentProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showWeatherHint, setShowWeatherHint] = useState(true);
   const { t } = useTranslation();
+
+  // Hide hint after user interacts or after a delay
+  useEffect(() => {
+    if (weatherData && showWeatherHint) {
+      const timer = setTimeout(() => {
+        setShowWeatherHint(false);
+      }, 8000); // Auto hide after 8 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [weatherData, showWeatherHint]);
 
   // Function to fit map to route bounds
   const fitMapToRoute = () => {
@@ -226,18 +242,79 @@ const MapComponent = ({
         <ZoomControl position="topright" />
 
         {startLocation && (
-          <Marker position={startLocation} icon={startIcon}>
-            <Popup className="custom-popup">
-              <div className="font-medium">{t('map.startLocation')}</div>
+          <Marker
+            position={startLocation}
+            icon={startIcon}
+            eventHandlers={{
+              click: () => setShowWeatherHint(false),
+            }}
+          >
+            <Popup className="glass-popup">
+              {weatherData?.start ? (
+                <WeatherInfo
+                  weather={weatherData.start.current}
+                  alerts={weatherData.start.alerts}
+                  locationName={weatherData.start.locationName}
+                />
+              ) : (
+                <div className="bg-white/90 backdrop-blur-md p-3 rounded-xl shadow-lg border border-blue-100 font-medium">
+                  {t('map.startLocation')}
+                </div>
+              )}
             </Popup>
           </Marker>
         )}
 
         {endLocation && (
-          <Marker position={endLocation} icon={endIcon}>
-            <Popup className="custom-popup">
-              <div className="font-medium">{t('map.destination')}</div>
+          <Marker
+            position={endLocation}
+            icon={endIcon}
+            eventHandlers={{
+              click: () => setShowWeatherHint(false),
+            }}
+          >
+            <Popup className="glass-popup">
+              {weatherData?.end ? (
+                <WeatherInfo
+                  weather={weatherData.end.current}
+                  alerts={weatherData.end.alerts}
+                  locationName={weatherData.end.locationName}
+                />
+              ) : (
+                <div className="bg-white/90 backdrop-blur-md p-3 rounded-xl shadow-lg border border-blue-100 font-medium">
+                  {t('map.destination')}
+                </div>
+              )}
             </Popup>
+            {weatherData && showWeatherHint && (
+              <Tooltip
+                permanent
+                direction="top"
+                offset={[0, -45]}
+                className="!bg-transparent !border-0 !shadow-none !p-0"
+                opacity={1}
+              >
+                <div className="animate-[bounce_2s_infinite] flex flex-col items-center select-none cursor-pointer hover:scale-105 transition-transform duration-300">
+                  <div className="relative flex items-center gap-2 px-4 py-2.5 bg-white/70 backdrop-blur-xl saturate-150 rounded-2xl border border-white/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] text-slate-800">
+                    <svg className="w-5 h-5 text-blue-500 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v2" />
+                      <path d="m4.93 4.93 1.41 1.41" />
+                      <path d="M20 12h2" />
+                      <path d="m19.07 4.93-1.41 1.41" />
+                      <path d="M15.947 12.65a4 4 0 0 0-5.925-4.128" />
+                      <path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z" />
+                    </svg>
+                    <span className="text-sm font-semibold tracking-wide drop-shadow-sm">
+                      {t('map.weatherHint', 'Tap for weather')}
+                    </span>
+                    {/* Glossy shine effect */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/40 to-transparent opacity-50 pointer-events-none"></div>
+                  </div>
+                  {/* Triangle tail */}
+                  <div className="w-3 h-3 bg-white/70 backdrop-blur-xl border-r border-b border-white/50 transform rotate-45 mt-[-6px] shadow-[2px_2px_4px_0_rgba(31,38,135,0.05)]"></div>
+                </div>
+              </Tooltip>
+            )}
           </Marker>
         )}
 
@@ -247,10 +324,18 @@ const MapComponent = ({
             position={waypoint.coordinates}
             icon={waypointIcon}
           >
-            <Popup className="custom-popup">
-              <div className="font-medium">
-                {t('map.waypoint')} {index + 1}: {waypoint.name}
-              </div>
+            <Popup className="glass-popup">
+              {weatherData?.waypoints[index] ? (
+                <WeatherInfo
+                  weather={weatherData.waypoints[index].current}
+                  alerts={weatherData.waypoints[index].alerts}
+                  locationName={weatherData.waypoints[index].locationName}
+                />
+              ) : (
+                <div className="bg-white/90 backdrop-blur-md p-3 rounded-xl shadow-lg border border-blue-100 font-medium">
+                  {t('map.waypoint')} {index + 1}: {waypoint.name}
+                </div>
+              )}
             </Popup>
           </Marker>
         ))}

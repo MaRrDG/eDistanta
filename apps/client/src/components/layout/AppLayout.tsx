@@ -158,6 +158,7 @@ const AppLayout = ({
             selectedRouteIndex={selectedRouteIndex}
             onRouteSelected={handleRouteSelected}
             isSidebarRight={isSidebarRight}
+            weatherData={useAppState().weatherData}
           />
 
           {!isSidebarOpen && (

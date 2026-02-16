@@ -11,7 +11,12 @@ RUN npm ci
 
 # Build image
 FROM deps AS builder
+
 COPY . .
+
+# Copy .env.web into the client directory so Vite picks up VITE_ vars at build time
+RUN if [ -f .env.web ]; then cp .env.web apps/client/.env; fi
+
 RUN npm run build
 
 # Production image

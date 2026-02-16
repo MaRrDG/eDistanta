@@ -26,6 +26,9 @@ app.use(httpLogger);
 // Security middleware
 app.use(helmet());
 
+import { apiLimiter } from './middleware/rateLimiter';
+app.use('/api/', apiLimiter);
+
 // CORS configuration
 app.use(
   cors({
@@ -43,11 +46,11 @@ app.use(compression());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
+  const isDev = process.env.NODE_ENV !== 'production';
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
+    ...(isDev && { uptime: process.uptime(), environment: process.env.NODE_ENV || 'development' }),
   });
 });
 
@@ -86,10 +89,7 @@ app.use(
     res.status(500).json({
       success: false,
       message: 'Internal server error',
-      error:
-        process.env.NODE_ENV === 'development'
-          ? err.message
-          : 'Something went wrong',
+      ...(process.env.NODE_ENV === 'development' && { error: err.message }),
     });
   }
 );

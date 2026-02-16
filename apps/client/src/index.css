@@ -139,3 +139,19 @@ body {
     transform: translateY(0) scale(1);
   }
 }
+
+.glass-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.glass-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.glass-popup .leaflet-popup-tip-container {
+  display: none !important;
+}

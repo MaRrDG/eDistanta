@@ -2,7 +2,7 @@ import type { LocationResult } from '../types/location';
 
 export class LocationService {
   private static readonly BASE_URL =
-    'https://nominatim.openstreetmap.org/search';
+    import.meta.env.VITE_NOMINATIM_URL || 'https://nominatim.openstreetmap.org/search';
   private static readonly SEARCH_DELAY = 300;
 
   // Valid place types for localities

@@ -1,7 +1,6 @@
 import { getBrowserFingerprint } from '../utils/fingerprint';
 
-// const API_BASE_URL = 'http://localhost:9002';
-const API_BASE_URL = 'https://api.edistanta.ro';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:9002';
 
 export interface RouteWaypoint {
   id: string;

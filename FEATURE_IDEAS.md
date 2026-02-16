@@ -50,7 +50,7 @@
 
 ---
 
-### 3. Weather Alerts on Route
+### 3. Weather Alerts on Route ✅
 **Goal**: Increase safety and user trust with weather-aware routing
 
 **Features**:
@@ -70,7 +70,7 @@
 
 ---
 
-### 4. Fuel Price History & Predictions
+### 4. Fuel Price History & Predictions ✅
 **Goal**: Gamify fuel savings and provide actionable insights
 
 **Features**:
@@ -282,8 +282,8 @@
 **Priority Features**:
 1. ✅ Mobile responsive bottom sheet (COMPLETED)
 2. Live Traffic Integration
-3. Weather Alerts
-4. Fuel Price History
+3. ✅ Weather Alerts (COMPLETED)
+4. ✅ Fuel Price History (COMPLETED)
 
 **Goals**:
 - Make app indispensable for daily use
@@ -382,7 +382,7 @@
 | Romania-Specific | ❌ | ❌ | ❌ | ✅ |
 | Toll/Bridge Info | ❌ | ⚠️ | ❌ | ✅ |
 | EV Charging | ⚠️ | ⚠️ | ❌ | 🔜 |
-| Weather Alerts | ❌ | ⚠️ | ❌ | 🔜 |
+| Weather Alerts | ❌ | ⚠️ | ❌ | ✅ |
 | Offline Mode | ✅ | ✅ | ❌ | 🔜 |
 
 **Legend**: ✅ Full support | ⚠️ Partial support | ❌ Not supported | 🔜 Planned

@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { RouteData, Waypoint } from '../types/route';
+import type { RouteWeather } from '../types/weather';
 import { RouteService } from '../services/routeService';
+import { WeatherService } from '../services/weatherService';
 
 interface AppStateContextType {
   // Route state
@@ -15,6 +17,10 @@ interface AppStateContextType {
   setRoutes: (routes: RouteData[] | null) => void;
   selectedRouteIndex: number;
   setSelectedRouteIndex: (index: number) => void;
+
+  // Weather state
+  weatherData: RouteWeather | null;
+  isLoadingWeather: boolean;
 
   // UI state
   isSidebarOpen: boolean;
@@ -83,6 +89,10 @@ export const AppStateProvider = ({
   const [routes, setRoutes] = useState<RouteData[] | null>(null);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
 
+  // Weather state
+  const [weatherData, setWeatherData] = useState<RouteWeather | null>(null);
+  const [isLoadingWeather, setIsLoadingWeather] = useState(false);
+
   // UI state
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
@@ -130,7 +140,15 @@ export const AppStateProvider = ({
     setWaypoints(waypointsList);
     setRoutes(routesData);
     setSelectedRouteIndex(initialRouteIndex);
+    setSelectedRouteIndex(initialRouteIndex);
     setIsDetailsExpanded(true);
+
+    // Fetch weather data
+    setIsLoadingWeather(true);
+    WeatherService.getRouteWeather(start, end, waypointsList.map(w => w.coordinates))
+      .then(data => setWeatherData(data))
+      .catch(err => console.error('Failed to fetch weather:', err))
+      .finally(() => setIsLoadingWeather(false));
   };
 
   const handleRouteSelected = (index: number) => {
@@ -261,6 +279,10 @@ export const AppStateProvider = ({
     setRoutes,
     selectedRouteIndex,
     setSelectedRouteIndex,
+
+    // Weather state
+    weatherData,
+    isLoadingWeather,
 
     // UI state
     isSidebarOpen,

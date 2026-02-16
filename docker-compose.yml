@@ -1,14 +1,17 @@
 version: '3.8'
 services:
   api:
-    build: .
+    build:
+      context: .
+      args:
+        - BUILD_TARGET=api
     container_name: edistanta-api
     command: ["/app/start.sh", "api"]
     ports:
       - "9001:9001"
     restart: always
     env_file:
-      - .env
+      - .env.api
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging:
@@ -25,7 +28,7 @@ services:
       - "3002:3002"
     restart: always
     env_file:
-      - .env
+      - .env.web
     extra_hosts:
       - "host.docker.internal:host-gateway"
     logging:
