@@ -8,6 +8,7 @@ import { MobileRoutePanel, RouteDetails } from '../features/route';
 import { MapComponent } from '../features/map';
 import { ProjectInfoModal, TermsAndConditionsModal, TollInfoModal } from '../modals';
 import { useAppState } from '../../contexts/AppStateContext';
+import { useRouteDetails } from '../../contexts/RouteDetailsContext';
 
 interface AppLayoutProps {
   initialStartInput?: string;
@@ -58,6 +59,11 @@ const AppLayout = ({
     handleRouteSelected,
     handleTollModalOpen,
   } = useAppState();
+
+  const { isRoundTrip } = useRouteDetails();
+
+  const activeDistance = distance !== null ? distance * (isRoundTrip ? 2 : 1) : null;
+  const activeDuration = duration !== null ? duration * (isRoundTrip ? 2 : 1) : null;
 
   return (
     <div className="h-screen h-[100dvh] flex flex-col bg-slate-50">
@@ -202,8 +208,8 @@ const AppLayout = ({
               setIsDetailsExpanded={setIsDetailsExpanded}
               setIsSidebarOpen={setIsSidebarOpen}
               safeAreaBottom={safeAreaBottom}
-              distance={distance}
-              duration={duration}
+              distance={activeDistance}
+              duration={activeDuration}
               onTollModalOpen={handleTollModalOpen}
             />
           )}

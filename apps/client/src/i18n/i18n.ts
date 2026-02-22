@@ -60,6 +60,9 @@ const enTranslations = {
     lastUpdated: 'Last updated',
     stationsError: 'Error loading stations',
     priceError: 'Error loading price',
+    roundTrip: 'Round Trip',
+    roundTripDesc: 'Calculate double distance and time for return trip',
+    roundTripPriceNote: '(Round Trip)',
     apiError: {
       title: 'Service Unavailable',
       description: 'The fuel price service is currently unavailable. Please try again later.',
@@ -320,6 +323,9 @@ const roTranslations = {
     lastUpdated: 'Actualizat ultima dată',
     stationsError: 'Eroare la încărcarea stațiilor',
     priceError: 'Eroare la încărcarea prețului',
+    roundTrip: 'Drum dus-întors',
+    roundTripDesc: 'Calculează distanța și timpul pentru ambele sensuri',
+    roundTripPriceNote: '(Dus-întors)',
     apiError: {
       title: 'Serviciu Indisponibil',
       description: 'Serviciul de preturi combustibil este temporar indisponibil. Vă rugăm să încercați din nou mai târziu.',

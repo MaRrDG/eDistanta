@@ -43,7 +43,7 @@ const RouteMetrics = ({ distance, duration, fuelCost, tollSummary, onTollModalOp
 
   const formattedDistance = distance.toFixed(1);
   const totalFuelConsumption = ((distance * fuelConsumption) / 100).toFixed(1);
-  
+
   const hours = Math.floor(duration / 60);
   const minutes = Math.round(duration % 60);
   const formattedDuration =

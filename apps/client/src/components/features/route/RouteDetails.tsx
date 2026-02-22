@@ -59,7 +59,8 @@ const RouteDetails = ({
     priceError,
     isApiAvailable,
     isCheckingHealth,
-    isRomaniaRoute
+    isRomaniaRoute,
+    isRoundTrip
   } = useRouteDetails();
   const { weatherData } = useAppState();
   const [showSaved, setShowSaved] = useState(false);
@@ -77,8 +78,15 @@ const RouteDetails = ({
     };
 
     const detectedBridges = TollService.detectTollBridges(selectedRoute.route);
-    return TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
-  }, [selectedRoute, vehicleType]);
+    const summary = TollService.getTollSummary(detectedBridges, vehicleType as TollVehicleType);
+
+    if (isRoundTrip) {
+      summary.totalRON *= 2;
+      summary.totalEUR *= 2;
+    }
+
+    return summary;
+  }, [selectedRoute, vehicleType, isRoundTrip]);
 
   if (!routes || routes.length === 0 || !selectedRoute) {
     return null;
@@ -95,8 +103,8 @@ const RouteDetails = ({
     );
   }
 
-  const distance = selectedRoute.distance;
-  const duration = selectedRoute.duration;
+  const distance = selectedRoute.distance * (isRoundTrip ? 2 : 1);
+  const duration = selectedRoute.duration * (isRoundTrip ? 2 : 1);
 
   // Helper function to safely convert price to number
   const getPriceAsNumber = (price: number | string | undefined): number => {
@@ -115,9 +123,16 @@ const RouteDetails = ({
 
   return (
     <div className="w-full md:mt-6 md:pt-5 md:border-t md:border-blue-100">
-      <h3 className="text-lg font-medium text-blue-900 mb-4 px-4 pt-2 md:px-0 md:pt-0">
-        {t('routeDetails.title')}
-      </h3>
+      <div className="flex items-center gap-2 mb-4 px-4 pt-2 md:px-0 md:pt-0">
+        <h3 className="text-lg font-medium text-blue-900">
+          {t('routeDetails.title')}
+        </h3>
+        {isRoundTrip && (
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-xs font-medium text-blue-700 border border-blue-100">
+            {t('routeDetails.roundTripPriceNote')}
+          </span>
+        )}
+      </div>
 
       {/* Weather Summary UX Hint */}
       {weatherData && (

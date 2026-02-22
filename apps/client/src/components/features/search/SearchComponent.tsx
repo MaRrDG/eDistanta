@@ -22,7 +22,7 @@ const SearchComponent = ({
   initialEndLocation = null,
 }: SearchComponentProps) => {
   const { t } = useTranslation();
-  const { setIsRomaniaRoute } = useRouteDetails();
+  const { setIsRomaniaRoute, isRoundTrip, setIsRoundTrip } = useRouteDetails();
 
   const [startInput, setStartInput] = useState(initialStartInput);
   const [endInput, setEndInput] = useState(initialEndInput);
@@ -64,6 +64,12 @@ const SearchComponent = ({
   const startInputRef = useRef<HTMLInputElement>(null);
   const endInputRef = useRef<HTMLInputElement>(null);
   const hasAutoCalculatedRef = useRef(false);
+
+  const isLocationInRomania = (coords: [number, number] | null) => {
+    if (!coords) return false;
+    const [lat, lng] = coords;
+    return lat >= 43.6 && lat <= 48.3 && lng >= 20.2 && lng <= 29.7;
+  };
 
   // Reset auto-calculation flag when route changes
   useEffect(() => {
@@ -113,6 +119,9 @@ const SearchComponent = ({
           );
 
           setHasCalculatedRoute(true);
+
+          const isRomania = isLocationInRomania(initialStartLocation) || isLocationInRomania(initialEndLocation);
+          setIsRomaniaRoute(isRomania);
         } catch (err) {
           setError(
             err instanceof Error ? err.message : 'An unknown error occurred'
@@ -261,6 +270,9 @@ const SearchComponent = ({
       );
 
       setHasCalculatedRoute(true);
+
+      const isRomania = isLocationInRomania(startCoords) || isLocationInRomania(endCoords);
+      setIsRomaniaRoute(isRomania);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
@@ -328,7 +340,9 @@ const SearchComponent = ({
         startLocation.country?.toLowerCase().includes('romania') ||
         startLocation.country?.toLowerCase().includes('românia') ||
         endLocation.country?.toLowerCase().includes('romania') ||
-        endLocation.country?.toLowerCase().includes('românia');
+        endLocation.country?.toLowerCase().includes('românia') ||
+        isLocationInRomania(startLocation.coordinates) ||
+        isLocationInRomania(endLocation.coordinates);
 
       setIsRomaniaRoute(!!isRomania);
 
@@ -485,6 +499,46 @@ const SearchComponent = ({
             </div>
           </motion.div>
         )}
+
+        {/* Round Trip Toggle */}
+        <motion.div
+          onClick={() => setIsRoundTrip(!isRoundTrip)}
+          className={`flex items-center justify-between p-3.5 border rounded-xl shadow-sm transition-all cursor-pointer ${isRoundTrip
+              ? 'bg-gradient-to-r from-blue-50/50 to-white border-blue-200 hover:shadow-md'
+              : 'bg-white border-gray-200 hover:border-gray-300'
+            }`}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg transition-colors flex-shrink-0 ${isRoundTrip ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'}`}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-800 select-none">
+                {t('routeDetails.roundTrip', 'Drum dus-întors')}
+              </p>
+              <p className="text-xs text-slate-500 select-none mt-0.5">
+                {t('routeDetails.roundTripDesc', 'Calculează distanța și timpul pentru ambele sensuri')}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isRoundTrip}
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 ml-2 ${isRoundTrip ? 'bg-blue-600' : 'bg-slate-200'
+              }`}
+          >
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isRoundTrip ? 'translate-x-5' : 'translate-x-0'
+                }`}
+            />
+          </button>
+        </motion.div>
 
         <motion.button
           type="submit"

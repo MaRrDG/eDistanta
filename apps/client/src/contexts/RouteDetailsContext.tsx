@@ -46,6 +46,8 @@ interface RouteDetailsContextType {
   isApiAvailable: boolean;
   isRomaniaRoute: boolean;
   setIsRomaniaRoute: (isRomania: boolean) => void;
+  isRoundTrip: boolean;
+  setIsRoundTrip: (isRoundTrip: boolean) => void;
 }
 
 const RouteDetailsContext = createContext<RouteDetailsContextType | undefined>(undefined);
@@ -79,6 +81,7 @@ export const RouteDetailsProvider = ({ children }: RouteDetailsProviderProps) =>
   });
 
   const [isRomaniaRoute, setIsRomaniaRoute] = useState(false);
+  const [isRoundTrip, setIsRoundTrip] = useState(false);
 
   // API hooks
   const { data: isApiHealthy, isLoading: isCheckingHealth, error: healthError } = useApiHealth();
@@ -141,6 +144,8 @@ export const RouteDetailsProvider = ({ children }: RouteDetailsProviderProps) =>
     isApiAvailable,
     isRomaniaRoute,
     setIsRomaniaRoute,
+    isRoundTrip,
+    setIsRoundTrip,
   };
 
   return (
