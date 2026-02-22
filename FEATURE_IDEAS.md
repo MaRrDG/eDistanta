@@ -466,6 +466,15 @@
 
 ## 🛠️ TECHNICAL DEBT & IMPROVEMENTS
 
+### Design System & Component Standardization
+- [ ] Create a unified design token system (colors, spacing, border-radius, shadows, typography)
+- [ ] Standardize animation patterns — all components should use the same transition durations, easing curves, and motion presets (e.g. shared Framer Motion variants)
+- [ ] Unify component design patterns — similar components (inputs, buttons, cards, dropdowns) must share the same base styles and specs instead of each having ad-hoc styling
+- [ ] Extract reusable base components (BaseInput, BaseCard, BaseButton, etc.) that enforce consistent design
+- [ ] Document design patterns and component usage guidelines (consider a Storybook or internal doc)
+- [ ] Audit existing components for inconsistencies (different border-radius, padding, font sizes, hover effects on similar elements) and refactor to use shared tokens
+- [ ] Ensure all interactive states (hover, focus, active, disabled) follow the same visual language across all components
+
 ### Performance
 - [ ] Implement route caching
 - [ ] Optimize map rendering
@@ -482,6 +491,19 @@
 
 ### Developer Experience
 - [ ] E2E testing suite (Playwright/Cypress)
+  - [ ] Test complete user flows: search → select location → calculate route → view results
+  - [ ] Test waypoint management (add, remove, reorder)
+  - [ ] Test search history & favorites functionality
+  - [ ] Test responsive behavior (mobile bottom sheet, desktop sidebar)
+  - [ ] Test map interactions (markers, route display, weather overlays)
+- [ ] API unit tests
+  - [ ] Test all route endpoints (calculate route, route options, alternatives)
+  - [ ] Test history endpoints (create, list, delete search history)
+  - [ ] Test fuel price endpoints (current prices, price history, station lookup)
+  - [ ] Test weather endpoints (route weather, alerts)
+  - [ ] Test input validation and error handling for all endpoints
+  - [ ] Test edge cases (empty inputs, invalid coordinates, rate limiting, API failures)
+  - [ ] Mock external API dependencies (Nominatim, OpenWeatherMap, OSRM)
 - [ ] Component storybook
 - [ ] CI/CD pipeline improvements
 - [ ] Error tracking (Sentry integration)
