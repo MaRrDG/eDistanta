@@ -11,6 +11,9 @@ import { useRouteDetails } from '../../../contexts/RouteDetailsContext';
 import LocationInput from './LocationInput';
 import WaypointInput from './WaypointInput';
 import { FavoritesSection } from '../favorites';
+import { useSaveRouteSearch } from '../../../hooks/useRouteHistory';
+import { RecentSearchesSection } from '../history/RecentSearchesSection';
+import type { RouteSearchRecord } from '../../../services/historyService';
 
 const SearchComponent = ({
   onRouteCalculated,
@@ -23,6 +26,7 @@ const SearchComponent = ({
 }: SearchComponentProps) => {
   const { t } = useTranslation();
   const { setIsRomaniaRoute, isRoundTrip, setIsRoundTrip } = useRouteDetails();
+  const { mutate: saveSearch } = useSaveRouteSearch();
 
   const [startInput, setStartInput] = useState(initialStartInput);
   const [endInput, setEndInput] = useState(initialEndInput);
@@ -273,6 +277,19 @@ const SearchComponent = ({
 
       const isRomania = isLocationInRomania(startCoords) || isLocationInRomania(endCoords);
       setIsRomaniaRoute(isRomania);
+
+      saveSearch({
+        startName: favorite.startName,
+        startLat: favorite.startLat,
+        startLng: favorite.startLng,
+        endName: favorite.endName,
+        endLat: favorite.endLat,
+        endLng: favorite.endLng,
+        waypoints: waypointsList,
+        isRoundTrip,
+        distanceKm: Number((routeData.routes[0]?.distance || 0).toFixed(2)),
+        estimatedTimeMins: Math.round((routeData.routes[0]?.duration || 0)),
+      });
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
@@ -345,12 +362,67 @@ const SearchComponent = ({
         isLocationInRomania(endLocation.coordinates);
 
       setIsRomaniaRoute(!!isRomania);
-
       setHasCalculatedRoute(true);
+
+      saveSearch({
+        startName: startLocation.name,
+        startLat: startLocation.coordinates[0],
+        startLng: startLocation.coordinates[1],
+        endName: endLocation.name,
+        endLat: endLocation.coordinates[0],
+        endLng: endLocation.coordinates[1],
+        waypoints: validWaypoints,
+        isRoundTrip,
+        distanceKm: Number((routeData.routes[0]?.distance || 0).toFixed(2)),
+        estimatedTimeMins: Math.round((routeData.routes[0]?.duration || 0)),
+      });
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
       );
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  const handleHistorySelect = async (record: RouteSearchRecord) => {
+    // Similar to handleFavoriteSelect, populate inputs and calculate
+    setStartInput(record.startName);
+    setEndInput(record.endName);
+    setHasStartSelection(true);
+    setHasEndSelection(true);
+    setIsRoundTrip(record.isRoundTrip || false);
+    setError(null);
+    setIsCalculating(true);
+
+    if (onMobileSubmit) {
+      onMobileSubmit();
+    }
+
+    try {
+      const startCoords: [number, number] = [record.startLat, record.startLng];
+      const endCoords: [number, number] = [record.endLat, record.endLng];
+      const waypointsList = record.waypoints || [];
+
+      const routeData = await RouteService.calculateRoute(
+        startCoords,
+        endCoords,
+        waypointsList.map(wp => wp.coordinates)
+      );
+
+      onRouteCalculated(
+        startCoords,
+        endCoords,
+        waypointsList,
+        routeData.routes,
+        0
+      );
+
+      setHasCalculatedRoute(true);
+      const isRomania = isLocationInRomania(startCoords) || isLocationInRomania(endCoords);
+      setIsRomaniaRoute(isRomania);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
       setIsCalculating(false);
     }
@@ -362,6 +434,7 @@ const SearchComponent = ({
         {t('search.title')}
       </h2>
 
+      <RecentSearchesSection onHistorySelect={handleHistorySelect} />
       <FavoritesSection onFavoriteSelect={handleFavoriteSelect} />
 
       <form onSubmit={handleSubmit} className="space-y-5 pb-12 md:pb-4">
@@ -504,8 +577,8 @@ const SearchComponent = ({
         <motion.div
           onClick={() => setIsRoundTrip(!isRoundTrip)}
           className={`flex items-center justify-between p-3.5 border rounded-xl shadow-sm transition-all cursor-pointer ${isRoundTrip
-              ? 'bg-gradient-to-r from-blue-50/50 to-white border-blue-200 hover:shadow-md'
-              : 'bg-white border-gray-200 hover:border-gray-300'
+            ? 'bg-gradient-to-r from-blue-50/50 to-white border-blue-200 hover:shadow-md'
+            : 'bg-white border-gray-200 hover:border-gray-300'
             }`}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
@@ -543,10 +616,10 @@ const SearchComponent = ({
         <motion.button
           type="submit"
           disabled={isCalculating || !startInput || !endInput}
-          className={`w-full py-2.5 px-4 rounded-md font-medium text-white transition-colors flex items-center justify-center ${isCalculating || !startInput || !endInput
-            ? 'bg-blue-300 cursor-not-allowed'
+          className={`w-full py-3.5 px-4 rounded-xl font-medium text-white transition-colors flex items-center justify-center shadow-md shadow-blue-600/20 active:scale-95 text-base ${isCalculating || !startInput || !endInput
+            ? 'bg-blue-300 cursor-not-allowed shadow-none'
             : hasRouteChanges && hasCalculatedRoute
-              ? 'bg-amber-500 hover:bg-amber-600'
+              ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'
               : 'bg-blue-600 hover:bg-blue-700'
             }`}
           whileHover={

@@ -1,12 +1,14 @@
 import { Router } from 'express';
 import fuelPricesRoutes from './fuelPrices';
 import favoritesRoutes from './favorites';
+import historyRoutes from './history';
 
 const router = Router();
 
 // Mount all v1 routes
 router.use('/fuel-prices', fuelPricesRoutes);
 router.use('/favorites', favoritesRoutes);
+router.use('/history', historyRoutes);
 
 // V1 API info endpoint
 router.get('/', (req, res) => {
@@ -16,6 +18,7 @@ router.get('/', (req, res) => {
     endpoints: {
       fuelPrices: '/api/v1/fuel-prices',
       favorites: '/api/v1/favorites',
+      history: '/api/v1/history',
       health: '/health'
     },
     documentation: '/api/v1/docs' // Future endpoint for API documentation

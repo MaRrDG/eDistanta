@@ -76,11 +76,9 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
             onChange={e => onChange(e.target.value)}
             onFocus={onFocus}
             placeholder={placeholder}
-            className={`w-full z-0 px-3 py-2 ${isSelected ? 'pr-16' : 'pr-10'} border ${
-              isSelected ? 'border-green-300 bg-green-50' : 'border-blue-200'
-            } rounded-md focus:outline-none focus:ring-2 ${
-              isSelected ? 'focus:ring-green-500' : 'focus:ring-blue-500'
-            } text-slate-900 placeholder:text-slate-600 ${isLoading ? 'bg-blue-50' : ''}`}
+            className={`w-full z-0 px-3 py-3 ${isSelected ? 'pr-16' : 'pr-10'} border ${isSelected ? 'border-green-300 bg-green-50' : 'border-blue-200'
+              } rounded-xl focus:outline-none focus:ring-2 ${isSelected ? 'focus:ring-green-500' : 'focus:ring-blue-500'
+              } text-slate-900 placeholder:text-slate-600 ${isLoading ? 'bg-blue-50' : ''}`}
           />
 
           {/* Loading indicator */}
@@ -113,7 +111,7 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
           {showSuggestions && suggestions.length > 0 && (
             <ul
               ref={suggestionsRef}
-              className="absolute z-[1000] w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg max-h-60 overflow-y-auto"
+              className="absolute z-[1000] w-full bg-white border border-blue-200 rounded-xl mt-1 shadow-lg max-h-60 overflow-y-auto"
             >
               {suggestions.map((location, index) => (
                 <li
@@ -143,7 +141,7 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
             suggestions.length === 0 &&
             value.trim() &&
             !isLoading && (
-              <div className="absolute z-50 w-full bg-white border border-blue-200 rounded-md mt-1 shadow-lg p-3">
+              <div className="absolute z-50 w-full bg-white border border-blue-200 rounded-xl mt-1 shadow-lg p-3">
                 <div className="text-sm text-slate-700 text-center">
                   <svg
                     className="w-5 h-5 mx-auto mb-1 text-slate-700"
@@ -169,7 +167,7 @@ const LocationInput = forwardRef<HTMLInputElement, LocationInputProps>(
             suggestions.length > 0 &&
             showSuggestions && (
               <div
-                className="absolute z-5 w-full bg-blue-50 border border-blue-200 rounded-md shadow-lg p-2 text-xs text-blue-700"
+                className="absolute z-5 w-full bg-blue-50 border border-blue-200 rounded-xl shadow-lg p-2 text-xs text-blue-700"
                 style={{
                   top: `calc(100% + 1rem + ${Math.min(suggestions.length * 60, 240)}px)`,
                 }}

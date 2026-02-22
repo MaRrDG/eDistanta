@@ -40,7 +40,7 @@ body {
 .leaflet-container .leaflet-pane {
   z-index: 0;
 }
-      
+
 @supports (-webkit-touch-callout: none) {
   .h-screen {
     height: 100vh;
@@ -52,15 +52,15 @@ body {
     bottom: 0;
     z-index: 1000;
   }
-  
+
   .max-h-\[60vh\] {
     max-height: 60vh;
   }
-  
+
   .leaflet-touch .leaflet-map-pane {
     touch-action: none;
   }
-  
+
   .leaflet-control-container {
     touch-action: auto;
   }
@@ -90,7 +90,7 @@ body {
   border-radius: 0.5rem !important;
 }
 
-.leaflet-control-zoom-in, 
+.leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
   border-radius: 0.25rem !important;
   color: #475569 !important;
@@ -124,6 +124,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -134,6 +135,7 @@ body {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -154,4 +156,34 @@ body {
 
 .glass-popup .leaflet-popup-tip-container {
   display: none !important;
+}
+
+@layer utilities {
+  .modal-blur {
+    backdrop-filter: blur(8px);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+  }
+
+  .replan-btn {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.2s ease-out;
+  }
+
+  .history-card:hover .replan-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -23,7 +23,7 @@ const FavoritesSection = ({ onFavoriteSelect }: FavoritesSectionProps) => {
       <motion.button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-lg transition-colors group"
+        className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer group"
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
       >
