@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import RoutePage from './pages/RoutePage';
-import NotFoundPage from './components/NotFoundPage';
+import HomePage from './ui/pages/HomePage';
+import RoutePage from './ui/pages/RoutePage';
+import NotFoundPage from './ui/components/NotFoundPage';
 
 function App() {
   return (

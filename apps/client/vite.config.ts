@@ -1,9 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@core': path.resolve(__dirname, './src/core'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@ui': path.resolve(__dirname, './src/ui'),
+      '@contexts': path.resolve(__dirname, './src/ui/contexts'),
+      '@data': path.resolve(__dirname, './src/data'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+    },
+  },
   plugins: [
     react(),
     VitePWA({

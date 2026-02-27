@@ -1,14 +1,7 @@
 @import "tailwindcss";
+@import "./ui/theme.css";
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-:root {
-  --primary-color: #2563eb;
-  --primary-light: #dbeafe;
-  --primary-dark: #1e40af;
-  --secondary-color: #f8fafc;
-  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
-}
 
 html {
   height: 100%;

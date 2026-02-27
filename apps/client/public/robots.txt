@@ -1,6 +1,24 @@
 User-agent: *
 Allow: /
 
+# Sitemaps
 Sitemap: https://edistanta.ro/sitemap.xml
 
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Block access to API endpoints and admin areas
 Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /ruta/
+Allow: /
+
+# Block common bot traps
+Disallow: /*?*
+Disallow: /*#*
+Disallow: /*.json$
+Disallow: /*.xml$
